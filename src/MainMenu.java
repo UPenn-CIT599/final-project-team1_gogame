@@ -1,5 +1,8 @@
 import java.awt.*;
 import java.awt.event.*;
+import java.text.*;
+import java.util.*;
+
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
@@ -11,25 +14,27 @@ import javax.swing.text.*;
  *
  */
 public class MainMenu {
-//    private Object notifier;
-    private UserInterface gui;
+//    private UserInterface gui;
     private JFrame frame;
-    private String player1Name;
-    private String player1Name1;
-    private String player1Name2;
-    private String player2Name;
-    private boolean demoMode;
-    private boolean onePlayerGame;
-    private int handicap;
-    private int handicap1;
-    private int handicap2;
-    private int numRows;
-    private int numRows1;
-    private int numRows2;
-    private String player1Color;
-    private String player1Color1;
-    private String player1Color2;
-    private boolean readyToPlay;
+    private String player1Name = "";
+    private String player1Name1 = "";
+    private String player1Name2 = "";
+    private String player2Name = "";
+    private boolean demoMode = false;
+    private boolean onePlayerGame = false;
+    private int handicap = 0;
+    private int handicap1 = 0;
+    private int handicap2 = 0;
+    private double komi = 6.5;
+    private double komi1 = 6.5;
+    private double komi2 = 6.5;
+    private int numRows = 19;;
+    private int numRows1 = 19;
+    private int numRows2 = 19;
+    private String player1Color = "Black";
+    private String player1Color1 = "Black";
+    private String player1Color2 = "Black";
+    private boolean readyToPlay = false;
 
     public String getPlayer1Name() {
 	return player1Name;
@@ -51,6 +56,10 @@ public class MainMenu {
 	return handicap;
     }
 
+    public double getKomi() {
+	return komi;
+    }
+    
     public int getNumRows() {
 	return numRows;
     }
@@ -64,29 +73,29 @@ public class MainMenu {
     }
 
     /**
-     * This method creates a MainMenu which is associated with the given
-     * UserInterface
+     * This method creates a MainMenu associated with the given UserInterface.
      * 
-     * @param gui The UserInterface which is associated with this MainMenu
+     * @param gui The UserInterface associated with this MainMenu
      */
     public MainMenu(UserInterface gui) {
-	this.gui = gui;
-	player1Name = "";
-	player1Name1 = "";
-	player1Name2 = "";
-	player2Name = "";
-	demoMode = false;
-	onePlayerGame = false;
-	handicap = 0;
-	handicap1 = 0;
-	handicap2 = 0;
-	numRows = 19;
-	numRows1 = 19;
-	numRows2 = 19;
-	player1Color = "Black";
-	player1Color1 = "Black";
-	player1Color2 = "Black";
-	readyToPlay = false;
+//	this.gui = gui;
+	
+//	player1Name = "";
+//	player1Name1 = "";
+//	player1Name2 = "";
+//	player2Name = "";
+//	demoMode = false;
+//	onePlayerGame = false;
+//	handicap = 0;
+//	handicap1 = 0;
+//	handicap2 = 0;
+//	numRows = 19;
+//	numRows1 = 19;
+//	numRows2 = 19;
+//	player1Color = "Black";
+//	player1Color1 = "Black";
+//	player1Color2 = "Black";
+//	readyToPlay = false;
 
 	/*
 	 * A portion of the below code is based on the following:
@@ -233,11 +242,11 @@ public class MainMenu {
 	/*
 	 * A portion of the below code is based on the following:
 	 * 
-	 * Title: SliderDemo 
+	 * Title: SliderDemo2 
 	 * Author: Oracle 
 	 * Date: 2008
 	 * Availability: 
-	 * https://docs.oracle.com/javase/tutorial/uiswing/examples/components/SliderDemoProject/src/components/SliderDemo.java
+	 * https://docs.oracle.com/javase/tutorial/uiswing/examples/components/SliderDemo2Project/src/components/SliderDemo2.java
 	 */
 	JPanel boardSizePanel1 = new JPanel();
 	boardSizePanel1
@@ -289,6 +298,75 @@ public class MainMenu {
 	boardSizePanel2.add(boardSizeChooser2Label);
 	boardSizePanel2.add(boardSizeChooser2);
 
+	double maxKomi = 8.5;
+	DecimalFormat komiDecimalFormat = new DecimalFormat("#.#");
+	
+	JPanel komiPanel1 = new JPanel();
+	komiPanel1
+		.setLayout(new BoxLayout(komiPanel1, BoxLayout.Y_AXIS));
+	JTextField komiChooser1Label = new JTextField(
+		"If handicap is 0, please choose a komi:");
+	komiChooser1Label.setEditable(false);
+	komiChooser1Label
+		.setHorizontalAlignment((int) JTextField.CENTER_ALIGNMENT);
+	JSlider komiChooser1 = new JSlider(JSlider.HORIZONTAL, 0, (int) maxKomi, 6);
+	
+	// JSlider uses integers, so it must be relabeled and 0.5 must be added
+	// to its values to correct for this
+	Hashtable<Integer, JLabel> komiLabelTable1 = new Hashtable<>();
+	for (int i = 0; i < maxKomi; i++) {
+	    komiLabelTable1.put(i, new JLabel(komiDecimalFormat.format(i + 0.5)));
+	}
+	komiChooser1.setLabelTable(komiLabelTable1);	
+	komiChooser1.addChangeListener(new ChangeListener() {
+
+	    @Override
+	    public void stateChanged(ChangeEvent arg0) {
+		if (!komiChooser1.getValueIsAdjusting()) {
+		    komi1 = komiChooser1.getValue() + 0.5;
+		}
+	    }
+
+	});
+	komiChooser1.setMajorTickSpacing(1);
+	komiChooser1.setPaintTicks(true);
+	komiChooser1.setPaintLabels(true);
+	komiPanel1.add(komiChooser1Label);
+	komiPanel1.add(komiChooser1);
+
+	JPanel komiPanel2 = new JPanel();
+	komiPanel2
+		.setLayout(new BoxLayout(komiPanel2, BoxLayout.Y_AXIS));
+	JTextField komiChooser2Label = new JTextField(
+		"If handicap is 0, please choose a komi:");
+	komiChooser2Label.setEditable(false);
+	komiChooser2Label
+		.setHorizontalAlignment((int) JTextField.CENTER_ALIGNMENT);
+	JSlider komiChooser2 = new JSlider(JSlider.HORIZONTAL, 0, (int) maxKomi, 6);
+	
+	// JSlider uses integers, so it must be relabeled and 0.5 must be added
+	// to its values to correct for this
+	Hashtable<Integer, JLabel> komiLabelTable2 = new Hashtable<>();
+	for (int i = 0; i < maxKomi; i++) {
+	    komiLabelTable2.put(i, new JLabel(komiDecimalFormat.format(i + 0.5)));
+	}
+	komiChooser2.setLabelTable(komiLabelTable2);	
+	komiChooser2.addChangeListener(new ChangeListener() {
+
+	    @Override
+	    public void stateChanged(ChangeEvent arg0) {
+		if (!komiChooser2.getValueIsAdjusting()) {
+		    komi2 = komiChooser2.getValue() + 0.5;
+		}
+	    }
+
+	});
+	komiChooser2.setMajorTickSpacing(1);
+	komiChooser2.setPaintTicks(true);
+	komiChooser2.setPaintLabels(true);
+	komiPanel2.add(komiChooser2Label);
+	komiPanel2.add(komiChooser2);
+
 	JPanel handicapPanel1 = new JPanel();
 	handicapPanel1
 		.setLayout(new BoxLayout(handicapPanel1, BoxLayout.Y_AXIS));
@@ -304,6 +382,14 @@ public class MainMenu {
 	    public void stateChanged(ChangeEvent arg0) {
 		if (!handicapChooser1.getValueIsAdjusting()) {
 		    handicap1 = (int) handicapChooser1.getValue();
+		    if (handicap1 == 0) {
+			komiChooser1Label.setEnabled(true);
+			komiChooser1.setEnabled(true);
+		    } else {
+			komiChooser1.setValue(0);
+			komiChooser1Label.setEnabled(false);
+			komiChooser1.setEnabled(false);
+		    }
 		}
 	    }
 
@@ -329,6 +415,14 @@ public class MainMenu {
 	    public void stateChanged(ChangeEvent arg0) {
 		if (!handicapChooser2.getValueIsAdjusting()) {
 		    handicap2 = (int) handicapChooser2.getValue();
+		    if (handicap2 == 0) {
+			komiChooser2Label.setEnabled(true);
+			komiChooser2.setEnabled(true);
+		    } else {
+			komiChooser2.setValue(0);
+			komiChooser2Label.setEnabled(false);
+			komiChooser2.setEnabled(false);
+		    }
 		}
 	    }
 
@@ -338,7 +432,7 @@ public class MainMenu {
 	handicapChooser2.setPaintLabels(true);
 	handicapPanel2.add(handicapChooser2Label);
 	handicapPanel2.add(handicapChooser2);
-
+	
 	JPanel buttonPanel1 = new JPanel();
 	JButton button1 = new JButton("Start Game");
 	button1.addActionListener(new ActionListener() {
@@ -349,6 +443,7 @@ public class MainMenu {
 		player1Color = player1Color1;
 		numRows = numRows1;
 		handicap = handicap1;
+		komi = komi1;
 		demoMode = false;
 		onePlayerGame = true;
 		readyToPlay = true;
@@ -369,6 +464,7 @@ public class MainMenu {
 		player1Color = player1Color2;
 		numRows = numRows2;
 		handicap = handicap2;
+		komi = komi2;
 		demoMode = false;
 		onePlayerGame = false;
 		readyToPlay = true;
@@ -387,6 +483,7 @@ public class MainMenu {
 	onePlayerCard.add(colorPanel1);
 	onePlayerCard.add(boardSizePanel1);
 	onePlayerCard.add(handicapPanel1);
+	onePlayerCard.add(komiPanel1);
 	onePlayerCard.add(buttonPanel1);
 
 	JPanel twoPlayerCard = new JPanel();
@@ -396,6 +493,7 @@ public class MainMenu {
 	twoPlayerCard.add(namePanel3);
 	twoPlayerCard.add(boardSizePanel2);
 	twoPlayerCard.add(handicapPanel2);
+	twoPlayerCard.add(komiPanel2);
 	twoPlayerCard.add(buttonPanel2);
 
 	JPanel demoCard = new JPanel();

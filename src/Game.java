@@ -15,6 +15,7 @@ public class Game {
     private int numRows;
     private int handicap;
     private int handicapCounter;
+    private double komi;
     private boolean onePlayerGame;
     private boolean isPlayer1Black;
     private boolean lastMoveWasPass;
@@ -54,6 +55,10 @@ public class Game {
     
     public int getHandicapCounter() {
 	return handicapCounter;
+    }
+    
+    public double getKomi() {
+	return komi;
     }
 
     public boolean isPlayer1Black() {
@@ -147,6 +152,7 @@ public class Game {
 	numRows = menu.getNumRows();
 	handicap = menu.getHandicap();
 	handicapCounter = handicap;
+	komi = menu.getKomi();
 	onePlayerGame = menu.isOnePlayerGame();
 	String player1ColorString = menu.getPlayer1Color();
 	isPlayer1Black = true;
