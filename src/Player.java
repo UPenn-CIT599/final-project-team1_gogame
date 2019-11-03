@@ -16,7 +16,7 @@ public class Player {
     private static int computerMoveDelay = 1000; // the number of milliseconds a
 						 // computer player will wait to
 						 // move
-    private static int maxAttempts = 20; // a computer player will pass after
+    private static int maxAttempts = 1; // a computer player will pass after
 					 // attempting this many illegal moves
 
     public static final int PASS = 8675309;
@@ -92,6 +92,8 @@ public class Player {
 		    } else {
 			boolean movedYet = false;
 			int count = 0;
+			// try to place a stone up to the maximum number of
+			// times
 			while (!movedYet && (count < maxAttempts)) {
 			    // attempt to place a stone in a random location
 			    try {
@@ -100,14 +102,28 @@ public class Player {
 				int y = (int) (Math.random() *
 					game.getNumRows());
 				game.getBoard().placeStone(color, x, y);
-				game.getGui().setMessage(name, false);
-				game.nextPlayersTurn();
+				if (game.getHandicapCounter() <= 0) {
+				    game.getGui().setMessage(name, false);
+				    game.nextPlayersTurn();
+				} else if (game.getHandicapCounter() == 1) {
+				    game.decrementHandicapCounter();
+				    game.getGui().setMessage(name, false);
+				    game.nextPlayersTurn();
+				}
+				else {
+				    game.decrementHandicapCounter();
+				    game.getGui().handicapMessage();
+				}
 				game.setLastMoveWasPass(false);
 				movedYet = true;
 			    }
-			    // try again if the attempted move is illegal
 			    catch (IllegalArgumentException e) {
-				count++;
+				// if handicap stones haven't all been placed,
+				// don't increase the counter in order to
+				// prevent passing
+				if (game.getHandicapCounter() <= 0) {
+				    count++;
+				}
 			    }
 			}
 			// pass if the maximum number of attempts was reached
@@ -152,6 +168,9 @@ public class Player {
 	if (isComputer || (isBlack != game.blackToMove())) {
 	    return false;
 	} else if (x == PASS) {
+	    if (game.getHandicapCounter() > 0) {
+		throw new IllegalArgumentException("handicap pass");
+	    }
 	    pass();
 	    return true;
 	} else {

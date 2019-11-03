@@ -297,7 +297,7 @@ public class MainMenu {
 	handicapChooser1Label.setEditable(false);
 	handicapChooser1Label
 		.setHorizontalAlignment((int) JTextField.CENTER_ALIGNMENT);
-	JSlider handicapChooser1 = new JSlider(JSlider.HORIZONTAL, 0, 10, 0);
+	JSlider handicapChooser1 = new JSlider(JSlider.HORIZONTAL, 0, 9, 0);
 	handicapChooser1.addChangeListener(new ChangeListener() {
 
 	    @Override
@@ -322,7 +322,7 @@ public class MainMenu {
 	handicapChooser2Label.setEditable(false);
 	handicapChooser2Label
 		.setHorizontalAlignment((int) JTextField.CENTER_ALIGNMENT);
-	JSlider handicapChooser2 = new JSlider(JSlider.HORIZONTAL, 0, 10, 0);
+	JSlider handicapChooser2 = new JSlider(JSlider.HORIZONTAL, 0, 9, 0);
 	handicapChooser2.addChangeListener(new ChangeListener() {
 
 	    @Override

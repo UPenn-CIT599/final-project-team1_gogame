@@ -92,7 +92,11 @@ public class UserInterface extends Canvas implements MouseListener {
 	lineSpacing = maxBoardSize / numRows;
 	pieceRadius = (int) (lineSpacing * pieceRadiusAsPercentOfLineSpacing);
 	boardSize = lineSpacing * (numRows - 1);
-	messageLine1 = "";
+	if (game.getHandicapCounter() > 0) {
+	    handicapMessage();
+	} else {
+	    messageLine1 = "";
+	}
 	drawBoard();
     }
 
@@ -121,7 +125,12 @@ public class UserInterface extends Canvas implements MouseListener {
      * @param reason The reason the move was invalid
      */
     public void invalidMove(String reason) {
-	messageLine1 = "Invalid move, please try again.";
+	if (reason.equals("handicap pass")) {
+	    messageLine1 = "Place all handicap stones before passing.";
+	}
+	else {
+	    messageLine1 = "Invalid move, please try again.";
+	}
     }
 
     /**
@@ -136,6 +145,15 @@ public class UserInterface extends Canvas implements MouseListener {
 	    action = " passed.";
 	}
 	messageLine1 = name + action;
+    }
+    
+    /**
+     * This method sets a message indicating how many handicap stones still need
+     * to be placed.
+     */
+    public void handicapMessage() {
+	messageLine1 = "Handicap stones remaining: " +
+		game.getHandicapCounter();
     }
 
     /**
