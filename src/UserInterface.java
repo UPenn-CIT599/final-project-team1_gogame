@@ -3,6 +3,21 @@ import java.awt.event.*;
 import java.awt.image.*;
 import javax.swing.*;
 
+/*
+ * Portions of the UserInterface class are based on the following:
+ * 
+ * Title: GraphicsProgram 
+ * Author: Landofcode.com 
+ * Date: unknown
+ * Availability: http://www.landofcode.com/java-tutorials/java-graphics.php
+ * 
+ * Other portions are based on the following:
+ * 
+ * Title: PennDraw
+ * Author: Robert Sedgewick, Kevin Wayne, and Benedict Brown
+ * Date: 2016
+ * Availability: https://www.cis.upenn.edu/~cis110/current/PennDraw.java
+ */
 /**
  * The UserInterface class is a graphical user interface for a game of Go.
  * 

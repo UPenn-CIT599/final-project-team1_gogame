@@ -88,6 +88,15 @@ public class MainMenu {
 	player1Color2 = "Black";
 	readyToPlay = false;
 
+	/*
+	 * A portion of the below code is based on the following:
+	 * 
+	 * Title: CardLayoutDemo 
+	 * Author: Oracle 
+	 * Date: 2008
+	 * Availability: 
+	 * https://docs.oracle.com/javase/tutorial/uiswing/examples/layout/CardLayoutDemoProject/src/layout/CardLayoutDemo.java
+	 */
 	frame = new JFrame("Go - Main Menu");
 	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	String select = "Select game mode";
@@ -221,6 +230,15 @@ public class MainMenu {
 	colorPanel2.add(colorChooser2Label);
 	colorPanel2.add(colorChooser2);
 
+	/*
+	 * A portion of the below code is based on the following:
+	 * 
+	 * Title: SliderDemo 
+	 * Author: Oracle 
+	 * Date: 2008
+	 * Availability: 
+	 * https://docs.oracle.com/javase/tutorial/uiswing/examples/components/SliderDemoProject/src/components/SliderDemo.java
+	 */
 	JPanel boardSizePanel1 = new JPanel();
 	boardSizePanel1
 		.setLayout(new BoxLayout(boardSizePanel1, BoxLayout.Y_AXIS));
@@ -335,9 +353,6 @@ public class MainMenu {
 		onePlayerGame = true;
 		readyToPlay = true;
 		frame.setVisible(false);
-//		synchronized(notifier) {
-//		    notifier.notify();
-//		}
 		gui.initializeGame();
 	    }
 
@@ -358,9 +373,6 @@ public class MainMenu {
 		onePlayerGame = false;
 		readyToPlay = true;
 		frame.setVisible(false);
-//		synchronized(notifier) {
-//		    notifier.notify();
-//		}
 		gui.initializeGame();
 	    }
 
@@ -412,6 +424,16 @@ public class MainMenu {
 	frame.setVisible(true);
     }
 
+    /*
+     * The createFilteredField method comes from the following, with slight
+     * modifications:
+     * 
+     * Title: FilterDemo 
+     * Author: Paul Samsotha 
+     * Date: 2017
+     * Availability:
+     * https://stackoverflow.com/questions/24844559/jtextfield-using-document-filter-to-filter-integers-and-periods
+     */    
     /**
      * This method creates a JTextField for the user to enter their name. The
      * output field will accept a maximum of 12 characters and will only accept
@@ -453,10 +475,6 @@ public class MainMenu {
 		StringBuilder builder = new StringBuilder(text);
 		builder.insert(offs, str);
 		String newText = builder.toString();
-
-		// checks
-		System.out.println("text = " + text + ", offset = " + offs +
-			", newText = " + newText);
 
 		if (newText.matches("[a-zA-Z[0-9[ ]]]*") &&
 			(newText.length() <= 12)) {
