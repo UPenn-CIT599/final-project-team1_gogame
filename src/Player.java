@@ -169,7 +169,8 @@ public class Player {
 	    return false;
 	} else if (x == PASS) {
 	    if (game.getHandicapCounter() > 0) {
-		throw new IllegalArgumentException("handicap pass");
+		throw new IllegalArgumentException(
+			"Place all handicap stones before passing.");
 	    }
 	    pass();
 	    return true;

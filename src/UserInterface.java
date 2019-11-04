@@ -156,12 +156,7 @@ public class UserInterface extends Canvas implements MouseListener {
      * @param reason The reason the move was invalid
      */
     public void invalidMove(String reason) {
-	if (reason.equals("handicap pass")) {
-	    messageLine1 = "Place all handicap stones before passing.";
-	}
-	else {
-	    messageLine1 = "Invalid move, please try again.";
-	}
+	messageLine1 = reason;
     }
 
     /**
