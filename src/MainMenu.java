@@ -447,7 +447,8 @@ public class MainMenu {
 		demoMode = false;
 		onePlayerGame = true;
 		readyToPlay = true;
-		frame.setVisible(false);
+//		frame.setVisible(false);
+		frame.dispose();
 		gui.initializeGame();
 	    }
 
@@ -468,7 +469,8 @@ public class MainMenu {
 		demoMode = false;
 		onePlayerGame = false;
 		readyToPlay = true;
-		frame.setVisible(false);
+//		frame.setVisible(false);
+		frame.dispose();
 		gui.initializeGame();
 	    }
 

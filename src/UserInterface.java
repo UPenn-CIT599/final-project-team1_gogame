@@ -33,8 +33,8 @@ public class UserInterface extends Canvas implements MouseListener {
     private boolean demoMode;
     private String player1Name;
     private String player2Name;
-    private boolean onePlayerGame;
-    private Object notifier = new Object();
+//    private boolean onePlayerGame;
+//    private Object notifier = new Object();
     private static final int imageSize = 700;
     private static final int borderSize = 100;
     private int numRows;
@@ -53,10 +53,41 @@ public class UserInterface extends Canvas implements MouseListener {
     private static Color buttonColor = Color.white;
     private String messageLine1;
     private String messageLine2;
-    private MainMenu menu;
+    private MainMenu mainMenu;
+    private EndGameMenu endGameMenu;
 
-    public Object getNotifier() {
-	return notifier;
+//    public Object getNotifier() {
+//	return notifier;
+//    }
+    
+    public Game getGame() {
+	return game;
+    }
+    
+    /**
+     * This method returns the name of the Player who is playing black.
+     * 
+     * @return The black Player's name
+     */
+    public String blackPlayerName() {
+	if (isPlayer1Black) {
+	    return player1Name;
+	} else {
+	    return player2Name;
+	}
+    }
+
+    /**
+     * This method returns the name of the Player who is playing white.
+     * 
+     * @return The white Player's name
+     */
+    public String whitePlayerName() {
+	if (isPlayer1Black) {
+	    return player2Name;
+	} else {
+	    return player1Name;
+	}
     }
 
     /**
@@ -80,10 +111,10 @@ public class UserInterface extends Canvas implements MouseListener {
      * selected in the MainMenu.
      */
     public void initializeGame() {
-	demoMode = menu.isDemoMode();
-	onePlayerGame = menu.isOnePlayerGame();
-	numRows = menu.getNumRows();
-	game = new Game(this, menu);
+	demoMode = mainMenu.isDemoMode();
+//	onePlayerGame = menu.isOnePlayerGame();
+	numRows = mainMenu.getNumRows();
+	game = new Game(this, mainMenu);
 	isPlayer1Black = game.isPlayer1Black();
 	player1Name = game.getPlayer1().getName();
 	player2Name = game.getPlayer2().getName();
@@ -243,8 +274,7 @@ public class UserInterface extends Canvas implements MouseListener {
      * This method is run when the game ends. TODO
      */
     public void gameOver() {
-	System.out.println("game over");
-	// TODO
+	endGameMenu = new EndGameMenu(this);
     }
 
     /**
@@ -252,7 +282,7 @@ public class UserInterface extends Canvas implements MouseListener {
      */
     public void run() {
 	frame.setVisible(false);
-	menu = new MainMenu(this);
+	mainMenu = new MainMenu(this);
     }
 
     /**
@@ -274,7 +304,9 @@ public class UserInterface extends Canvas implements MouseListener {
 	    if (buttonClicked(passButton, mouseX, mouseY)) {
 		game.processMouseClick(Player.PASS);
 	    } else if (buttonClicked(gameMainMenuButton, mouseX, mouseY)) {
-		run(); // TODO create warning popup
+		if (!game.isGameOver()) {
+		    run(); // TODO create warning popup
+		}
 	    } else {
 		for (int i = 0; i < numRows; i++) {
 		    for (int j = 0; j < numRows; j++) {

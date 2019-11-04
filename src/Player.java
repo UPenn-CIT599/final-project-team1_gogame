@@ -16,7 +16,7 @@ public class Player {
     private static int computerMoveDelay = 1000; // the number of milliseconds a
 						 // computer player will wait to
 						 // move
-    private static int maxAttempts = 1; // a computer player will pass after
+    private static int maxAttempts = 20; // a computer player will pass after
 					 // attempting this many illegal moves
 
     public static final int PASS = 8675309;
