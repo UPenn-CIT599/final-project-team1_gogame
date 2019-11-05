@@ -1,6 +1,7 @@
 import java.awt.*;
 import java.awt.event.*;
 import java.text.*;
+import java.util.*;
 import javax.swing.*;
 import javax.swing.text.*;
 
@@ -35,7 +36,6 @@ public class EndGameMenu {
      * @param gui The UserInterface associated with this EndGameMenu
      */
     public EndGameMenu(UserInterface gui) {
-	
 	frame = new JFrame("Go - Game Over");
 	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	frame.setAlwaysOnTop(true);
@@ -43,8 +43,9 @@ public class EndGameMenu {
 	pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
 	blackPlayerName = gui.blackPlayerName();
 	whitePlayerName = gui.whitePlayerName();
-	blackScore = 100 * Math.random(); // TODO
-	whiteScore = 100 * Math.random(); // TODO
+	HashMap<String, Integer> scores = gui.getGame().getFinalScore();
+	blackScore = scores.get("blackScore");
+	whiteScore = scores.get("whiteScore") + gui.getGame().getKomi();
 	
 	/*
 	 * A portion of the below code is based on the following:

@@ -145,9 +145,14 @@ public class Player {
      */
     private void pass() {
 	if (game.wasLastMovePass()) {
+	    String color = "white";
+	    if (isBlack) {
+		color = "black";
+	    }
+	    game.setFinalMoveColor(color);
 	    game.gameOver();
 	} else {
-//	    game.getBoard().pass();
+//	    game.getBoard().pass(); // TODO
 	    game.setLastMoveWasPass(true);
 	    game.getGui().setMessage(name, true);
 	}
@@ -174,6 +179,9 @@ public class Player {
 	    }
 	    pass();
 	    return true;
+	} else if (game.isSelectingDeadStones()) {
+	   game.getSelector().selectStone(x, y); 
+	   return true;
 	} else {
 	    game.getBoard().placeStone(color, x, y);
 	    game.setLastMoveWasPass(false);

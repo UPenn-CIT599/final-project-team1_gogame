@@ -33,7 +33,7 @@ public class UserInterface extends Canvas implements MouseListener {
     private boolean demoMode;
     private String player1Name;
     private String player2Name;
-//    private boolean onePlayerGame;
+    private boolean onePlayerGame;
 //    private Object notifier = new Object();
     private static final int imageSize = 700;
     private static final int borderSize = 100;
@@ -47,13 +47,19 @@ public class UserInterface extends Canvas implements MouseListener {
     private Rectangle demoMainMenuButton = new Rectangle(480, 610, 120, 30);
     private Rectangle passButton = new Rectangle(165, 610, 120, 30);
     private Rectangle gameMainMenuButton = new Rectangle(415, 610, 120, 30);
+    private Rectangle calculateScoreButton = new Rectangle(100, 610, 200, 30);
+    private Rectangle continuePlayButton = new Rectangle(400, 610, 200, 30);
     private static Color backgroundColor = Color.lightGray;
     private static Color lineColor = Color.darkGray;
     private static Color textColor = Color.black;
     private static Color buttonColor = Color.white;
+    private static Color deadStoneColor = Color.red;
     private String messageLine1;
     private String messageLine2;
     private MainMenu mainMenu;
+//    private DeadStoneSelector selector;
+//    private boolean selectingDeadStones = false;
+//    private Score scorekeeper;
     private EndGameMenu endGameMenu;
 
 //    public Object getNotifier() {
@@ -89,6 +95,10 @@ public class UserInterface extends Canvas implements MouseListener {
 	    return player1Name;
 	}
     }
+    
+//    public DeadStoneSelector getSelector() {
+//	return selector;
+//    }
 
     /**
      * This method creates a UserInterface.
@@ -112,7 +122,7 @@ public class UserInterface extends Canvas implements MouseListener {
      */
     public void initializeGame() {
 	demoMode = mainMenu.isDemoMode();
-//	onePlayerGame = menu.isOnePlayerGame();
+	onePlayerGame = mainMenu.isOnePlayerGame();
 	numRows = mainMenu.getNumRows();
 	game = new Game(this, mainMenu);
 	isPlayer1Black = game.isPlayer1Black();
@@ -199,6 +209,9 @@ public class UserInterface extends Canvas implements MouseListener {
 		    stop);
 	}
 	drawPieces(g);
+	if (game.isSelectingDeadStones()) {
+	    drawDeadStones(g);
+	}
 	drawButtons(g);
 	if (game.isGameOver()) {
 	    messageLine1 = "";
@@ -259,9 +272,26 @@ public class UserInterface extends Canvas implements MouseListener {
 	    drawButton(g, previousButton, "Previous", 28);
 	    drawButton(g, nextButton, "Next", 43);
 	    drawButton(g, demoMainMenuButton, "Main Menu", 20);
-	} else {
+	} else if (game.isSelectingDeadStones()) {
+	    drawButton(g, calculateScoreButton, "Calculate Score", 41);
+	    drawButton(g, continuePlayButton, "Continue Play", 47);
+	}
+	else {
 	    drawButton(g, passButton, "Pass", 43);
 	    drawButton(g, gameMainMenuButton, "Main Menu", 20);
+	}
+    }
+    
+    private void drawDeadStones(Graphics g) {
+	g.setColor(deadStoneColor);
+	for (int i = 0; i < numRows; i++) {
+	    for (int j = 0; j < numRows; j++) {
+		if (game.getSelector().isDeadStone(i, j)) {
+		    g.fillOval(borderSize + i * lineSpacing + pieceRadius / 2,
+			    borderSize + j * lineSpacing + pieceRadius / 2,
+			    pieceRadius, pieceRadius);
+		}
+	    }
 	}
     }
 
@@ -269,8 +299,36 @@ public class UserInterface extends Canvas implements MouseListener {
      * This method is run when the game ends. TODO
      */
     public void gameOver() {
+//	scorekeeper = new Score(game.getBoard());
+//	scorekeeper.categorizePoints();
+//	if (!onePlayerGame) {
+//	    selectingDeadStones = true;
+//	    selector = new DeadStoneSelector(game.getBoard());
+//	}
 	endGameMenu = new EndGameMenu(this);
     }
+    
+//    public void finalizeScore() {
+//	if (selectingDeadStones) {
+//	    scorekeeper.removeDeadStones(
+//		    scorekeeper.getDeadStones(selector.deadStoneHashSet()));
+//	    selectionPhaseOver();
+//	}
+//	scorekeeper.combineEmptyLocations();
+//	scorekeeper.checkAreaBlackOrWhite();
+//	scorekeeper.fillNeutralPositions(game.getFinalMoveColor());
+//	
+//    }
+    
+//    public void selectDeadStones() {
+////	selectingDeadStones = true;
+//	selector = new DeadStoneSelector(game);
+//    }
+    
+//    public void selectionPhaseOver() {
+//	selectingDeadStones = false;
+//	selector = null;
+//    }
 
     /**
      * This method runs the UserInterface.
@@ -295,6 +353,14 @@ public class UserInterface extends Canvas implements MouseListener {
 	    } else if (buttonClicked(demoMainMenuButton, mouseX, mouseY)) {
 		run();
 	    }
+	} else if (game.isSelectingDeadStones()) {
+	    if (buttonClicked(calculateScoreButton, mouseX, mouseY)) {
+		game.finalizeScore();
+	    } else if (buttonClicked(continuePlayButton, mouseX, mouseY)) {
+		game.continuePlay();
+	    } else {
+		processMouseClick(mouseX, mouseY);
+	    }
 	} else {
 	    if (buttonClicked(passButton, mouseX, mouseY)) {
 		game.processMouseClick(Player.PASS);
@@ -303,16 +369,31 @@ public class UserInterface extends Canvas implements MouseListener {
 		    run(); // TODO create warning popup
 		}
 	    } else {
-		for (int i = 0; i < numRows; i++) {
-		    for (int j = 0; j < numRows; j++) {
-			if (buttonClicked(
-				new Rectangle(borderSize + i * lineSpacing,
-					borderSize + j * lineSpacing,
-					2 * pieceRadius, 2 * pieceRadius),
-				mouseX, mouseY)) {
-			    game.processMouseClick(i, j);
-			}
-		    }
+//		for (int i = 0; i < numRows; i++) {
+//		    for (int j = 0; j < numRows; j++) {
+//			if (buttonClicked(
+//				new Rectangle(borderSize + i * lineSpacing,
+//					borderSize + j * lineSpacing,
+//					2 * pieceRadius, 2 * pieceRadius),
+//				mouseX, mouseY)) {
+//			    game.processMouseClick(i, j);
+//			}
+//		    }
+//		}
+		processMouseClick(mouseX, mouseY);
+	    }
+	}
+    }
+    
+    public void processMouseClick(int mouseX, int mouseY) {
+	for (int i = 0; i < numRows; i++) {
+	    for (int j = 0; j < numRows; j++) {
+		if (buttonClicked(
+			new Rectangle(borderSize + i * lineSpacing,
+				borderSize + j * lineSpacing,
+				2 * pieceRadius, 2 * pieceRadius),
+			mouseX, mouseY)) {
+		    game.processMouseClick(i, j);
 		}
 	    }
 	}

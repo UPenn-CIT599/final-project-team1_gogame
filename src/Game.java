@@ -1,3 +1,4 @@
+import java.util.*;
 
 /**
  * The Game class represents a game of Go.
@@ -19,7 +20,12 @@ public class Game {
     private boolean onePlayerGame;
     private boolean isPlayer1Black;
     private boolean lastMoveWasPass;
+    private String finalMoveColor;
     private boolean gameOver;
+    private Score scorekeeper;
+    private boolean selectingDeadStones = false;
+    private DeadStoneSelector selector;
+    private HashMap<String, Integer> finalScore;
 
     public UserInterface getGui() {
 	return gui;
@@ -76,13 +82,66 @@ public class Game {
     public boolean isGameOver() {
 	return gameOver;
     }
+    
+    public boolean isSelectingDeadStones() {
+	return selectingDeadStones;
+    }
+    
+    public DeadStoneSelector getSelector() {
+	return selector;
+    }
+    
+    public String getFinalMoveColor() {
+	return finalMoveColor;
+    }
+    
+    public void setFinalMoveColor(String finalMoveColor) {
+	this.finalMoveColor = finalMoveColor;
+    }
+    
+    public HashMap<String, Integer> getFinalScore() {
+	return finalScore;
+    }
+    
+    public void continuePlay() {
+	selectionPhaseOver();
+	gameOver = false;
+    }
 
     /**
      * This method ends the game.
      */
     public void gameOver() {
 	gameOver = true;
+	scorekeeper = new Score(board);
+	scorekeeper.categorizePoints();
+	if (!onePlayerGame) {
+	    selectingDeadStones = true;
+//	    gui.selectDeadStones();
+	    selector = new DeadStoneSelector(this);
+	    gui.drawBoard();
+	} else {
+	    finalizeScore();
+	}
+	
+    }
+    
+    public void finalizeScore() {
+	if (selectingDeadStones) {
+	    scorekeeper.removeDeadStones(
+		    scorekeeper.getDeadStones(selector.deadStoneHashSet()));
+	    selectionPhaseOver();
+	}
+	scorekeeper.combineEmptyLocations();
+	scorekeeper.checkAreaBlackOrWhite();
+	scorekeeper.fillNeutralPositions(finalMoveColor);
+	finalScore = scorekeeper.scoring();
 	gui.gameOver();
+    }
+    
+    public void selectionPhaseOver() {
+	selectingDeadStones = false;
+	selector = null;
     }
 
     /**
@@ -104,7 +163,7 @@ public class Game {
      * @param y The row which was clicked
      */
     public void processMouseClick(int x, int y) {
-	if (!gameOver) {
+	if (!gameOver || selectingDeadStones) {
 	    try {
 		boolean player1Moved = player1.processMouseClick(x, y);
 		boolean player2Moved = player2.processMouseClick(x, y);
@@ -115,8 +174,7 @@ public class Game {
 		    } else if (handicapCounter == 1) {
 			decrementHandicapCounter();
 			nextPlayersTurn();
-		    }
-		    else {
+		    } else if (!selectingDeadStones) {
 			nextPlayersTurn();
 		    }
 		    gui.drawBoard();
