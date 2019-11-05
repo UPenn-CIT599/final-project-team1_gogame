@@ -14,6 +14,8 @@ public class Game {
     private boolean blackToMove;
     private int numRows;
     private int handicap;
+    private int handicapCounter;
+    private double komi;
     private boolean onePlayerGame;
     private boolean isPlayer1Black;
     private boolean lastMoveWasPass;
@@ -46,6 +48,18 @@ public class Game {
     public int getNumRows() {
 	return numRows;
     }
+    
+    public int getHandicap() {
+	return handicap;
+    }
+    
+    public int getHandicapCounter() {
+	return handicapCounter;
+    }
+    
+    public double getKomi() {
+	return komi;
+    }
 
     public boolean isPlayer1Black() {
 	return isPlayer1Black;
@@ -77,6 +91,10 @@ public class Game {
     public void nextPlayersTurn() {
 	blackToMove = !blackToMove;
     }
+    
+    public void decrementHandicapCounter() {
+	handicapCounter--;
+    }
 
     /**
      * This method processes a mouse click on the column and row given as
@@ -91,7 +109,16 @@ public class Game {
 		boolean player1Moved = player1.processMouseClick(x, y);
 		boolean player2Moved = player2.processMouseClick(x, y);
 		if (player1Moved || player2Moved) {
-		    nextPlayersTurn();
+		    if (handicapCounter > 1) {
+			decrementHandicapCounter();
+			gui.handicapMessage();
+		    } else if (handicapCounter == 1) {
+			decrementHandicapCounter();
+			nextPlayersTurn();
+		    }
+		    else {
+			nextPlayersTurn();
+		    }
 		    gui.drawBoard();
 		}
 		if (onePlayerGame) {
@@ -124,6 +151,8 @@ public class Game {
 	blackToMove = true;
 	numRows = menu.getNumRows();
 	handicap = menu.getHandicap();
+	handicapCounter = handicap;
+	komi = menu.getKomi();
 	onePlayerGame = menu.isOnePlayerGame();
 	String player1ColorString = menu.getPlayer1Color();
 	isPlayer1Black = true;
