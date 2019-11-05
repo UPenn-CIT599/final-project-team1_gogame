@@ -106,6 +106,7 @@ public class Game {
     public void continuePlay() {
 	selectionPhaseOver();
 	gameOver = false;
+	gui.drawBoard();
     }
 
     /**
@@ -163,7 +164,8 @@ public class Game {
      * @param y The row which was clicked
      */
     public void processMouseClick(int x, int y) {
-	if (!gameOver || selectingDeadStones) {
+	boolean selectionPhase = selectingDeadStones;
+	if (!gameOver || selectionPhase) {
 	    try {
 		boolean player1Moved = player1.processMouseClick(x, y);
 		boolean player2Moved = player2.processMouseClick(x, y);
@@ -174,7 +176,7 @@ public class Game {
 		    } else if (handicapCounter == 1) {
 			decrementHandicapCounter();
 			nextPlayersTurn();
-		    } else if (!selectingDeadStones) {
+		    } else if (!selectionPhase) {
 			nextPlayersTurn();
 		    }
 		    gui.drawBoard();

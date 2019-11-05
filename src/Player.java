@@ -144,6 +144,7 @@ public class Player {
      * This method indicates that the Player is passing.
      */
     private void pass() {
+//	game.getBoard().pass(); // TODO
 	if (game.wasLastMovePass()) {
 	    String color = "white";
 	    if (isBlack) {
@@ -152,7 +153,6 @@ public class Player {
 	    game.setFinalMoveColor(color);
 	    game.gameOver();
 	} else {
-//	    game.getBoard().pass(); // TODO
 	    game.setLastMoveWasPass(true);
 	    game.getGui().setMessage(name, true);
 	}
