@@ -1,8 +1,5 @@
 import java.awt.*;
 import java.awt.event.*;
-import java.text.*;
-import java.util.*;
-
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
@@ -14,27 +11,25 @@ import javax.swing.text.*;
  *
  */
 public class MainMenu {
+//    private Object notifier;
     private UserInterface gui;
     private JFrame frame;
-    private String player1Name = "";
-    private String player1Name1 = "";
-    private String player1Name2 = "";
-    private String player2Name = "";
-    private boolean demoMode = false;
-    private boolean onePlayerGame = false;
-    private int handicap = 0;
-    private int handicap1 = 0;
-    private int handicap2 = 0;
-    private double komi = 6.5;
-    private double komi1 = 6.5;
-    private double komi2 = 6.5;
-    private int numRows = 19;;
-    private int numRows1 = 19;
-    private int numRows2 = 19;
-    private String player1Color = "Black";
-    private String player1Color1 = "Black";
-    private String player1Color2 = "Black";
-    private boolean readyToPlay = false;
+    private String player1Name;
+    private String player1Name1;
+    private String player1Name2;
+    private String player2Name;
+    private boolean demoMode;
+    private boolean onePlayerGame;
+    private int handicap;
+    private int handicap1;
+    private int handicap2;
+    private int numRows;
+    private int numRows1;
+    private int numRows2;
+    private String player1Color;
+    private String player1Color1;
+    private String player1Color2;
+    private boolean readyToPlay;
 
     public String getPlayer1Name() {
 	return player1Name;
@@ -56,10 +51,6 @@ public class MainMenu {
 	return handicap;
     }
 
-    public double getKomi() {
-	return komi;
-    }
-    
     public int getNumRows() {
 	return numRows;
     }
@@ -73,21 +64,30 @@ public class MainMenu {
     }
 
     /**
-     * This method creates a MainMenu associated with the given UserInterface.
+     * This method creates a MainMenu which is associated with the given
+     * UserInterface
      * 
-     * @param gui The UserInterface associated with this MainMenu
+     * @param gui The UserInterface which is associated with this MainMenu
      */
     public MainMenu(UserInterface gui) {
-	/*
-	 * A portion of the below code is based on the following:
-	 * 
-	 * Title: CardLayoutDemo 
-	 * Author: Oracle 
-	 * Date: 2008
-	 * Availability: 
-	 * https://docs.oracle.com/javase/tutorial/uiswing/examples/layout/CardLayoutDemoProject/src/layout/CardLayoutDemo.java
-	 */
 	this.gui = gui;
+	player1Name = "";
+	player1Name1 = "";
+	player1Name2 = "";
+	player2Name = "";
+	demoMode = false;
+	onePlayerGame = false;
+	handicap = 0;
+	handicap1 = 0;
+	handicap2 = 0;
+	numRows = 19;
+	numRows1 = 19;
+	numRows2 = 19;
+	player1Color = "Black";
+	player1Color1 = "Black";
+	player1Color2 = "Black";
+	readyToPlay = false;
+
 	frame = new JFrame("Go - Main Menu");
 	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	String select = "Select game mode";
@@ -106,26 +106,266 @@ public class MainMenu {
 	comboBoxPane.add(welcome);
 	comboBoxPane.add(selectGameMode);
 	comboBoxPane.setLayout(new BoxLayout(comboBoxPane, BoxLayout.Y_AXIS));
-	
-	JPanel namePanel1 = createNamePanel(1, 1);
-	JPanel namePanel2 = createNamePanel(1, 2);
-	JPanel namePanel3 = createNamePanel(2, 2);
-	
-	JPanel colorPanel1 = createColorPanel(1);
-	JPanel colorPanel2 = createColorPanel(2);
 
-	JPanel boardSizePanel1 = createBoardSizePanel(1);
-	JPanel boardSizePanel2 = createBoardSizePanel(2);
+	JPanel namePanel1 = new JPanel();
+	JTextField choosePlayer1Name1Label = new JTextField(
+		"Player 1, please enter your name: ");
+	choosePlayer1Name1Label.setEditable(false);
+	JTextField choosePlayer1Name1 = createFilteredField();
+	choosePlayer1Name1.getDocument()
+		.addDocumentListener(new DocumentListener() {
 
-	
-	JPanel komiPanel1 = createKomiPanel(1);
-	JPanel komiPanel2 = createKomiPanel(2);
+		    @Override
+		    public void changedUpdate(DocumentEvent e) {
+			player1Name1 = choosePlayer1Name1.getText();
+		    }
 
-	JPanel handicapPanel1 = createHandicapPanel(1, komiPanel1);
-	JPanel handicapPanel2 = createHandicapPanel(2, komiPanel2);
-	
-	JPanel buttonPanel1 = createStartButtonPanel(1);
-	JPanel buttonPanel2 = createStartButtonPanel(2);
+		    @Override
+		    public void insertUpdate(DocumentEvent e) {
+			player1Name1 = choosePlayer1Name1.getText();
+		    }
+
+		    @Override
+		    public void removeUpdate(DocumentEvent e) {
+			player1Name1 = choosePlayer1Name1.getText();
+		    }
+
+		});
+	namePanel1.add(choosePlayer1Name1Label);
+	namePanel1.add(choosePlayer1Name1);
+
+	JPanel namePanel2 = new JPanel();
+	JTextField choosePlayer1Name2Label = new JTextField(
+		"Player 1, please enter your name: ");
+	choosePlayer1Name2Label.setEditable(false);
+	JTextField choosePlayer1Name2 = createFilteredField();
+	choosePlayer1Name2.getDocument()
+		.addDocumentListener(new DocumentListener() {
+
+		    @Override
+		    public void changedUpdate(DocumentEvent e) {
+			player1Name2 = choosePlayer1Name2.getText();
+		    }
+
+		    @Override
+		    public void insertUpdate(DocumentEvent e) {
+			player1Name2 = choosePlayer1Name2.getText();
+		    }
+
+		    @Override
+		    public void removeUpdate(DocumentEvent e) {
+			player1Name2 = choosePlayer1Name2.getText();
+		    }
+
+		});
+	namePanel2.add(choosePlayer1Name2Label);
+	namePanel2.add(choosePlayer1Name2);
+
+	JPanel namePanel3 = new JPanel();
+	JTextField choosePlayer2NameLabel = new JTextField(
+		"Player 2, please enter your name: ");
+	choosePlayer2NameLabel.setEditable(false);
+	JTextField choosePlayer2Name = createFilteredField();
+	choosePlayer2Name.getDocument()
+		.addDocumentListener(new DocumentListener() {
+
+		    @Override
+		    public void changedUpdate(DocumentEvent e) {
+			player2Name = choosePlayer2Name.getText();
+		    }
+
+		    @Override
+		    public void insertUpdate(DocumentEvent e) {
+			player2Name = choosePlayer2Name.getText();
+		    }
+
+		    @Override
+		    public void removeUpdate(DocumentEvent e) {
+			player2Name = choosePlayer2Name.getText();
+		    }
+
+		});
+	namePanel3.add(choosePlayer2NameLabel);
+	namePanel3.add(choosePlayer2Name);
+
+	JPanel colorPanel1 = new JPanel();
+	String[] colorChoices = { "Black", "White", "Random" };
+	JTextField colorChooser1Label = new JTextField(
+		"Player 1, please choose a color: ");
+	colorChooser1Label.setEditable(false);
+	JComboBox<String> colorChooser1 = new JComboBox<>(colorChoices);
+	colorChooser1.addItemListener(new ItemListener() {
+
+	    @Override
+	    public void itemStateChanged(ItemEvent evt) {
+		player1Color1 = (String) evt.getItem();
+	    }
+
+	});
+	colorPanel1.add(colorChooser1Label);
+	colorPanel1.add(colorChooser1);
+
+	JPanel colorPanel2 = new JPanel();
+	JTextField colorChooser2Label = new JTextField(
+		"Player 1, please choose a color: ");
+	colorChooser2Label.setEditable(false);
+	JComboBox<String> colorChooser2 = new JComboBox<>(colorChoices);
+	colorChooser2.addItemListener(new ItemListener() {
+
+	    @Override
+	    public void itemStateChanged(ItemEvent evt) {
+		player1Color2 = (String) evt.getItem();
+	    }
+
+	});
+	colorPanel2.add(colorChooser2Label);
+	colorPanel2.add(colorChooser2);
+
+	JPanel boardSizePanel1 = new JPanel();
+	boardSizePanel1
+		.setLayout(new BoxLayout(boardSizePanel1, BoxLayout.Y_AXIS));
+	JTextField boardSizeChooser1Label = new JTextField(
+		"Please choose a board size:");
+	boardSizeChooser1Label.setEditable(false);
+	boardSizeChooser1Label
+		.setHorizontalAlignment((int) JTextField.CENTER_ALIGNMENT);
+	JSlider boardSizeChooser1 = new JSlider(JSlider.HORIZONTAL, 5, 19, 19);
+	boardSizeChooser1.addChangeListener(new ChangeListener() {
+
+	    @Override
+	    public void stateChanged(ChangeEvent arg0) {
+		if (!boardSizeChooser1.getValueIsAdjusting()) {
+		    numRows1 = (int) boardSizeChooser1.getValue();
+		}
+	    }
+
+	});
+	boardSizeChooser1.setMajorTickSpacing(1);
+	boardSizeChooser1.setPaintTicks(true);
+	boardSizeChooser1.setPaintLabels(true);
+	boardSizePanel1.add(boardSizeChooser1Label);
+	boardSizePanel1.add(boardSizeChooser1);
+
+	JPanel boardSizePanel2 = new JPanel();
+	boardSizePanel2
+		.setLayout(new BoxLayout(boardSizePanel2, BoxLayout.Y_AXIS));
+	JTextField boardSizeChooser2Label = new JTextField(
+		"Please choose a board size:");
+	boardSizeChooser2Label.setEditable(false);
+	boardSizeChooser2Label
+		.setHorizontalAlignment((int) JTextField.CENTER_ALIGNMENT);
+	JSlider boardSizeChooser2 = new JSlider(JSlider.HORIZONTAL, 5, 19, 19);
+	boardSizeChooser2.addChangeListener(new ChangeListener() {
+
+	    @Override
+	    public void stateChanged(ChangeEvent arg0) {
+		if (!boardSizeChooser2.getValueIsAdjusting()) {
+		    numRows2 = (int) boardSizeChooser2.getValue();
+		}
+	    }
+
+	});
+	boardSizeChooser2.setMajorTickSpacing(1);
+	boardSizeChooser2.setPaintTicks(true);
+	boardSizeChooser2.setPaintLabels(true);
+	boardSizePanel2.add(boardSizeChooser2Label);
+	boardSizePanel2.add(boardSizeChooser2);
+
+	JPanel handicapPanel1 = new JPanel();
+	handicapPanel1
+		.setLayout(new BoxLayout(handicapPanel1, BoxLayout.Y_AXIS));
+	JTextField handicapChooser1Label = new JTextField(
+		"Please choose a handicap:");
+	handicapChooser1Label.setEditable(false);
+	handicapChooser1Label
+		.setHorizontalAlignment((int) JTextField.CENTER_ALIGNMENT);
+	JSlider handicapChooser1 = new JSlider(JSlider.HORIZONTAL, 0, 10, 0);
+	handicapChooser1.addChangeListener(new ChangeListener() {
+
+	    @Override
+	    public void stateChanged(ChangeEvent arg0) {
+		if (!handicapChooser1.getValueIsAdjusting()) {
+		    handicap1 = (int) handicapChooser1.getValue();
+		}
+	    }
+
+	});
+	handicapChooser1.setMajorTickSpacing(1);
+	handicapChooser1.setPaintTicks(true);
+	handicapChooser1.setPaintLabels(true);
+	handicapPanel1.add(handicapChooser1Label);
+	handicapPanel1.add(handicapChooser1);
+
+	JPanel handicapPanel2 = new JPanel();
+	handicapPanel2
+		.setLayout(new BoxLayout(handicapPanel2, BoxLayout.Y_AXIS));
+	JTextField handicapChooser2Label = new JTextField(
+		"Please choose a handicap:");
+	handicapChooser2Label.setEditable(false);
+	handicapChooser2Label
+		.setHorizontalAlignment((int) JTextField.CENTER_ALIGNMENT);
+	JSlider handicapChooser2 = new JSlider(JSlider.HORIZONTAL, 0, 10, 0);
+	handicapChooser2.addChangeListener(new ChangeListener() {
+
+	    @Override
+	    public void stateChanged(ChangeEvent arg0) {
+		if (!handicapChooser2.getValueIsAdjusting()) {
+		    handicap2 = (int) handicapChooser2.getValue();
+		}
+	    }
+
+	});
+	handicapChooser2.setMajorTickSpacing(1);
+	handicapChooser2.setPaintTicks(true);
+	handicapChooser2.setPaintLabels(true);
+	handicapPanel2.add(handicapChooser2Label);
+	handicapPanel2.add(handicapChooser2);
+
+	JPanel buttonPanel1 = new JPanel();
+	JButton button1 = new JButton("Start Game");
+	button1.addActionListener(new ActionListener() {
+
+	    @Override
+	    public void actionPerformed(ActionEvent arg0) {
+		player1Name = player1Name1;
+		player1Color = player1Color1;
+		numRows = numRows1;
+		handicap = handicap1;
+		demoMode = false;
+		onePlayerGame = true;
+		readyToPlay = true;
+		frame.setVisible(false);
+//		synchronized(notifier) {
+//		    notifier.notify();
+//		}
+		gui.initializeGame();
+	    }
+
+	});
+	buttonPanel1.add(button1);
+
+	JPanel buttonPanel2 = new JPanel();
+	JButton button2 = new JButton("Start Game");
+	button2.addActionListener(new ActionListener() {
+
+	    @Override
+	    public void actionPerformed(ActionEvent arg0) {
+		player1Name = player1Name2;
+		player1Color = player1Color2;
+		numRows = numRows2;
+		handicap = handicap2;
+		demoMode = false;
+		onePlayerGame = false;
+		readyToPlay = true;
+		frame.setVisible(false);
+//		synchronized(notifier) {
+//		    notifier.notify();
+//		}
+		gui.initializeGame();
+	    }
+
+	});
+	buttonPanel2.add(button2);
 
 	JPanel selectCard = new JPanel();
 
@@ -135,7 +375,6 @@ public class MainMenu {
 	onePlayerCard.add(colorPanel1);
 	onePlayerCard.add(boardSizePanel1);
 	onePlayerCard.add(handicapPanel1);
-	onePlayerCard.add(komiPanel1);
 	onePlayerCard.add(buttonPanel1);
 
 	JPanel twoPlayerCard = new JPanel();
@@ -145,11 +384,9 @@ public class MainMenu {
 	twoPlayerCard.add(namePanel3);
 	twoPlayerCard.add(boardSizePanel2);
 	twoPlayerCard.add(handicapPanel2);
-	twoPlayerCard.add(komiPanel2);
 	twoPlayerCard.add(buttonPanel2);
 
 	JPanel demoCard = new JPanel();
-	// TODO
 
 	JPanel cards = new JPanel(new CardLayout());
 	cards.add(selectCard, select);
@@ -175,16 +412,6 @@ public class MainMenu {
 	frame.setVisible(true);
     }
 
-    /*
-     * The createFilteredField method comes from the following, with slight
-     * modifications:
-     * 
-     * Title: FilterDemo 
-     * Author: Paul Samsotha 
-     * Date: 2017
-     * Availability:
-     * https://stackoverflow.com/questions/24844559/jtextfield-using-document-filter-to-filter-integers-and-periods
-     */    
     /**
      * This method creates a JTextField for the user to enter their name. The
      * output field will accept a maximum of 12 characters and will only accept
@@ -227,6 +454,10 @@ public class MainMenu {
 		builder.insert(offs, str);
 		String newText = builder.toString();
 
+		// checks
+		System.out.println("text = " + text + ", offset = " + offs +
+			", newText = " + newText);
+
 		if (newText.matches("[a-zA-Z[0-9[ ]]]*") &&
 			(newText.length() <= 12)) {
 		    super.insertString(fb, offs, str, a);
@@ -236,281 +467,5 @@ public class MainMenu {
 	    }
 	});
 	return field;
-    }
-    
-    /**
-     * This method is used by the createNamePanel method to set a Player's name.
-     * 
-     * @param playerNumber The number of the Player
-     * @param numPlayers   The number of human Players in the game
-     * @param name         The name of the Player
-     */
-    private void setName(int playerNumber, int numPlayers, String name) {
-	if (playerNumber == 2) {
-	    player2Name = name;
-	} else if (numPlayers == 1) {
-	    player1Name1 = name;
-	} else {
-	    player1Name2 = name;
-	}
-    }
-
-    /**
-     * This method creates a JPanel to enter the user's name.
-     * 
-     * @param playerNumber The number of the Player whose name will be entered
-     * @param numPlayers   The number of human Players in the game
-     * @return The JPanel used to enter the user's name
-     */
-    private JPanel createNamePanel(int playerNumber, int numPlayers) {
-	JPanel namePanel = new JPanel();
-	JTextField choosePlayerNameLabel = new JTextField(
-		"Player " + playerNumber + ", please enter your name: ");
-	choosePlayerNameLabel.setEditable(false);
-	JTextField choosePlayerName = createFilteredField();
-	choosePlayerName.getDocument()
-		.addDocumentListener(new DocumentListener() {
-
-		    @Override
-		    public void changedUpdate(DocumentEvent e) {
-			setName(playerNumber, numPlayers,
-				choosePlayerName.getText());
-		    }
-
-		    @Override
-		    public void insertUpdate(DocumentEvent e) {
-			setName(playerNumber, numPlayers,
-				choosePlayerName.getText());
-		    }
-
-		    @Override
-		    public void removeUpdate(DocumentEvent e) {
-			setName(playerNumber, numPlayers,
-				choosePlayerName.getText());
-		    }
-
-		});
-	namePanel.add(choosePlayerNameLabel);
-	namePanel.add(choosePlayerName);
-	return namePanel;
-    }
-    
-    /**
-     * This method creates a JPanel to enter Player 1's color.
-     * 
-     * @param numPlayers The number of human Players in the game
-     * @return The JPanel used to enter Player 1's color
-     */
-    private JPanel createColorPanel(int numPlayers) {
-	JPanel colorPanel = new JPanel();
-	String[] colorChoices = { "Black", "White", "Random" };
-	JTextField colorChooserLabel = new JTextField(
-		"Player 1, please choose a color: ");
-	colorChooserLabel.setEditable(false);
-	JComboBox<String> colorChooser = new JComboBox<>(colorChoices);
-	colorChooser.addItemListener(new ItemListener() {
-
-	    @Override
-	    public void itemStateChanged(ItemEvent evt) {
-		String color = (String) evt.getItem();
-		if (numPlayers == 1) {
-		    player1Color1 = color;
-		} else {
-		    player1Color2 = color;
-		}
-	    }
-
-	});
-	colorPanel.add(colorChooserLabel);
-	colorPanel.add(colorChooser);
-	return colorPanel;
-    }
-    
-    /*
-     * A portion of the createBoardSizePanel, createHandicapPanel, and
-     * createKomiPanel methods is based on the following:
-     * 
-     * Title: SliderDemo2 
-     * Author: Oracle 
-     * Date: 2008 
-     * Availability:
-     * https://docs.oracle.com/javase/tutorial/uiswing/examples/components/SliderDemo2Project/src/components/SliderDemo2.java
-     */
-    /**
-     * This method creates a JPanel to select the board size.
-     * 
-     * @param numPlayers The number of human Players in the game
-     * @return The JPanel used to select the board size
-     */
-    private JPanel createBoardSizePanel(int numPlayers) {
-	JPanel boardSizePanel = new JPanel();
-	boardSizePanel
-		.setLayout(new BoxLayout(boardSizePanel, BoxLayout.Y_AXIS));
-	JTextField boardSizeChooserLabel = new JTextField(
-		"Please choose a board size:");
-	boardSizeChooserLabel.setEditable(false);
-	boardSizeChooserLabel
-		.setHorizontalAlignment((int) JTextField.CENTER_ALIGNMENT);
-	JSlider boardSizeChooser = new JSlider(JSlider.HORIZONTAL, 5, 19, 19);
-	boardSizeChooser.addChangeListener(new ChangeListener() {
-
-	    @Override
-	    public void stateChanged(ChangeEvent arg0) {
-		if (!boardSizeChooser.getValueIsAdjusting()) {
-		    int value = (int) boardSizeChooser.getValue();
-		    if (numPlayers == 1) {
-			numRows1 = value;
-		    } else {
-			numRows2 = value;
-		    }
-		}
-	    }
-
-	});
-	boardSizeChooser.setMajorTickSpacing(1);
-	boardSizeChooser.setPaintTicks(true);
-	boardSizeChooser.setPaintLabels(true);
-	boardSizePanel.add(boardSizeChooserLabel);
-	boardSizePanel.add(boardSizeChooser);
-	return boardSizePanel;
-    }
-    
-    /**
-     * This method creates a JPanel to select the komi.
-     * 
-     * @param numPlayers The number of human Players in the game
-     * @return The JPanel used to select the komi
-     */
-    public JPanel createKomiPanel(int numPlayers) {
-	double maxKomi = 8.5;
-	DecimalFormat komiDecimalFormat = new DecimalFormat("#.#");
-	
-	JPanel komiPanel = new JPanel();
-	komiPanel.setLayout(new BoxLayout(komiPanel, BoxLayout.Y_AXIS));
-	JTextField komiChooserLabel = new JTextField(
-		"If handicap is 0, please choose a komi:");
-	komiChooserLabel.setEditable(false);
-	komiChooserLabel
-		.setHorizontalAlignment((int) JTextField.CENTER_ALIGNMENT);
-	komiPanel.add(komiChooserLabel);
-	JSlider komiChooser = new JSlider(JSlider.HORIZONTAL, 0, (int) maxKomi, 6);
-	
-	// JSlider uses integers, so it must be relabeled and 0.5 must be added
-	// to its values to correct for this
-	Hashtable<Integer, JLabel> komiLabelTable = new Hashtable<>();
-	for (int i = 0; i < maxKomi; i++) {
-	    komiLabelTable.put(i, new JLabel(komiDecimalFormat.format(i + 0.5)));
-	}
-	komiChooser.setLabelTable(komiLabelTable);	
-	komiChooser.addChangeListener(new ChangeListener() {
-
-	    @Override
-	    public void stateChanged(ChangeEvent arg0) {
-		if (!komiChooser.getValueIsAdjusting()) {
-		    double value = komiChooser.getValue() + 0.5;
-		    if (numPlayers == 1) {
-			komi1 = value;
-		    } else {
-			komi2 = value;
-		    }
-		}
-	    }
-
-	});
-	komiChooser.setMajorTickSpacing(1);
-	komiChooser.setPaintTicks(true);
-	komiChooser.setPaintLabels(true);
-	komiPanel.add(komiChooser);
-	return komiPanel;
-    }
-    
-    /**
-     * This method creates a JPanel to select the handicap.
-     * 
-     * @param numPlayers The number of human Players in the game
-     * @return The JPanel used to select the handicap
-     */
-    private JPanel createHandicapPanel(int numPlayers, JPanel komiPanel) {
-	JPanel handicapPanel = new JPanel();
-	handicapPanel.setLayout(new BoxLayout(handicapPanel, BoxLayout.Y_AXIS));
-	JTextField handicapChooserLabel = new JTextField(
-		"Please choose a handicap:");
-	handicapChooserLabel.setEditable(false);
-	handicapChooserLabel
-		.setHorizontalAlignment((int) JTextField.CENTER_ALIGNMENT);
-	JSlider handicapChooser = new JSlider(JSlider.HORIZONTAL, 0, 9, 0);
-	handicapChooser.addChangeListener(new ChangeListener() {
-
-	    @Override
-	    public void stateChanged(ChangeEvent arg0) {
-		if (!handicapChooser.getValueIsAdjusting()) {
-		    int value = (int) handicapChooser.getValue();
-		    if (numPlayers == 1) {
-			handicap1 = value;
-		    } else {
-			handicap2 = value;
-		    }
-
-		    JTextField komiChooserLabel = (JTextField) komiPanel
-			    .getComponent(0);
-		    JSlider komiChooser = (JSlider) komiPanel.getComponent(1);
-		    if (value == 0) {
-			komiChooserLabel.setEnabled(true);
-			komiChooser.setEnabled(true);
-		    } else {
-			komiChooser.setValue(0);
-			komiChooserLabel.setEnabled(false);
-			komiChooser.setEnabled(false);
-		    }
-		}
-	    }
-
-	});
-	handicapChooser.setMajorTickSpacing(1);
-	handicapChooser.setPaintTicks(true);
-	handicapChooser.setPaintLabels(true);
-	handicapPanel.add(handicapChooserLabel);
-	handicapPanel.add(handicapChooser);
-	return handicapPanel; // TODO
-    }
-    
-    /**
-     * This method creates a JPanel to start the game.
-     * 
-     * @param numPlayers The number of human Players in the game
-     * @return The JPanel used to start the game
-     */
-    private JPanel createStartButtonPanel(int numPlayers) {
-	JPanel buttonPanel = new JPanel();
-	JButton button = new JButton("Start Game");
-	button.addActionListener(new ActionListener() {
-
-	    @Override
-	    public void actionPerformed(ActionEvent arg0) {
-		if (numPlayers == 1) {
-		    player1Name = player1Name1;
-		    player1Color = player1Color1;
-		    numRows = numRows1;
-		    handicap = handicap1;
-		    komi = komi1;
-		    onePlayerGame = true;
-		} else {
-		    player1Name = player1Name2;
-		    player1Color = player1Color2;
-		    numRows = numRows2;
-		    handicap = handicap2;
-		    komi = komi2;
-		    onePlayerGame = false;
-		}
-		demoMode = false;
-		readyToPlay = true;
-//		frame.setVisible(false);
-		frame.dispose();
-		gui.initializeGame();
-	    }
-
-	});
-	buttonPanel.add(button);
-	return buttonPanel;
     }
 }

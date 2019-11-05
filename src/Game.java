@@ -7,15 +7,13 @@
  */
 public class Game {
     private UserInterface gui;
-//    private Board board; //TODO
-    private TestBoard board; // TODO
+    private Board board; //TODO
+    //private TestBoard board; // TODO
     private Player player1;
     private Player player2;
     private boolean blackToMove;
     private int numRows;
     private int handicap;
-    private int handicapCounter;
-    private double komi;
     private boolean onePlayerGame;
     private boolean isPlayer1Black;
     private boolean lastMoveWasPass;
@@ -25,13 +23,13 @@ public class Game {
 	return gui;
     }
 
-//    public Board getBoard() { // TODO
-//	return board;
-//    }
-
-    public TestBoard getBoard() { // TODO
+    public Board getBoard() { // TODO
 	return board;
     }
+
+//    public TestBoard getBoard() { // TODO
+//	return board;
+//    }
 
     public Player getPlayer1() {
 	return player1;
@@ -47,18 +45,6 @@ public class Game {
 
     public int getNumRows() {
 	return numRows;
-    }
-    
-    public int getHandicap() {
-	return handicap;
-    }
-    
-    public int getHandicapCounter() {
-	return handicapCounter;
-    }
-    
-    public double getKomi() {
-	return komi;
     }
 
     public boolean isPlayer1Black() {
@@ -91,10 +77,6 @@ public class Game {
     public void nextPlayersTurn() {
 	blackToMove = !blackToMove;
     }
-    
-    public void decrementHandicapCounter() {
-	handicapCounter--;
-    }
 
     /**
      * This method processes a mouse click on the column and row given as
@@ -109,16 +91,7 @@ public class Game {
 		boolean player1Moved = player1.processMouseClick(x, y);
 		boolean player2Moved = player2.processMouseClick(x, y);
 		if (player1Moved || player2Moved) {
-		    if (handicapCounter > 1) {
-			decrementHandicapCounter();
-			gui.handicapMessage();
-		    } else if (handicapCounter == 1) {
-			decrementHandicapCounter();
-			nextPlayersTurn();
-		    }
-		    else {
-			nextPlayersTurn();
-		    }
+		    nextPlayersTurn();
 		    gui.drawBoard();
 		}
 		if (onePlayerGame) {
@@ -151,8 +124,6 @@ public class Game {
 	blackToMove = true;
 	numRows = menu.getNumRows();
 	handicap = menu.getHandicap();
-	handicapCounter = handicap;
-	komi = menu.getKomi();
 	onePlayerGame = menu.isOnePlayerGame();
 	String player1ColorString = menu.getPlayer1Color();
 	isPlayer1Black = true;
@@ -170,8 +141,8 @@ public class Game {
 	} else if (player2Name.equals("")) {
 	    player2Name = "Player 2";
 	}
+	board = new Board(numRows); // TODO
 //	board = new Board(numRows); // TODO
-	board = new TestBoard(numRows); // TODO
 	player1 = new Player(this, player1Name, isPlayer1Black, false);
 	player2 = new Player(this, player2Name, !isPlayer1Black, onePlayerGame);
 	lastMoveWasPass = false;

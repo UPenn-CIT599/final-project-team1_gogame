@@ -92,8 +92,6 @@ public class Player {
 		    } else {
 			boolean movedYet = false;
 			int count = 0;
-			// try to place a stone up to the maximum number of
-			// times
 			while (!movedYet && (count < maxAttempts)) {
 			    // attempt to place a stone in a random location
 			    try {
@@ -102,28 +100,14 @@ public class Player {
 				int y = (int) (Math.random() *
 					game.getNumRows());
 				game.getBoard().placeStone(color, x, y);
-				if (game.getHandicapCounter() <= 0) {
-				    game.getGui().setMessage(name, false);
-				    game.nextPlayersTurn();
-				} else if (game.getHandicapCounter() == 1) {
-				    game.decrementHandicapCounter();
-				    game.getGui().setMessage(name, false);
-				    game.nextPlayersTurn();
-				}
-				else {
-				    game.decrementHandicapCounter();
-				    game.getGui().handicapMessage();
-				}
+				game.getGui().setMessage(name, false);
+				game.nextPlayersTurn();
 				game.setLastMoveWasPass(false);
 				movedYet = true;
 			    }
+			    // try again if the attempted move is illegal
 			    catch (IllegalArgumentException e) {
-				// if handicap stones haven't all been placed,
-				// don't increase the counter in order to
-				// prevent passing
-				if (game.getHandicapCounter() <= 0) {
-				    count++;
-				}
+				count++;
 			    }
 			}
 			// pass if the maximum number of attempts was reached
@@ -147,7 +131,7 @@ public class Player {
 	if (game.wasLastMovePass()) {
 	    game.gameOver();
 	} else {
-	    game.getBoard().pass();
+//	    game.getBoard().pass();
 	    game.setLastMoveWasPass(true);
 	    game.getGui().setMessage(name, true);
 	}
@@ -168,10 +152,6 @@ public class Player {
 	if (isComputer || (isBlack != game.blackToMove())) {
 	    return false;
 	} else if (x == PASS) {
-	    if (game.getHandicapCounter() > 0) {
-		throw new IllegalArgumentException(
-			"Place all handicap stones before passing.");
-	    }
 	    pass();
 	    return true;
 	} else {

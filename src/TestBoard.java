@@ -36,8 +36,7 @@ public class TestBoard {
 	    throws IllegalArgumentException {
 	if (Math.random() < 0.25) {
 	    System.out.println("invalid");
-	    throw new IllegalArgumentException(
-		    "Invalid move, please try again.");
+	    throw new IllegalArgumentException("test");
 	}
 	if (intersections[x][y] == null) {
 	    intersections[x][y] = color;
