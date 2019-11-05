@@ -3,215 +3,314 @@ import java.util.ArrayList;
 
 public class Board {
 
-    private Intersection[][] intersections;
-    private ArrayList<Group> groups;
-    private ArrayList<Stone> stones;
-    private int capturedWhiteStones;
-    private int capturedBlackStones;
-    private int size;
-    private ArrayList<String> boardPositions; // Keeps a record of the game position after each move
+	private Intersection[][] intersections;
+	private ArrayList<Group> groups;
+	private ArrayList<Stone> stones;
+	private int capturedWhiteStones;
+	private int capturedBlackStones;
+	private int size;
+	private ArrayList<String> boardPositions; // Keeps a record of the game position after each move
 
-    public String NO_LIBERTIES_MESSAGE = "Placed stone has no liberties";
-    public String KO_MESSAGE = "Move violates rule of Ko";
+	// Invalid move messages
+	public String NO_LIBERTIES_MESSAGE = "Placed stone has no liberties";
+	public String KO_MESSAGE = "Move violates rule of Ko";
+	public String SUPER_KO_MESSAGE = "Move violates rule of Super Ko";
 
-    public Board(int size) {
-	this.size = size;
-	groups = new ArrayList<Group>();
-	stones = new ArrayList<Stone>();
-	boardPositions = new ArrayList<String>();
+	public Board(int size) {
+		this.size = size;
+		groups = new ArrayList<Group>();
+		stones = new ArrayList<Stone>();
+		boardPositions = new ArrayList<String>();
+		boardPositions.add("");
 
-	intersections = new Intersection[size][size];
-	for (int x = 0; x < size; x++) {
-	    for (int y = 0; y < size; y++) {
-		Intersection intersection = new Intersection(x, y);
-		intersections[x][y] = intersection;
-	    }
-	}
-	capturedBlackStones = 0;
-	capturedWhiteStones = 0;
-    }
-
-
-    /**
-     * When a stone is placed, a new stone is created, it is added to the total list of stones, and the intersection is updated
-     * updatedGroups is then called
-     * removedCapturedGroups is then called
-     * @param color
-     * @param x
-     * @param y
-     */
-    public void placeStone(Color color, int x, int y) throws IllegalArgumentException {
-
-	if (intersections[x][y].getStone() != null) {
-	    throw new IllegalArgumentException("A stone is already on that intersection");
-	}
-
-	Stone placedStone = new Stone(color, x, y, this); 	// Create a new stone with given color and location
-
-	stones.add(placedStone);							// Update stones
-	intersections[x][y].setStone(placedStone); 			// Update that board location
-	Group placedStoneGroup = new Group(placedStone);
-	placedStone.setGroup(placedStoneGroup);
-
-	ArrayList<Group> mergedGroups = new ArrayList<Group>();
-	ArrayList<Group> capturedGroups = new ArrayList<Group>();
-
-	try {
-	    validateMove(placedStone, placedStoneGroup, mergedGroups, capturedGroups);
-	}
-	catch(IllegalArgumentException e) {
-	    throw e;
-	}
-
-	updateBoard(placedStone, placedStoneGroup, mergedGroups, capturedGroups);
-
-    }
-
-    /**
-     * Validates that the move is legal without changing the state of the board (too much)
-     * @param placedStone
-     * @param placedStoneGroup
-     * @param mergedGroups
-     * @param capturedGroups
-     */
-    public void validateMove(Stone placedStone, Group placedStoneGroup, ArrayList<Group> mergedGroups, ArrayList<Group> capturedGroups) {
-
-	Boolean groupIsCaptured = false;
-
-	for (Intersection intersection : placedStone.getAdjacentIntersections(this)) {			
-	    if (intersection.getStone() == null) {continue;}
-	    Stone adjacentStone = intersection.getStone();
-
-	    if (adjacentStone.getColor() == placedStone.getColor()) { // If the stone is adjacent to a stone of the same color...
-
-		if (!mergedGroups.contains(adjacentStone.getGroup())) {
-		    mergedGroups.add(adjacentStone.getGroup());
+		intersections = new Intersection[size][size];
+		for (int x = 0; x < size; x++) {
+			for (int y = 0; y < size; y++) {
+				Intersection intersection = new Intersection(x, y);
+				intersections[x][y] = intersection;
+			}
 		}
-	    }
-	    else {
-		if (adjacentStone.getGroup().getLiberties(this).size() == 0) {
-		    if (!capturedGroups.contains(adjacentStone.getGroup())) {
-			capturedGroups.add(adjacentStone.getGroup()); // Else, if the adjacent stone is of the opposite color, check if that group is captured
-			groupIsCaptured = true;
-		    }
+		capturedBlackStones = 0;
+		capturedWhiteStones = 0;
+	}
+
+
+	/**
+	 * Method to place a stone on the board. The general flow is to first validate the move,
+	 * and then make the corresponding updates to the board position.
+	 * @param color
+	 * @param x
+	 * @param y
+	 */
+	public void placeStone(Color color, int x, int y) throws IllegalArgumentException {
+
+		// Check whether the intersection is already occupied
+		if (intersections[x][y].getStone() != null) {
+			throw new IllegalArgumentException("A stone is already on that intersection");
 		}
-	    }
-	}
 
-	Group validateGroup = new Group(placedStone);
-	for (Group mergedGroup : mergedGroups) {
-	    validateGroup.addGroup(mergedGroup);
-	}
+		// Create a new stone with given color and location
+		Stone placedStone = new Stone(color, x, y, this);
 
-	if (!groupIsCaptured && validateGroup.getLiberties(this).size() == 0) {
-	    // Remove placed stone, update liberties again
-	    placedStoneGroup.getStones().remove(placedStone);
-	    placedStone.getIntersection().setStone(null);
-	    stones.remove(placedStone);
-	    throw new IllegalArgumentException(NO_LIBERTIES_MESSAGE);
-	}
+		// Update stones and intersections. Note that these changes need to be reverted in the event that the move is invalid
+		stones.add(placedStone);
+		intersections[x][y].setStone(placedStone);
+		// Create a new group for the placed stone. In the event that this stone is adjacent to other stones of the same color, those stones' groups will be merged into this one
+		Group placedStoneGroup = new Group(placedStone);
+		placedStone.setGroup(placedStoneGroup);
 
-	// Check if Ko is violated:
+		// Create two ArrayLists to keep track of which groups need to be merged and which need to be captured
+		ArrayList<Group> mergedGroups = new ArrayList<Group>();
+		ArrayList<Group> capturedGroups = new ArrayList<Group>();
 
-	String boardPosition = "";
-	ArrayList<Stone> capturedStones = new ArrayList<Stone>();
-	for (Group capturedGroup : capturedGroups) {
-	    for (Stone capturedStone : capturedGroup.getStones()) {
-		if (!capturedStones.contains(capturedStone)) {
-		    capturedStones.add(capturedStone);
+		// Validate the move
+		try {
+			validateMove(placedStone, placedStoneGroup, mergedGroups, capturedGroups);
 		}
-	    }
-	}
-
-	for (int x = 0; x < size; x++) {
-	    for (int y = 0; y < size; y++) {
-		if ((intersections[x][y].getStone() == null) || capturedStones.contains(intersections[x][y].getStone())) {
-		    boardPosition += Integer.toString(x) + Integer.toString(y) + ","; 
-		} else if (intersections[x][y].getStone().getColor() == Color.WHITE) {
-		    boardPosition += "w" + Integer.toString(x) + Integer.toString(y) + ","; 
-		} else if (intersections[x][y].getStone().getColor() == Color.BLACK) {
-		    boardPosition += "b" + Integer.toString(x) + Integer.toString(y) + ",";
+		catch(IllegalArgumentException e) {
+			throw e;
 		}
-	    }
+
+		// If the move was valid, update the board position
+		updateBoard(placedStone, placedStoneGroup, mergedGroups, capturedGroups);
 	}
 
-	if ((boardPositions.size() > 1) && (boardPosition.equals(boardPositions.get(boardPositions.size() - 2)))) {
-	    placedStoneGroup.getStones().remove(placedStone);
-	    placedStone.getIntersection().setStone(null);
-	    stones.remove(placedStone);
-	    throw new IllegalArgumentException(KO_MESSAGE);
+	/**
+	 * Validates that the move is legal without changing the state of the board (too much).
+	 * A move is invalid if either the placed stone would immediately die (has no liberties),
+	 * or if the rules of Ko or Super Ko are violated.
+	 * Once the move has been validated, the actual updates to the board are performed by a different method.
+	 * This is to avoid needing to "undo" a bunch of changes to the board state if the move is deemed invalid
+	 * after making several changes to the board state.
+	 * 
+	 * @param placedStone
+	 * @param placedStoneGroup
+	 * @param mergedGroups
+	 * @param capturedGroups
+	 */
+	public void validateMove(Stone placedStone, Group placedStoneGroup, ArrayList<Group> mergedGroups, ArrayList<Group> capturedGroups) {
+
+		// Indicates whether a group has been captured
+		Boolean groupIsCaptured = false;
+
+		// Cycles through each of the intersections adjacent to the placed stone
+		for (Intersection intersection : placedStone.getAdjacentIntersections(this)) {			
+			if (intersection.getStone() == null) {continue;}
+			Stone adjacentStone = intersection.getStone();
+
+			// If the stone is adjacent to a stone of the same color, then that stone's group should be merged into the placed stone's group
+			if (adjacentStone.getColor() == placedStone.getColor()) {
+				if (!mergedGroups.contains(adjacentStone.getGroup())) {
+					mergedGroups.add(adjacentStone.getGroup());
+				}
+			}
+			// Otherwise, check if the adjacent opposing stone is captured or not.
+			else {
+				if (adjacentStone.getGroup().getLiberties(this).size() == 0) {
+					if (!capturedGroups.contains(adjacentStone.getGroup())) {
+						capturedGroups.add(adjacentStone.getGroup());
+						// Flag that a group has been captured. This is used later in checking that Ko is not violated
+						groupIsCaptured = true;
+					}
+				}
+			}
+		}
+
+		// Create a temporary group to validate that it will have liberties (i.e. that it is a valid group)
+		
+		Group validateGroup = new Group(placedStone);
+		for (Group mergedGroup : mergedGroups) {
+			validateGroup.addGroup(mergedGroup);
+		}
+
+		if (!groupIsCaptured && validateGroup.getLiberties(this).size() == 0) {
+			// If the group doesn't have liberties, the move is invalid... undo the changes caused by the placed stone and throw the appropriate exception
+			placedStoneGroup.getStones().remove(placedStone);
+			placedStone.getIntersection().setStone(null);
+			stones.remove(placedStone);
+			throw new IllegalArgumentException(NO_LIBERTIES_MESSAGE);
+		}
+
+		// Check if Ko is violated
+		// Firstly grab all captured stones, so as not to include them in the updated board position
+		String boardPosition = "";
+		ArrayList<Stone> capturedStones = new ArrayList<Stone>();
+		for (Group capturedGroup : capturedGroups) {
+			for (Stone capturedStone : capturedGroup.getStones()) {
+				if (!capturedStones.contains(capturedStone)) {
+					capturedStones.add(capturedStone);
+				}
+			}
+		}
+
+		// Cycle through each stone on the board and record which stones are on which intersections (not including captured stones)
+		for (int x = 0; x < size; x++) {
+			for (int y = 0; y < size; y++) {
+				if ((intersections[x][y].getStone() == null) || capturedStones.contains(intersections[x][y].getStone())) {
+					boardPosition += Integer.toString(x) + Integer.toString(y) + ","; 
+				} else if (intersections[x][y].getStone().getColor() == Color.WHITE) {
+					boardPosition += "w" + Integer.toString(x) + Integer.toString(y) + ","; 
+				} else if (intersections[x][y].getStone().getColor() == Color.BLACK) {
+					boardPosition += "b" + Integer.toString(x) + Integer.toString(y) + ",";
+				}
+			}
+		}
+
+		// Check if the position prior to the new one is identical. If it is, this move violates Ko
+		if ((boardPositions.size() > 1) && (boardPosition.equals(boardPositions.get(boardPositions.size() - 2)))) {
+			// Undo all changes caused by placing a stone
+			placedStoneGroup.getStones().remove(placedStone);
+			placedStone.getIntersection().setStone(null);
+			stones.remove(placedStone);
+			throw new IllegalArgumentException(KO_MESSAGE);
+		}
+
+		// Check if the position prior to the new one has occurred some time previously. If so, this move violates Super Ko
+		for (String priorPosition : boardPositions) {
+			if (boardPosition.equals(priorPosition)) {
+				// Again, undo all changes caused by placing a stone
+				placedStoneGroup.getStones().remove(placedStone);
+				placedStone.getIntersection().setStone(null);
+				stones.remove(placedStone);
+				throw new IllegalArgumentException(SUPER_KO_MESSAGE);
+			}
+		}
+
+		// Lastly, if the move has been validated, add the updated position to the running list of board positions
+		boardPositions.add(boardPosition);
 	}
 
-	boardPositions.add(boardPosition);
-    }
+	/**
+	 * Updates all groups on the board after verifying that the performed move is valid. 
+	 * The inputs include the groups to be merged and groups to be captured that were determined during move validation
+	 * @param placedStone
+	 * @param placedStoneGroup
+	 * @param mergedGroups
+	 * @param capturedGroups
+	 */
+	public void updateBoard(Stone placedStone, Group placedStoneGroup, ArrayList<Group> mergedGroups, ArrayList<Group> capturedGroups) {
 
-    /*
-     * Updates all groups on the board after verifying that the performed move is valid
-     */
-    public void updateBoard(Stone placedStone, Group placedStoneGroup, ArrayList<Group> mergedGroups, ArrayList<Group> capturedGroups) {
+		placedStone.setGroup(placedStoneGroup);
+		if (!groups.contains(placedStoneGroup)) {
+			groups.add(placedStoneGroup);
+		}
 
-	placedStone.setGroup(placedStoneGroup);
-	if (!groups.contains(placedStoneGroup)) {
-	    groups.add(placedStoneGroup);
+		// For each of the groups to be merged, merge them in
+		for (Group mergedGroup : mergedGroups) {
+			placedStoneGroup.addGroup(mergedGroup);
+			groups.remove(mergedGroup);
+		}
+
+		// For each of the groups that are captured, capture them
+		for (Group capturedGroup : capturedGroups) {
+			// Firstly remove the individual stones
+			for (Stone capturedStone : capturedGroup.getStones()) {
+				capturedStone.getIntersection().setStone(null);
+				stones.remove(capturedStone);
+			}
+
+			groups.remove(capturedGroup);
+
+			// Then remove the groups as a whole
+			if (capturedGroup.getColor() == Color.WHITE) {
+				capturedWhiteStones += capturedGroup.getStones().size();
+			} else {
+				capturedBlackStones += capturedGroup.getStones().size();
+			}	
+		}
+
 	}
 
-	for (Group mergedGroup : mergedGroups) {
-	    placedStoneGroup.addGroup(mergedGroup);
-	    groups.remove(mergedGroup);
+	/**
+	 * Passes a move. The only effect is that the board positions are updated with a duplicate position of the board
+	 */
+	public void pass() {
+		// Cycle through each stone on the board and record which stones are on which intersections
+		String boardPosition = "";
+		for (int x = 0; x < size; x++) {
+			for (int y = 0; y < size; y++) {
+				if ((intersections[x][y].getStone() == null)) {
+					boardPosition += Integer.toString(x) + Integer.toString(y) + ","; 
+				} else if (intersections[x][y].getStone().getColor() == Color.WHITE) {
+					boardPosition += "w" + Integer.toString(x) + Integer.toString(y) + ","; 
+				} else if (intersections[x][y].getStone().getColor() == Color.BLACK) {
+					boardPosition += "b" + Integer.toString(x) + Integer.toString(y) + ",";
+				}
+			}
+		}
+		
+		boardPositions.add(boardPosition);
 	}
 
-	for (Group capturedGroup : capturedGroups) {
-	    for (Stone capturedStone : capturedGroup.getStones()) {
-		capturedStone.getIntersection().setStone(null);
-		stones.remove(capturedStone);
-	    }
 
-	    groups.remove(capturedGroup);
-
-	    if (capturedGroup.getColor() == Color.WHITE) {
-		capturedWhiteStones += capturedGroup.getStones().size();
-	    } else {
-		capturedBlackStones += capturedGroup.getStones().size();
-	    }	
+	/**
+	 * Returns list of all intersections on the board
+	 * @return
+	 */
+	public Intersection[][] getIntersections() {
+		return intersections;
 	}
 
-    }
-
-
-    public Intersection[][] getIntersections() {
-	return intersections;
-    }
-
-    public ArrayList<Group> getGroups() {
-	return groups;
-    }
-
-    public ArrayList<Stone> getStones() {
-	return stones;
-    }
-
-    public int getCapturedWhiteStones() {
-	return capturedWhiteStones;
-    }
-
-    public int getCapturedBlackStones() {
-	return capturedBlackStones;
-    }
-
-    public int getSize() {
-	return size;
-    }
-
-    public ArrayList<String> getBoardPositions() {
-	return boardPositions;
-    }
-
-    public Color getStoneColor(int x, int y) {
-	Color color = null;
-	if (intersections[x][y].getStone() != null) {
-	    color = intersections[x][y].getStone().getColor();
+	/**
+	 * Returns the current list of all groups on the board
+	 * @return
+	 */
+	public ArrayList<Group> getGroups() {
+		return groups;
 	}
-	return color;
-    }
+
+	/**
+	 * Returns current list of stones on the board
+	 * @return
+	 */
+	public ArrayList<Stone> getStones() {
+		return stones;
+	}
+
+	/**
+	 * Returns number of captured white stones
+	 * @return
+	 */
+	public int getCapturedWhiteStones() {
+		return capturedWhiteStones;
+	}
+
+	/**
+	 * Returns list of captured black stones
+	 * @return
+	 */
+	public int getCapturedBlackStones() {
+		return capturedBlackStones;
+	}
+
+	/**
+	 * Returns size (vertical or horizontal dimenstion)
+	 * @return
+	 */
+	public int getSize() {
+		return size;
+	}
+
+	/**
+	 * Returns list of past board positions
+	 * @return
+	 */
+	public ArrayList<String> getBoardPositions() {
+		return boardPositions;
+	}
+
+	/**
+	 * Gets the color of the stone at a given intersection. If no stone is at the intersection, the method returns null
+	 * @param x
+	 * @param y
+	 * @return
+	 */
+	public Color getStoneColor(int x, int y) {
+		Color color = null;
+		if (intersections[x][y].getStone() != null) {
+			color = intersections[x][y].getStone().getColor();
+		}
+		return color;
+	}
 
 }
