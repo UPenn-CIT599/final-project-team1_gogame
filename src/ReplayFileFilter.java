@@ -1,6 +1,15 @@
 import java.io.File;
 import javax.swing.filechooser.FileFilter;
 
+/*
+ * The ReplayFileFilter class is based on the following:
+ * 
+ * Title: ArffFilter
+ * Author: makata 
+ * Date: 2015 
+ * Availability:
+ * https://stackoverflow.com/questions/19302029/filter-file-types-with-jfilechooser
+ */
 /**
  * The ReplayFileFilter class is used to only allow the user to select .sgf
  * files to open

@@ -216,6 +216,15 @@ public class MainMenu {
 
 	    @Override
 	    public void actionPerformed(ActionEvent arg0) {
+		/*
+		 * A portion of the below code is based on the following:
+		 * 
+		 * Title: FileChooserDemo 
+		 * Author: Oracle 
+		 * Date: 2008 
+		 * Availability:
+		 * https://docs.oracle.com/javase/tutorial/uiswing/examples/components/FileChooserDemoProject/src/components/FileChooserDemo.java
+		 */
 		JFileChooser fileChooser = new JFileChooser();
 		fileChooser.setFileFilter(new ReplayFileFilter());
 		fileChooser.setAcceptAllFileFilterUsed(false);
