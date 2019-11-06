@@ -41,9 +41,9 @@ public class Player {
 	this.isBlack = isBlack;
 	this.isComputer = isComputer;
 	if (isBlack) {
-	    this.color = Color.black;
+	    this.color = Color.BLACK;
 	} else {
-	    this.color = Color.white;
+	    this.color = Color.WHITE;
 	}
 	if (isComputer) {
 	    initializeComputer();
@@ -144,7 +144,7 @@ public class Player {
      * This method indicates that the Player is passing.
      */
     private void pass() {
-//	game.getBoard().pass(); // TODO
+	game.getBoard().pass();
 	if (game.wasLastMovePass()) {
 	    String color = "white";
 	    if (isBlack) {
