@@ -20,7 +20,7 @@ public class MainMenu {
     private String player1Name1 = "";
     private String player1Name2 = "";
     private String player2Name = "";
-    private boolean demoMode = false;
+    private boolean replayMode = false;
     private boolean onePlayerGame = false;
     private int handicap = 0;
     private int handicap1 = 0;
@@ -36,38 +36,65 @@ public class MainMenu {
     private String player1Color2 = "Black";
     private boolean readyToPlay = false;
 
+    /**
+     * @return the player1Name
+     */
     public String getPlayer1Name() {
 	return player1Name;
     }
 
+    /**
+     * @return the player2Name
+     */
     public String getPlayer2Name() {
 	return player2Name;
     }
 
-    public boolean isDemoMode() {
-	return demoMode;
+    /**
+     * @return replayMode
+     */
+    public boolean isReplayMode() {
+	return replayMode;
     }
 
+    /**
+     * @return onePlayerGame
+     */
     public boolean isOnePlayerGame() {
 	return onePlayerGame;
     }
 
+    /**
+     * @return the handicap
+     */
     public int getHandicap() {
 	return handicap;
     }
 
+    /**
+     * @return the komi
+     */
     public double getKomi() {
 	return komi;
     }
     
+    /**
+     * @return the numRows
+     */
     public int getNumRows() {
 	return numRows;
     }
 
+    /**
+     * @return the player1Color
+     */
     public String getPlayer1Color() {
 	return player1Color;
     }
 
+    /**
+     * @return readyToPlay
+     */
     public boolean isReadyToPlay() {
 	return readyToPlay;
     }
@@ -93,13 +120,13 @@ public class MainMenu {
 	String select = "Select game mode";
 	String onePlayer = "1 Player Game";
 	String twoPlayer = "2 Player Game";
-	String demo = "Demo Mode";
+	String replay = "Replay Mode";
 	JPanel comboBoxPane = new JPanel();
 	JTextField welcome = new JTextField("Welcome to Go!");
 	welcome.setEditable(false);
 	welcome.setHorizontalAlignment((int) JTextField.CENTER_ALIGNMENT);
 	welcome.setFont(new Font(Font.DIALOG, Font.BOLD, 28));
-	String[] comboBoxItems = { select, onePlayer, twoPlayer, demo };
+	String[] comboBoxItems = { select, onePlayer, twoPlayer, replay };
 	JComboBox<String> selectGameMode = new JComboBox<>(comboBoxItems);
 	selectGameMode.setEditable(false);
 	selectGameMode.setMaximumSize(new Dimension(135, 50));
@@ -148,14 +175,14 @@ public class MainMenu {
 	twoPlayerCard.add(komiPanel2);
 	twoPlayerCard.add(buttonPanel2);
 
-	JPanel demoCard = new JPanel();
+	JPanel replayCard = new JPanel();
 	// TODO
 
 	JPanel cards = new JPanel(new CardLayout());
 	cards.add(selectCard, select);
 	cards.add(onePlayerCard, onePlayer);
 	cards.add(twoPlayerCard, twoPlayer);
-	cards.add(demoCard, demo);
+	cards.add(replayCard, replay);
 
 	Container pane = frame.getContentPane();
 	pane.add(comboBoxPane, BorderLayout.PAGE_START);
@@ -502,7 +529,7 @@ public class MainMenu {
 		    komi = komi2;
 		    onePlayerGame = false;
 		}
-		demoMode = false;
+		replayMode = false;
 		readyToPlay = true;
 //		frame.setVisible(false);
 		frame.dispose();

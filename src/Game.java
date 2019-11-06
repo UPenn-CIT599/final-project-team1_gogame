@@ -27,82 +27,143 @@ public class Game {
     private DeadStoneSelector selector;
     private HashMap<String, Integer> finalScore;
 
+    /**
+     * @return the gui
+     */
     public UserInterface getGui() {
 	return gui;
     }
 
+    /**
+     * @return the board
+     */
     public Board getBoard() { // TODO
 	return board;
     }
 
+//    /**
+//     * @return the board
+//     */
 //    public TestBoard getBoard() { // TODO
 //	return board;
 //    }
 
+    /**
+     * @return player1
+     */
     public Player getPlayer1() {
 	return player1;
     }
 
+    /**
+     * @return player2
+     */
     public Player getPlayer2() {
 	return player2;
     }
 
+    /**
+     * @return blackToMove
+     */
     public boolean blackToMove() {
 	return blackToMove;
     }
 
+    /**
+     * @return the numRows
+     */
     public int getNumRows() {
 	return numRows;
     }
     
+    /**
+     * @return the handicap
+     */
     public int getHandicap() {
 	return handicap;
     }
     
+    /**
+     * @return the handicapCounter
+     */
     public int getHandicapCounter() {
 	return handicapCounter;
     }
     
+    /**
+     * @return the komi
+     */
     public double getKomi() {
 	return komi;
     }
 
+    /**
+     * @return isPLayer1Black
+     */
     public boolean isPlayer1Black() {
 	return isPlayer1Black;
     }
 
+    /**
+     * @return lastMoveWasPass
+     */
     public boolean wasLastMovePass() {
 	return lastMoveWasPass;
     }
 
+    /**
+     * @param lastMoveWasPass the lastMoveWasPass to set
+     */
     public void setLastMoveWasPass(boolean lastMoveWasPass) {
 	this.lastMoveWasPass = lastMoveWasPass;
     }
 
+    /**
+     * @return gameOver
+     */
     public boolean isGameOver() {
 	return gameOver;
     }
     
+    /**
+     * @return selectingDeadStones
+     */
     public boolean isSelectingDeadStones() {
 	return selectingDeadStones;
     }
     
+    /**
+     * @return the selector
+     */
     public DeadStoneSelector getSelector() {
 	return selector;
     }
     
+    /**
+     * @return the finalMoveColor
+     */
     public String getFinalMoveColor() {
 	return finalMoveColor;
     }
     
+    /**
+     * @param finalMoveColor the finalMoveColor to set
+     */
     public void setFinalMoveColor(String finalMoveColor) {
 	this.finalMoveColor = finalMoveColor;
     }
     
+    /**
+     * @return the finalScore
+     */
     public HashMap<String, Integer> getFinalScore() {
 	return finalScore;
     }
     
+    /**
+     * This method returns to game play if players pass consecutively to end the
+     * game but can't agree on which stones are dead
+     */
     public void continuePlay() {
 	selectionPhaseOver();
 	gameOver = false;
@@ -127,6 +188,9 @@ public class Game {
 	
     }
     
+    /**
+     * This method finalizes the score and triggers the GUI's gameOver method.
+     */
     public void finalizeScore() {
 	if (selectingDeadStones) {
 	    scorekeeper.removeDeadStones(
@@ -140,6 +204,9 @@ public class Game {
 	gui.gameOver();
     }
     
+    /**
+     * This method indicates that the players are done selecting dead stones.
+     */
     public void selectionPhaseOver() {
 	selectingDeadStones = false;
 	selector = null;
@@ -152,6 +219,9 @@ public class Game {
 	blackToMove = !blackToMove;
     }
     
+    /**
+     * This method reduces the handicap counter by one.
+     */
     public void decrementHandicapCounter() {
 	handicapCounter--;
     }
