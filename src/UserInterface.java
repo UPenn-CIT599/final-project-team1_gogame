@@ -61,6 +61,18 @@ public class UserInterface extends Canvas implements MouseListener {
 //    private boolean selectingDeadStones = false;
 //    private Score scorekeeper;
     private EndGameMenu endGameMenu;
+    
+    private static String CONFIRM_MAIN_MENU = 
+	    "Are you sure you want to return to the main menu?";
+    private static String LOST_PROGRESS_WARNING = 
+	    "Your game progress will be lost.";
+    
+    /**
+     * @return the frame
+     */
+    public JFrame getFrame() {
+	return frame;
+    }
 
 //    /**
 //     * @return the notifier
@@ -109,7 +121,28 @@ public class UserInterface extends Canvas implements MouseListener {
 	setBackground(backgroundColor);
 	setSize(imageSize, imageSize);
 	frame = new JFrame("Go");
-	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+	frame.addWindowListener(new WindowAdapter() {
+	    /*
+	     * The below code comes from the following:
+	     * 
+	     * Title: exitListener 
+	     * Author: mKorbel 
+	     * Date: 2011
+	     * Availability: 
+	     * https://stackoverflow.com/questions/6084039/create-custom-operation-for-setdefaultcloseoperation
+	     */
+	    @Override
+	    public void windowClosing(WindowEvent e) {
+	        int confirm = JOptionPane.showOptionDialog(
+	             frame, "Are You Sure to Close Application?", 
+	             "Exit Confirmation", JOptionPane.YES_NO_OPTION, 
+	             JOptionPane.QUESTION_MESSAGE, null, null, null);
+	        if (confirm == 0) {
+	           System.exit(0);
+	        }
+	    }
+	});	
 	frame.add(this);
 	frame.setLayout(null);
 	frame.setSize(imageSize, imageSize);
@@ -379,7 +412,13 @@ public class UserInterface extends Canvas implements MouseListener {
 	    } else if (buttonClicked(nextButton, mouseX, mouseY)) {
 		// TODO
 	    } else if (buttonClicked(replayMainMenuButton, mouseX, mouseY)) {
-		run();
+		int confirm = JOptionPane.showOptionDialog(frame,
+			CONFIRM_MAIN_MENU, "Main menu confirmation",
+			JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
+			null, null, null);
+		if (confirm == 0) {
+		    run();
+		}
 	    }
 	} else if (game.isSelectingDeadStones()) {
 	    if (buttonClicked(calculateScoreButton, mouseX, mouseY)) {
@@ -394,7 +433,13 @@ public class UserInterface extends Canvas implements MouseListener {
 		game.processMouseClick(Player.PASS);
 	    } else if (buttonClicked(gameMainMenuButton, mouseX, mouseY)) {
 		if (!game.isGameOver()) {
-		    run(); // TODO create warning popup
+		    int confirm = JOptionPane.showOptionDialog(frame,
+			    CONFIRM_MAIN_MENU + "\n" + LOST_PROGRESS_WARNING,
+			    "Main menu confirmation", JOptionPane.YES_NO_OPTION,
+			    JOptionPane.WARNING_MESSAGE, null, null, null);
+		    if (confirm == 0) {
+			run();
+		    }
 		}
 	    } else {
 //		for (int i = 0; i < numRows; i++) {

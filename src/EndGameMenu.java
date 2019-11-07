@@ -1,5 +1,6 @@
 import java.awt.*;
 import java.awt.event.*;
+import java.io.*;
 import java.text.*;
 import java.util.*;
 import javax.swing.*;
@@ -19,6 +20,10 @@ public class EndGameMenu {
     private String whitePlayerName;
     private double blackScore;
     private double whiteScore;
+    private double scoreDifferential;
+    private JFileChooser fileChooser;
+    private File replayFile;
+    
     private static DecimalFormat scoreFormat = new DecimalFormat("#.#");
 
     /*
@@ -46,6 +51,10 @@ public class EndGameMenu {
 	HashMap<String, Integer> scores = gui.getGame().getFinalScore();
 	blackScore = scores.get("blackScore");
 	whiteScore = scores.get("whiteScore") + gui.getGame().getKomi();
+	scoreDifferential = Math.abs(blackScore - whiteScore);
+	fileChooser = new JFileChooser();
+	fileChooser.setFileFilter(new ReplayFileFilter());
+	fileChooser.setAcceptAllFileFilterUsed(false);
 	
 	/*
 	 * A portion of the below code is based on the following:
@@ -78,8 +87,19 @@ public class EndGameMenu {
 
 	    @Override
 	    public void actionPerformed(ActionEvent arg0) {
-		// TODO Auto-generated method stub
-
+		if (replayFile == null) {
+		    int confirm = JOptionPane.showOptionDialog(frame,
+			    "You must save your replay before viewing it.\n" +
+		            "Press OK to choose where to save it.",
+			    "Save replay", JOptionPane.OK_CANCEL_OPTION,
+			    JOptionPane.INFORMATION_MESSAGE, null, null, null);
+		    if (confirm == 0) {
+			saveReplay();
+		    } else {
+			return;
+		    }
+		}
+		// TODO open the replay file
 	    }
 
 	});
@@ -88,8 +108,7 @@ public class EndGameMenu {
 
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
-
+		saveReplay();
 	    }
 
 	});
@@ -119,6 +138,42 @@ public class EndGameMenu {
     }
     
     /**
+     * This method allows the user to choose where to save the replay, and it
+     * sets replayFile to the file selected by the user.
+     */
+    private void saveReplay() {
+	int returnVal = fileChooser.showSaveDialog(buttonPanel);
+	if (returnVal == JFileChooser.APPROVE_OPTION) {
+	    replayFile = fileChooser.getSelectedFile();
+	    String filePath = replayFile.getPath();
+	    if (!filePath.toLowerCase().endsWith(".sgf")) {
+		replayFile = new File(filePath + ".sgf");
+	    }
+	    if (replayFile.exists()) {
+		int confirm = JOptionPane.showOptionDialog(frame,
+			"Are you sure you want to overwrite " +
+				replayFile.getName() + "?",
+			"File overwrite warning", JOptionPane.YES_NO_OPTION,
+			JOptionPane.WARNING_MESSAGE, null, null, null);
+		if (confirm != 0) {
+		    return;
+		}
+	    }
+	    try {
+		FileWriter fw = new FileWriter(replayFile);
+		PrintWriter pw = new PrintWriter(fw);
+		pw.println("Testing .sgf writer"); // TODO
+		pw.flush();
+	    } catch (IOException e) {
+		JOptionPane.showMessageDialog(frame,
+			"File writing failed.\n" + 
+		        "Please select a different location to save your replay.",
+			"File writing error", JOptionPane.ERROR_MESSAGE);
+	    }
+	}
+    }
+    
+    /**
      * This method creates a JButton with the given text, adds it to the button
      * panel, and then returns that JButton
      * 
@@ -140,10 +195,12 @@ public class EndGameMenu {
      *         tie.
      */
     private String winner() {
+	String winText = " wins by " + scoreFormat.format(scoreDifferential) +
+		" points!";
 	if (blackScore > whiteScore) {
-	    return blackPlayerName + " wins!";
+	    return blackPlayerName + winText;
 	} else if (whiteScore > blackScore) {
-	    return whitePlayerName + " wins!";
+	    return whitePlayerName + winText;
 	} else {
 	    return "Tie game!";
 	}

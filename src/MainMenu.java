@@ -34,6 +34,7 @@ public class MainMenu {
     private String player1Color = "Black";
     private String player1Color1 = "Black";
     private String player1Color2 = "Black";
+    private JFileChooser fileChooser;
     private File replayFile = null;
     private boolean readyToPlay = false;
 
@@ -211,23 +212,23 @@ public class MainMenu {
 	startReplayPanel.add(startReplayButton);
 
 	JPanel chooseFilePanel = new JPanel();
+	/*
+	 * A portion of the below code is based on the following:
+	 * 
+	 * Title: FileChooserDemo 
+	 * Author: Oracle 
+	 * Date: 2008 
+	 * Availability:
+	 * https://docs.oracle.com/javase/tutorial/uiswing/examples/components/FileChooserDemoProject/src/components/FileChooserDemo.java
+	 */
+	fileChooser = new JFileChooser();
+	fileChooser.setFileFilter(new ReplayFileFilter());
+	fileChooser.setAcceptAllFileFilterUsed(false);
 	JButton chooseFileButton = new JButton("Select file");
 	chooseFileButton.addActionListener(new ActionListener() {
 
 	    @Override
 	    public void actionPerformed(ActionEvent arg0) {
-		/*
-		 * A portion of the below code is based on the following:
-		 * 
-		 * Title: FileChooserDemo 
-		 * Author: Oracle 
-		 * Date: 2008 
-		 * Availability:
-		 * https://docs.oracle.com/javase/tutorial/uiswing/examples/components/FileChooserDemoProject/src/components/FileChooserDemo.java
-		 */
-		JFileChooser fileChooser = new JFileChooser();
-		fileChooser.setFileFilter(new ReplayFileFilter());
-		fileChooser.setAcceptAllFileFilterUsed(false);
 		int returnVal = fileChooser.showOpenDialog(replayCard);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 		    replayFile = fileChooser.getSelectedFile();
