@@ -1,5 +1,7 @@
 import java.util.*;
 
+import javax.swing.JOptionPane;
+
 /**
  * The Game class represents a game of Go.
  * 
@@ -182,6 +184,11 @@ public class Game {
 //	    gui.selectDeadStones();
 	    selector = new DeadStoneSelector(this);
 	    gui.drawBoard();
+	    JOptionPane.showMessageDialog(gui.getFrame(), 
+		    "Please select all dead stones. Once both players\n" + 
+		    "agree on which stones are dead, press the Calculate\n" + 
+	            "Score button. If no agreement can be reached, you may\n" + 
+		    "Continue Play to resolve the dispute.");
 	} else {
 	    finalizeScore();
 	}

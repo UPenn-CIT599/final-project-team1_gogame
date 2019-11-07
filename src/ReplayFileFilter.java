@@ -28,7 +28,7 @@ public class ReplayFileFilter extends FileFilter {
 	    return true;
 	}
 	String filename = f.getName();
-	return filename.endsWith(".sgf");
+	return filename.toLowerCase().endsWith(".sgf");
     }
 
     /**

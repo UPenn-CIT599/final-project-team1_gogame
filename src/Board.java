@@ -1,6 +1,14 @@
 import java.awt.Color;
 import java.util.ArrayList;
 
+/**
+ * This class keeps track of the current state of the game board. This includes a list of all 
+ * stones currently in the game, which intersections they occupy, and to which groups they belong
+ * This class is in charge of validating moves made by the players. In addition, it is responsible for
+ * updating the position of the board in accordance with the rules of Go, once a move has been made.
+ * @author morrowch
+ *
+ */
 public class Board {
 
 	private Intersection[][] intersections;
@@ -16,6 +24,10 @@ public class Board {
 	public String KO_MESSAGE = "Move violates rule of Ko";
 	public String SUPER_KO_MESSAGE = "Move violates rule of Super Ko";
 
+	/**
+	 * Constructor, creating an array of intersections based on the desired size of the board
+	 * @param size
+	 */
 	public Board(int size) {
 		this.size = size;
 		groups = new ArrayList<Group>();
