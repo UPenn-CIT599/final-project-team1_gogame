@@ -36,12 +36,19 @@ public class sgfHandler {
 	}
 
 	public static Board constructBoard() {
-		Board board = new Board(19);
+		Board board;
+		
+		// Get the size of the board, specified by SZ[size]. If no tag is found, default to 19x19
+		Matcher boardSize = Pattern.compile("SZ\\[(\\d+)\\]").matcher(sgfText);
+		if (boardSize.find()) {
+			board = new Board(Integer.parseInt(boardSize.group(1)));
+		} else {
+			board = new Board(19);
+		}
 
 		// Find lines that correspond to "Add black" or "Add white"
 		Matcher w = stonePositions.matcher(sgfText);
 		try {
-			
 			while (w.find()) {
 				String stonePositionsLine = w.group();
 				// Determine whether the stones are white or black
@@ -65,5 +72,6 @@ public class sgfHandler {
 
 		return board;
 	}
+	
 
 }
