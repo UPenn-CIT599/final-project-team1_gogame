@@ -45,8 +45,9 @@ public class UserInterface extends Canvas implements MouseListener {
     private Rectangle previousButton = new Rectangle(100, 610, 120, 30);
     private Rectangle nextButton = new Rectangle(290, 610, 120, 30);
     private Rectangle replayMainMenuButton = new Rectangle(480, 610, 120, 30);
-    private Rectangle passButton = new Rectangle(165, 610, 120, 30);
-    private Rectangle gameMainMenuButton = new Rectangle(415, 610, 120, 30);
+    private Rectangle passButton = new Rectangle(100, 610, 120, 30);
+    private Rectangle resignButton = new Rectangle(290, 610, 120, 30);
+    private Rectangle gameMainMenuButton = new Rectangle(480, 610, 120, 30);
     private Rectangle calculateScoreButton = new Rectangle(100, 610, 200, 30);
     private Rectangle continuePlayButton = new Rectangle(400, 610, 200, 30);
     private static Color backgroundColor = Color.LIGHT_GRAY;
@@ -135,7 +136,7 @@ public class UserInterface extends Canvas implements MouseListener {
 	    @Override
 	    public void windowClosing(WindowEvent e) {
 	        int confirm = JOptionPane.showOptionDialog(
-	             frame, "Are You Sure to Close Application?", 
+	             frame, "Are you sure you want to exit the game?", 
 	             "Exit Confirmation", JOptionPane.YES_NO_OPTION, 
 	             JOptionPane.QUESTION_MESSAGE, null, null, null);
 	        if (confirm == 0) {
@@ -334,6 +335,7 @@ public class UserInterface extends Canvas implements MouseListener {
 	}
 	else {
 	    drawButton(g, passButton, "Pass", 43);
+	    drawButton(g, resignButton, "Resign", 35);
 	    drawButton(g, gameMainMenuButton, "Main Menu", 20);
 	}
     }
@@ -413,7 +415,7 @@ public class UserInterface extends Canvas implements MouseListener {
 		// TODO
 	    } else if (buttonClicked(replayMainMenuButton, mouseX, mouseY)) {
 		int confirm = JOptionPane.showOptionDialog(frame,
-			CONFIRM_MAIN_MENU, "Main menu confirmation",
+			CONFIRM_MAIN_MENU, "Main Menu Confirmation",
 			JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
 			null, null, null);
 		if (confirm == 0) {
@@ -431,11 +433,13 @@ public class UserInterface extends Canvas implements MouseListener {
 	} else {
 	    if (buttonClicked(passButton, mouseX, mouseY)) {
 		game.processMouseClick(Player.PASS);
+	    } else if (buttonClicked(resignButton, mouseX, mouseY)) {
+		game.processMouseClick(Player.RESIGN);
 	    } else if (buttonClicked(gameMainMenuButton, mouseX, mouseY)) {
 		if (!game.isGameOver()) {
 		    int confirm = JOptionPane.showOptionDialog(frame,
 			    CONFIRM_MAIN_MENU + "\n" + LOST_PROGRESS_WARNING,
-			    "Main menu confirmation", JOptionPane.YES_NO_OPTION,
+			    "Main Menu Confirmation", JOptionPane.YES_NO_OPTION,
 			    JOptionPane.WARNING_MESSAGE, null, null, null);
 		    if (confirm == 0) {
 			run();
