@@ -24,6 +24,8 @@ public class Game {
     private boolean lastMoveWasPass;
     private String finalMoveColor;
     private boolean gameOver;
+    private String resignedPlayer; // the name of the player who resigned, or
+				   // null if no one has resigned
     private Score scorekeeper;
     private boolean selectingDeadStones = false;
     private DeadStoneSelector selector;
@@ -112,6 +114,13 @@ public class Game {
     public boolean wasLastMovePass() {
 	return lastMoveWasPass;
     }
+    
+    /**
+     * @return the resignedPlayer
+     */
+    public String getResignedPlayer() {
+	return resignedPlayer;
+    }
 
     /**
      * @param lastMoveWasPass the lastMoveWasPass to set
@@ -125,6 +134,13 @@ public class Game {
      */
     public boolean isGameOver() {
 	return gameOver;
+    }
+    
+    /**
+     * @param resignedPlayer the resignedPlayer to set
+     */
+    public void setResignedPlayer(String resignedPlayer) {
+	this.resignedPlayer = resignedPlayer;
     }
     
     /**
@@ -179,7 +195,7 @@ public class Game {
 	gameOver = true;
 	scorekeeper = new Score(board);
 	scorekeeper.categorizePoints();
-	if (!onePlayerGame) {
+	if (!onePlayerGame && (resignedPlayer == null)) {
 	    selectingDeadStones = true;
 //	    gui.selectDeadStones();
 	    selector = new DeadStoneSelector(this);
