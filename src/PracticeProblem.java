@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class PracticeProblem implements GameViewer {
@@ -8,6 +9,9 @@ public class PracticeProblem implements GameViewer {
     private boolean blackToMove;
     private String finalMoveColor;
     private int numRows;
+    private ArrayList<Problem> problems;
+    private int problemNumber = 0;
+    private Problem currentProblem;
 
 	@Override
 	public boolean blackToMove() {
@@ -21,7 +25,7 @@ public class PracticeProblem implements GameViewer {
 
 	@Override
 	public void gameOver() {
-		// This method is not used in Practice Problem mode
+		// Called when the problem is over
 		
 	}
 
@@ -103,6 +107,14 @@ public class PracticeProblem implements GameViewer {
 	public boolean wasLastMovePass() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+	
+	public PracticeProblem(UserInterface gui, ArrayList<Problem> problems) {
+		this.gui = gui;
+		this.problems = problems;
+		currentProblem = problems.get(problemNumber);
+		
+		
 	}
 
 }
