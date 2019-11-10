@@ -196,10 +196,11 @@ public class Game implements GameViewer {
 	scorekeeper.categorizePoints();
 	if (!scorekeeper.checkIfStonesArePlaced() && (resignedPlayer == null)) {
 	    gameOver = false;
-	    gui.drawBoard();
-	    JOptionPane.showMessageDialog(gui.getFrame(),
-	            "No stone has been placed. Please place a stone.");
+	    gui.invalidMove("Board is empty - please place a stone.");
 	    lastMoveWasPass = false;
+	    gui.drawBoard();
+//	    JOptionPane.showMessageDialog(gui.getFrame(),
+//	            "No stone has been placed. Please place a stone.");
 	} else {
 	    gameOver = true;
 	    if (!onePlayerGame && (resignedPlayer == null)) {
