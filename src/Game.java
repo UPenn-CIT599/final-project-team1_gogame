@@ -192,23 +192,30 @@ public class Game implements GameViewer {
      * This method ends the game.
      */
     public void gameOver() {
-	gameOver = true;
 	scorekeeper = new Score(board);
 	scorekeeper.categorizePoints();
-	if (!onePlayerGame && (resignedPlayer == null)) {
-	    selectingDeadStones = true;
-//	    gui.selectDeadStones();
-	    selector = new DeadStoneSelector(this);
+	if (!scorekeeper.checkIfStonesArePlaced() && (resignedPlayer == null)) {
+	    gameOver = false;
 	    gui.drawBoard();
-	    JOptionPane.showMessageDialog(gui.getFrame(), 
-		    "Please select all dead stones. Once both players\n" + 
-		    "agree on which stones are dead, press the Calculate\n" + 
-	            "Score button. If no agreement can be reached, you may\n" + 
-		    "Continue Play to resolve the dispute.");
+	    JOptionPane.showMessageDialog(gui.getFrame(),
+	            "No stone has been placed. Please place a stone.");
+	    lastMoveWasPass = false;
 	} else {
-	    finalizeScore();
+	    gameOver = true;
+	    if (!onePlayerGame && (resignedPlayer == null)) {
+	        selectingDeadStones = true;
+//	        gui.selectDeadStones();
+	        selector = new DeadStoneSelector(this);
+	        gui.drawBoard();
+	        JOptionPane.showMessageDialog(gui.getFrame(), 
+		        "Please select all dead stones. Once both players\n" + 
+		        "agree on which stones are dead, press the Calculate\n" + 
+	                "Score button. If no agreement can be reached, you may\n" + 
+		        "Continue Play to resolve the dispute.");
+	    } else {
+	        finalizeScore();
+	    }
 	}
-	
     }
     
     /**
