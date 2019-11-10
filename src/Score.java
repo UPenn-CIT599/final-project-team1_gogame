@@ -40,7 +40,7 @@ public class Score {
     	finalBoardPositions = boardPositions.get(boardPositions.size() - 1);
     	finalPositions = new Point[size][size];
     }
-
+    
     /**
      * According to the final board positions, 
      * this method categorizes each point on the board into 3 groups: 
@@ -69,6 +69,19 @@ public class Score {
     		}
 	    }
 	}
+    
+    /**
+     * This method checks if any stone is placed on the board.
+     * @return stonePlaced
+     */
+    public boolean checkIfStonesArePlaced() {
+    	boolean stonePlaced = true;
+    	if ((blackStones.size() == 0) && (whiteStones.size() == 0)) {
+    		stonePlaced = false;
+    	}
+    	return stonePlaced;
+    }
+
     
     /**
      * Given the positions of the dead stones selected by the players,
@@ -128,22 +141,26 @@ public class Score {
         		Area area = new Area();
         		area.setEmptyLocation(emptyPoints);
             	HashSet<Point> borders = emptyPointsAndBorders.get(1); 
-            	ArrayList<Point> borderList = new ArrayList<>();
-            	borderList.addAll(borders);
-        		String possibleBorderColor = borderList.get(0).getStatus();
-        		boolean sameBorderColor = true;
-        		for (Point borderPoint : borders) {
-        			if (!borderPoint.getStatus().equals(possibleBorderColor)) {
-        				sameBorderColor = false;
-        				break;
-        			}
-        		}
-        		if (sameBorderColor) {
-        			area.setAreaColor(possibleBorderColor);
-        		} else {
-        			area.setAreaColor("e");
-        		}
-        		areas.add(area);
+            	if (borders.size() == 0) {
+            		area.setAreaColor("e");
+            	} else {
+            		ArrayList<Point> borderList = new ArrayList<>();
+            		borderList.addAll(borders);
+            		String possibleBorderColor = borderList.get(0).getStatus();
+            		boolean sameBorderColor = true;
+            		for (Point borderPoint : borders) {
+            			if (!borderPoint.getStatus().equals(possibleBorderColor)) {
+            				sameBorderColor = false;
+            				break;
+            			}
+            		}
+            		if (sameBorderColor) {
+            			area.setAreaColor(possibleBorderColor);
+            		} else {
+            			area.setAreaColor("e");
+            		}
+            		areas.add(area);
+            	}
     		}
     	}
     	
