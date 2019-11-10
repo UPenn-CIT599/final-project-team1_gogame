@@ -6,24 +6,27 @@ import java.awt.Color;
 
 public class Area {
 	
+	/**
+	 * Area is a group of empty locations adjacent to each other on the board.
+	 * An area belongs to either black or white, or does not belong to any side.
+	 */
+	
 	private HashSet<Point> emptyLocationsWithinArea = new HashSet<>();
 	private Color areaColor;
 
-	public Area() {
-		
-	}
-
 	/**
-	 * Adds a new empty location to the area
-	 * @param emptyLocation
+	 * This method assigns a group of adjacent empty locations to an area.
+	 * @param emptyPoints
 	 */
-	public void addEmptyLocation(Point emptyLocation) { 
-		emptyLocationsWithinArea.add(emptyLocation);
-		emptyLocation.setArea(this);
+	public void setEmptyLocation(HashSet<Point> emptyPoints) { 
+		emptyLocationsWithinArea = emptyPoints;
+		for (Point p : emptyPoints) {
+			p.setArea(this);
+		}
 	}
 	
 	/**
-	 * Returns all the empty locations within an area
+	 * This method returns all the empty locations within an area.
 	 * @return emptyLocationsWithinArea
 	 */
 	public HashSet<Point> getEmptyLocations() {
@@ -31,14 +34,19 @@ public class Area {
 	}
 	
 	/**
-	 * Sets the color of an area
+	 * This method sets the color of an area according to its ownership:
+	 * Color black - area owned by black
+	 * Color white - area owned by white
+	 * Color grey - area that does not belong to any side (neutral)
 	 * @param color
 	 */
 	public void setAreaColor(String color) {
 		if (color.contains("b")) {
 			areaColor = Color.BLACK;
-		} else {
+		} else if (color.contains("w")) {
 			areaColor = Color.WHITE;
+		} else {
+			areaColor = Color.GRAY;
 		}
 	}
 

@@ -33,15 +33,17 @@ public class Board {
 		groups = new ArrayList<Group>();
 		stones = new ArrayList<Stone>();
 		boardPositions = new ArrayList<String>();
-		boardPositions.add("");
+		String boardPosition = "";
 
 		intersections = new Intersection[size][size];
 		for (int x = 0; x < size; x++) {
 			for (int y = 0; y < size; y++) {
 				Intersection intersection = new Intersection(x, y);
 				intersections[x][y] = intersection;
+				boardPosition += Integer.toString(x) + Integer.toString(y) + ",";
 			}
 		}
+		boardPositions.add(boardPosition);
 		capturedBlackStones = 0;
 		capturedWhiteStones = 0;
 	}

@@ -1,5 +1,7 @@
 import java.awt.*;
 
+import javax.swing.JOptionPane;
+
 /**
  * The Player class represents one of the players in a game of Go.
  * 
@@ -19,7 +21,14 @@ public class Player {
     private static int maxAttempts = 20; // a computer player will pass after
 					 // attempting this many illegal moves
 
-    public static final int PASS = 8675309;
+    /**
+     * Used to indicate that the Pass button has been clicked.
+     */
+    public static final int PASS = -1;
+    /**
+     * Used to indicate that the Resign button has been clicked.
+     */
+    public static final int RESIGN = -2;
 
     public String getName() {
 	return name;
@@ -146,16 +155,29 @@ public class Player {
     private void pass() {
 	game.getBoard().pass();
 	if (game.wasLastMovePass()) {
-	    String color = "white";
+	    String colorString = "white";
 	    if (isBlack) {
-		color = "black";
+		colorString = "black";
 	    }
-	    game.setFinalMoveColor(color);
+	    game.setFinalMoveColor(colorString);
 	    game.gameOver();
 	} else {
 	    game.setLastMoveWasPass(true);
 	    game.getGui().setMessage(name, true);
 	}
+    }
+    
+    /**
+     * This method indicates that the Player is resigning.
+     */
+    private void resign() {
+	if ((isBlack && game.wasLastMovePass()) || (!isBlack && !game.wasLastMovePass())) {
+	    game.setFinalMoveColor("black");
+	} else {
+	    game.setFinalMoveColor("white");
+	}
+	game.setResignedPlayer(name);
+	game.gameOver();
     }
 
     /**
@@ -179,6 +201,17 @@ public class Player {
 	    }
 	    pass();
 	    return true;
+	} else if (x == RESIGN) {
+	    int confirm = JOptionPane.showOptionDialog(game.getGui().getFrame(),
+		    name + ", are you sure you want to resign?",
+		    "Resign Confirmation", JOptionPane.YES_NO_OPTION,
+		    JOptionPane.WARNING_MESSAGE, null, null, null);
+	    if (confirm == 0) {
+		resign();
+		return true;
+	    } else {
+		return false;
+	    }
 	} else if (game.isSelectingDeadStones()) {
 	   game.getSelector().selectStone(x, y); 
 	   return true;

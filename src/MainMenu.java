@@ -13,7 +13,7 @@ import javax.swing.text.*;
  * @author Chris Hartung
  *
  */
-public class MainMenu {
+public class MainMenu implements ActionListener {
     private UserInterface gui;
     private JFrame frame;
     private String player1Name = "";
@@ -36,7 +36,14 @@ public class MainMenu {
     private String player1Color2 = "Black";
     private JFileChooser fileChooser;
     private File replayFile = null;
+    private boolean practiceProblem = false;
     private boolean readyToPlay = false;
+    
+    private static String SELECT_FILE = "Select File";
+    private static String REPLAY = "Replay";
+    private static String PRACTICE = "Practice Problem";
+    private static String START_GAME = "Start Game";
+    private static String START_REPLAY = "Start Replay";
 
     /**
      * @return the player1Name
@@ -93,6 +100,13 @@ public class MainMenu {
     public String getPlayer1Color() {
 	return player1Color;
     }
+    
+    /**
+     * @return practiceProblem
+     */
+    public boolean isPracticeProblem() {
+	return practiceProblem;
+    }
 
     /**
      * @return readyToPlay
@@ -122,20 +136,16 @@ public class MainMenu {
 	String select = "Select game mode";
 	String onePlayer = "1 Player Game";
 	String twoPlayer = "2 Player Game";
-	String replay = "Replay Mode";
-	JPanel comboBoxPane = new JPanel();
-//	JTextField welcome = new JTextField("Welcome to Go!");
-//	welcome.setEditable(false);
-//	welcome.setHorizontalAlignment((int) JTextField.CENTER_ALIGNMENT);
+	String replayMode = "Replay Mode";
+	JPanel comboBoxPane = createBoxLayoutPanel();
 	JTextField welcome = createTextField("Welcome to Go!");
 	welcome.setFont(new Font(Font.DIALOG, Font.BOLD, 28));
-	String[] comboBoxItems = { select, onePlayer, twoPlayer, replay };
+	String[] comboBoxItems = { select, onePlayer, twoPlayer, replayMode };
 	JComboBox<String> selectGameMode = new JComboBox<>(comboBoxItems);
 	selectGameMode.setEditable(false);
 	selectGameMode.setMaximumSize(new Dimension(135, 50));
 	comboBoxPane.add(welcome);
 	comboBoxPane.add(selectGameMode);
-	comboBoxPane.setLayout(new BoxLayout(comboBoxPane, BoxLayout.Y_AXIS));
 	
 	JPanel namePanel1 = createNamePanel(1, 1);
 	JPanel namePanel2 = createNamePanel(1, 2);
@@ -159,8 +169,7 @@ public class MainMenu {
 	
 	JPanel selectCard = new JPanel();
 
-	JPanel onePlayerCard = new JPanel();
-	onePlayerCard.setLayout(new BoxLayout(onePlayerCard, BoxLayout.Y_AXIS));
+	JPanel onePlayerCard = createBoxLayoutPanel();
 	onePlayerCard.add(namePanel1);
 	onePlayerCard.add(colorPanel1);
 	onePlayerCard.add(boardSizePanel1);
@@ -168,8 +177,7 @@ public class MainMenu {
 	onePlayerCard.add(komiPanel1);
 	onePlayerCard.add(buttonPanel1);
 
-	JPanel twoPlayerCard = new JPanel();
-	twoPlayerCard.setLayout(new BoxLayout(twoPlayerCard, BoxLayout.Y_AXIS));
+	JPanel twoPlayerCard = createBoxLayoutPanel();
 	twoPlayerCard.add(namePanel2);
 	twoPlayerCard.add(colorPanel2);
 	twoPlayerCard.add(namePanel3);
@@ -178,40 +186,46 @@ public class MainMenu {
 	twoPlayerCard.add(komiPanel2);
 	twoPlayerCard.add(buttonPanel2);
 
-	JPanel replayCard = new JPanel();
-	replayCard.setLayout(new BoxLayout(replayCard, BoxLayout.Y_AXIS));
+	JPanel replayCard = createBoxLayoutPanel();
 
-	JPanel chooseFileLabelPanel = new JPanel();
-//	JTextField chooseFileLabel = new JTextField(
-//		"Please choose a replay file.");
-	JTextField chooseFileLabel = createTextField(
-		"Please choose a replay file.");
-//	chooseFileLabel.setEditable(false);
-//	chooseFileLabel.setHorizontalAlignment(JTextField.CENTER);
-	chooseFileLabelPanel.add(chooseFileLabel);
-
-	JPanel selectedFilePanel = new JPanel();
-	selectedFilePanel
-		.setLayout(new BoxLayout(selectedFilePanel, BoxLayout.Y_AXIS));
+	JPanel selectedFilePanel = createBoxLayoutPanel();
 	JTextField selectedFileLabel = createTextField("");
 	JTextField selectedFileName = createTextField("");
 	selectedFilePanel.add(selectedFileLabel);
 	selectedFilePanel.add(selectedFileName);
+	
+	JPanel isPracticeProblemPanel = createBoxLayoutPanel();
+	JTextField isPracticeProblemLabel = createTextField(
+		"Is the selected file a replay or a practice problem?");
+	isPracticeProblemLabel.setEnabled(false);
+	JRadioButton replayButton = createRadioButton(REPLAY, KeyEvent.VK_R);
+	replayButton.setSelected(true);
+	replayButton.setEnabled(false);
+	JRadioButton practiceProblemButton = createRadioButton(PRACTICE,
+		KeyEvent.VK_P);
+	practiceProblemButton.setEnabled(false);
+	ButtonGroup buttonGroup = new ButtonGroup();
+	buttonGroup.add(replayButton);
+	buttonGroup.add(practiceProblemButton);
+	JPanel isPracticeProblemButtonPanel = createBoxLayoutPanel(false);
+	isPracticeProblemButtonPanel.add(replayButton);
+	isPracticeProblemButtonPanel.add(practiceProblemButton);
+	isPracticeProblemPanel.add(isPracticeProblemLabel);
+	isPracticeProblemPanel.add(isPracticeProblemButtonPanel);
+	isPracticeProblemPanel
+		.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
 
 	JPanel startReplayPanel = new JPanel();
-	JButton startReplayButton = new JButton("Start Replay");
+	JButton startReplayButton = new JButton(START_REPLAY);
 	startReplayButton.setEnabled(false);
-	startReplayButton.addActionListener(new ActionListener() {
-
-	    @Override
-	    public void actionPerformed(ActionEvent e) {
-		System.out.println("opening " + replayFile.getName()); // TODO
-	    }
-
-	});
+	startReplayButton.setActionCommand(START_REPLAY);
+	startReplayButton.addActionListener(this);
 	startReplayPanel.add(startReplayButton);
 
-	JPanel chooseFilePanel = new JPanel();
+	JPanel chooseFilePanel = createBoxLayoutPanel();
+	JTextField chooseFileLabel = createTextField(
+		"Please choose a file.");
+	chooseFileLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 	/*
 	 * A portion of the below code is based on the following:
 	 * 
@@ -224,7 +238,12 @@ public class MainMenu {
 	fileChooser = new JFileChooser();
 	fileChooser.setFileFilter(new ReplayFileFilter());
 	fileChooser.setAcceptAllFileFilterUsed(false);
-	JButton chooseFileButton = new JButton("Select file");
+	JButton chooseFileButton = new JButton(SELECT_FILE);
+	chooseFileButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+	
+	// The choose file button uses its own ActionListener rather than the
+	// one used by the other buttons so that it can more easily reference
+	// the components it needs to enable.
 	chooseFileButton.addActionListener(new ActionListener() {
 
 	    @Override
@@ -232,6 +251,9 @@ public class MainMenu {
 		int returnVal = fileChooser.showOpenDialog(replayCard);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 		    replayFile = fileChooser.getSelectedFile();
+		    isPracticeProblemLabel.setEnabled(true);
+		    replayButton.setEnabled(true);
+		    practiceProblemButton.setEnabled(true);
 		    startReplayButton.setEnabled(true);
 		    selectedFileLabel
 			    .setText("You selected the following file:");
@@ -240,18 +262,21 @@ public class MainMenu {
 	    }
 
 	});
+	chooseFilePanel.add(chooseFileLabel);
 	chooseFilePanel.add(chooseFileButton);
+	chooseFilePanel
+		.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
 
-	replayCard.add(chooseFileLabelPanel);
 	replayCard.add(chooseFilePanel);
 	replayCard.add(selectedFilePanel);
+	replayCard.add(isPracticeProblemPanel);
 	replayCard.add(startReplayPanel);
 
 	JPanel cards = new JPanel(new CardLayout());
 	cards.add(selectCard, select);
 	cards.add(onePlayerCard, onePlayer);
 	cards.add(twoPlayerCard, twoPlayer);
-	cards.add(replayCard, replay);
+	cards.add(replayCard, replayMode);
 
 	Container pane = frame.getContentPane();
 	pane.add(comboBoxPane, BorderLayout.PAGE_START);
@@ -360,9 +385,6 @@ public class MainMenu {
      */
     private JPanel createNamePanel(int playerNumber, int numPlayers) {
 	JPanel namePanel = new JPanel();
-//	JTextField choosePlayerNameLabel = new JTextField(
-//		"Player " + playerNumber + ", please enter your name: ");
-//	choosePlayerNameLabel.setEditable(false);
 	JTextField choosePlayerNameLabel = createTextField(
 		"Player " + playerNumber + ", please enter your name: ");
 	JTextField choosePlayerName = createFilteredField();
@@ -402,9 +424,6 @@ public class MainMenu {
     private JPanel createColorPanel(int numPlayers) {
 	JPanel colorPanel = new JPanel();
 	String[] colorChoices = { "Black", "White", "Random" };
-//	JTextField colorChooserLabel = new JTextField(
-//		"Player 1, please choose a color: ");
-//	colorChooserLabel.setEditable(false);
 	JTextField colorChooserLabel = createTextField(
 		"Player 1, please choose a color: ");
 	JComboBox<String> colorChooser = new JComboBox<>(colorChoices);
@@ -443,14 +462,7 @@ public class MainMenu {
      * @return The JPanel used to select the board size
      */
     private JPanel createBoardSizePanel(int numPlayers) {
-	JPanel boardSizePanel = new JPanel();
-	boardSizePanel
-		.setLayout(new BoxLayout(boardSizePanel, BoxLayout.Y_AXIS));
-//	JTextField boardSizeChooserLabel = new JTextField(
-//		"Please choose a board size:");
-//	boardSizeChooserLabel.setEditable(false);
-//	boardSizeChooserLabel
-//		.setHorizontalAlignment((int) JTextField.CENTER_ALIGNMENT);
+	JPanel boardSizePanel = createBoxLayoutPanel();
 	JTextField boardSizeChooserLabel = createTextField(
 		"Please choose a board size:");
 	JSlider boardSizeChooser = new JSlider(JSlider.HORIZONTAL, 5, 19, 19);
@@ -487,15 +499,12 @@ public class MainMenu {
 	double maxKomi = 8.5;
 	DecimalFormat komiDecimalFormat = new DecimalFormat("#.#");
 	
-	JPanel komiPanel = new JPanel();
-	komiPanel.setLayout(new BoxLayout(komiPanel, BoxLayout.Y_AXIS));
+	JPanel komiPanel = createBoxLayoutPanel();
 	JTextField komiChooserLabel = new JTextField(
 		"If handicap is 0, please choose a komi:");
 	komiChooserLabel.setEditable(false);
 	komiChooserLabel
 		.setHorizontalAlignment((int) JTextField.CENTER_ALIGNMENT);
-//	JTextField komiChooserLabel = new JTextField(
-//		"If handicap is 0, please choose a komi:");
 	komiPanel.add(komiChooserLabel);
 	JSlider komiChooser = new JSlider(JSlider.HORIZONTAL, 0, (int) maxKomi, 6);
 	
@@ -535,13 +544,7 @@ public class MainMenu {
      * @return The JPanel used to select the handicap
      */
     private JPanel createHandicapPanel(int numPlayers, JPanel komiPanel) {
-	JPanel handicapPanel = new JPanel();
-	handicapPanel.setLayout(new BoxLayout(handicapPanel, BoxLayout.Y_AXIS));
-//	JTextField handicapChooserLabel = new JTextField(
-//		"Please choose a handicap:");
-//	handicapChooserLabel.setEditable(false);
-//	handicapChooserLabel
-//		.setHorizontalAlignment((int) JTextField.CENTER_ALIGNMENT);
+	JPanel handicapPanel = createBoxLayoutPanel();
 	JTextField handicapChooserLabel = createTextField(
 		"Please choose a handicap:");
 	JSlider handicapChooser = new JSlider(JSlider.HORIZONTAL, 0, 9, 0);
@@ -588,36 +591,40 @@ public class MainMenu {
      */
     private JPanel createStartButtonPanel(int numPlayers) {
 	JPanel buttonPanel = new JPanel();
-	JButton button = new JButton("Start Game");
-	button.addActionListener(new ActionListener() {
-
-	    @Override
-	    public void actionPerformed(ActionEvent arg0) {
-		if (numPlayers == 1) {
-		    player1Name = player1Name1;
-		    player1Color = player1Color1;
-		    numRows = numRows1;
-		    handicap = handicap1;
-		    komi = komi1;
-		    onePlayerGame = true;
-		} else {
-		    player1Name = player1Name2;
-		    player1Color = player1Color2;
-		    numRows = numRows2;
-		    handicap = handicap2;
-		    komi = komi2;
-		    onePlayerGame = false;
-		}
-		replayMode = false;
-		readyToPlay = true;
-//		frame.setVisible(false);
-		frame.dispose();
-		gui.initializeGame();
-	    }
-
-	});
+	JButton button = new JButton(START_GAME);
+	button.setActionCommand(numPlayers + START_GAME);
+	button.addActionListener(this);
 	buttonPanel.add(button);
 	return buttonPanel;
+    }
+    
+    /**
+     * This method returns a new JPanel with a BoxLayout.
+     * 
+     * @param vertical True if the components in the panel are to be arranged
+     *                 vertically and false if they are to be arranged
+     *                 horizontally
+     * @return The JPanel that was created
+     */
+    private JPanel createBoxLayoutPanel(boolean vertical) {
+	JPanel panel = new JPanel();
+	int axis = 0;
+	if (vertical) {
+	    axis = BoxLayout.Y_AXIS;
+	} else {
+	    axis = BoxLayout.X_AXIS;
+	}
+	panel.setLayout(new BoxLayout(panel, axis));
+	return panel;
+    }
+    
+    /**
+     * This method returns a new JPanel with a BoxLayout.
+     * 
+     * @return The JPanel that was created
+     */
+    private JPanel createBoxLayoutPanel() {
+	return createBoxLayoutPanel(true);
     }
     
     /**
@@ -633,5 +640,47 @@ public class MainMenu {
 	field.setMaximumSize(new Dimension(500, 30));
 	field.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
 	return field;
+    }
+    
+    
+    private JRadioButton createRadioButton(String text, int keyEvent) {
+	JRadioButton button = new JRadioButton(text);
+	button.setMnemonic(keyEvent);
+	button.setActionCommand(text);
+	button.addActionListener(this);
+	return button;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+	String command = e.getActionCommand();
+	if (command.equals(REPLAY)) {
+	    practiceProblem = false;
+	} else if (command.equals(PRACTICE)) {
+	    practiceProblem = true;
+	} else if (command.equals(START_REPLAY)) {
+	    System.out.println("opening " + replayFile.getName()); // TODO
+	} else if (command.contains(START_GAME)) {
+	    int numPlayers = Integer.parseInt(command.substring(0, 1));
+	    if (numPlayers == 1) {
+		player1Name = player1Name1;
+		player1Color = player1Color1;
+		numRows = numRows1;
+		handicap = handicap1;
+		komi = komi1;
+		onePlayerGame = true;
+	    } else {
+		player1Name = player1Name2;
+		player1Color = player1Color2;
+		numRows = numRows2;
+		handicap = handicap2;
+		komi = komi2;
+		onePlayerGame = false;
+	    }
+	    replayMode = false;
+	    readyToPlay = true;
+	    frame.dispose();
+	    gui.initializeGame();
+	}
     }
 }

@@ -23,7 +23,8 @@ class BoardTest {
 		assertEquals(board.getStones().size(), 4);
 
 		// Check board positions
-		assertEquals(board.getBoardPositions().get(0), "");
+		assertEquals(board.getBoardPositions().get(0), 
+				"00,01,02,03,04,10,11,12,13,14,20,21,22,23,24,30,31,32,33,34,40,41,42,43,44,");
 		assertEquals(board.getBoardPositions().get(1), 
 				"b00,01,02,03,04,10,11,12,13,14,20,21,22,23,24,30,31,32,33,34,40,41,42,43,44,");
 		assertEquals(board.getBoardPositions().get(2), 
@@ -59,7 +60,8 @@ class BoardTest {
 		assertEquals(board.getStones().size(), 3);
 
 		// Check board positions
-		assertEquals(board.getBoardPositions().get(0), "");
+		assertEquals(board.getBoardPositions().get(0), 
+				"00,01,02,03,04,10,11,12,13,14,20,21,22,23,24,30,31,32,33,34,40,41,42,43,44,");
 		assertEquals(board.getBoardPositions().get(1), 
 				"00,01,02,03,04,b10,11,12,13,14,20,21,22,23,24,30,31,32,33,34,40,41,42,43,44,");
 		assertEquals(board.getBoardPositions().get(2), 
@@ -94,7 +96,8 @@ class BoardTest {
 		assertEquals(board.getStones().size(), 5);
 
 		// Check board positions
-		assertEquals(board.getBoardPositions().get(0), "");
+		assertEquals(board.getBoardPositions().get(0), 
+				"00,01,02,03,04,10,11,12,13,14,20,21,22,23,24,30,31,32,33,34,40,41,42,43,44,");
 		assertEquals(board.getBoardPositions().get(1), 
 				"b00,01,02,03,04,10,11,12,13,14,20,21,22,23,24,30,31,32,33,34,40,41,42,43,44,");
 		assertEquals(board.getBoardPositions().get(2), 
@@ -121,7 +124,8 @@ class BoardTest {
 		board.pass();
 		board.pass();
 		
-		assertEquals(board.getBoardPositions().get(0), "");
+		assertEquals(board.getBoardPositions().get(0), 
+				"00,01,02,03,04,10,11,12,13,14,20,21,22,23,24,30,31,32,33,34,40,41,42,43,44,");
 		assertEquals(board.getBoardPositions().get(1), 
 				"00,01,02,03,04,10,11,12,13,14,20,21,22,23,24,30,31,32,b33,34,40,41,42,43,44,");
 		assertEquals(board.getBoardPositions().get(2), 

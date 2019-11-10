@@ -13,6 +13,7 @@ import javax.swing.text.*;
  *
  */
 public class EndGameMenu {
+    private UserInterface gui;
     private JFrame frame;
     private Container pane;
     private JPanel buttonPanel;
@@ -41,6 +42,7 @@ public class EndGameMenu {
      * @param gui The UserInterface associated with this EndGameMenu
      */
     public EndGameMenu(UserInterface gui) {
+	this.gui = gui;
 	frame = new JFrame("Go - Game Over");
 	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	frame.setAlwaysOnTop(true);
@@ -48,7 +50,7 @@ public class EndGameMenu {
 	pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
 	blackPlayerName = gui.blackPlayerName();
 	whitePlayerName = gui.whitePlayerName();
-	HashMap<String, Integer> scores = gui.getGame().getFinalScore();
+	HashMap<String, Double> scores = gui.getGame().getFinalScore();
 	blackScore = scores.get("blackScore");
 	whiteScore = scores.get("whiteScore") + gui.getGame().getKomi();
 	scoreDifferential = Math.abs(blackScore - whiteScore);
@@ -91,7 +93,7 @@ public class EndGameMenu {
 		    int confirm = JOptionPane.showOptionDialog(frame,
 			    "You must save your replay before viewing it.\n" +
 		            "Press OK to choose where to save it.",
-			    "Save replay", JOptionPane.OK_CANCEL_OPTION,
+			    "Save Replay", JOptionPane.OK_CANCEL_OPTION,
 			    JOptionPane.INFORMATION_MESSAGE, null, null, null);
 		    if (confirm == 0) {
 			saveReplay();
@@ -153,7 +155,7 @@ public class EndGameMenu {
 		int confirm = JOptionPane.showOptionDialog(frame,
 			"Are you sure you want to overwrite " +
 				replayFile.getName() + "?",
-			"File overwrite warning", JOptionPane.YES_NO_OPTION,
+			"File Overwrite Warning", JOptionPane.YES_NO_OPTION,
 			JOptionPane.WARNING_MESSAGE, null, null, null);
 		if (confirm != 0) {
 		    return;
@@ -164,11 +166,12 @@ public class EndGameMenu {
 		PrintWriter pw = new PrintWriter(fw);
 		pw.println("Testing .sgf writer"); // TODO
 		pw.flush();
+		pw.close();
 	    } catch (IOException e) {
 		JOptionPane.showMessageDialog(frame,
 			"File writing failed.\n" + 
 		        "Please select a different location to save your replay.",
-			"File writing error", JOptionPane.ERROR_MESSAGE);
+			"File Writing Error", JOptionPane.ERROR_MESSAGE);
 	    }
 	}
     }
@@ -197,7 +200,18 @@ public class EndGameMenu {
     private String winner() {
 	String winText = " wins by " + scoreFormat.format(scoreDifferential) +
 		" points!";
-	if (blackScore > whiteScore) {
+	String resignText = " resigned. ";
+	String resignWinText = " wins!";
+	if (gui.getGame().getResignedPlayer() != null) {
+	    String resignedPlayer = gui.getGame().getResignedPlayer();
+	    String winningPlayer = "";
+	    if (resignedPlayer.equals(blackPlayerName)) {
+		winningPlayer = whitePlayerName;
+	    } else {
+		winningPlayer = blackPlayerName;
+	    }
+	    return resignedPlayer + resignText + winningPlayer + resignWinText;
+	} else if (blackScore > whiteScore) {
 	    return blackPlayerName + winText;
 	} else if (whiteScore > blackScore) {
 	    return whitePlayerName + winText;

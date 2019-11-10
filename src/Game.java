@@ -8,7 +8,7 @@ import javax.swing.JOptionPane;
  * @author Chris Hartung
  *
  */
-public class Game {
+public class Game implements GameViewer {
     private UserInterface gui;
     private Board board; //TODO
     //private TestBoard board; // TODO
@@ -24,10 +24,12 @@ public class Game {
     private boolean lastMoveWasPass;
     private String finalMoveColor;
     private boolean gameOver;
+    private String resignedPlayer; // the name of the player who resigned, or
+				   // null if no one has resigned
     private Score scorekeeper;
     private boolean selectingDeadStones = false;
     private DeadStoneSelector selector;
-    private HashMap<String, Integer> finalScore;
+    private HashMap<String, Double> finalScore;
 
     /**
      * @return the gui
@@ -112,6 +114,13 @@ public class Game {
     public boolean wasLastMovePass() {
 	return lastMoveWasPass;
     }
+    
+    /**
+     * @return the resignedPlayer
+     */
+    public String getResignedPlayer() {
+	return resignedPlayer;
+    }
 
     /**
      * @param lastMoveWasPass the lastMoveWasPass to set
@@ -125,6 +134,13 @@ public class Game {
      */
     public boolean isGameOver() {
 	return gameOver;
+    }
+    
+    /**
+     * @param resignedPlayer the resignedPlayer to set
+     */
+    public void setResignedPlayer(String resignedPlayer) {
+	this.resignedPlayer = resignedPlayer;
     }
     
     /**
@@ -158,7 +174,7 @@ public class Game {
     /**
      * @return the finalScore
      */
-    public HashMap<String, Integer> getFinalScore() {
+    public HashMap<String, Double> getFinalScore() {
 	return finalScore;
     }
     
@@ -179,7 +195,7 @@ public class Game {
 	gameOver = true;
 	scorekeeper = new Score(board);
 	scorekeeper.categorizePoints();
-	if (!onePlayerGame) {
+	if (!onePlayerGame && (resignedPlayer == null)) {
 	    selectingDeadStones = true;
 //	    gui.selectDeadStones();
 	    selector = new DeadStoneSelector(this);
@@ -204,10 +220,11 @@ public class Game {
 		    scorekeeper.getDeadStones(selector.deadStoneHashSet()));
 	    selectionPhaseOver();
 	}
-	scorekeeper.combineEmptyLocations();
-	scorekeeper.checkAreaBlackOrWhite();
-	scorekeeper.fillNeutralPositions(finalMoveColor);
-	finalScore = scorekeeper.scoring();
+	//scorekeeper.combineEmptyLocations();
+	scorekeeper.checkAreaOwnership();
+	//scorekeeper.fillNeutralPositions(finalMoveColor);
+	int sekiCount = scorekeeper.checkSeki();
+	finalScore = scorekeeper.scoring(finalMoveColor, sekiCount);
 	gui.gameOver();
     }
     
