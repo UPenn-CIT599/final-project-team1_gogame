@@ -9,17 +9,15 @@ public class Area {
 	private HashSet<Point> emptyLocationsWithinArea = new HashSet<>();
 	private Color areaColor;
 
-	public Area() {
-		
-	}
-
 	/**
 	 * Adds a new empty location to the area
 	 * @param emptyLocation
 	 */
-	public void addEmptyLocation(Point emptyLocation) { 
-		emptyLocationsWithinArea.add(emptyLocation);
-		emptyLocation.setArea(this);
+	public void setEmptyLocation(HashSet<Point> emptyPoints) { 
+		emptyLocationsWithinArea = emptyPoints;
+		for (Point p : emptyPoints) {
+			p.setArea(this);
+		}
 	}
 	
 	/**
@@ -37,8 +35,10 @@ public class Area {
 	public void setAreaColor(String color) {
 		if (color.contains("b")) {
 			areaColor = Color.BLACK;
-		} else {
+		} else if (color.contains("w")) {
 			areaColor = Color.WHITE;
+		} else {
+			areaColor = Color.GRAY;
 		}
 	}
 
