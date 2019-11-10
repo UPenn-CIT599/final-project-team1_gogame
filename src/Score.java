@@ -7,8 +7,21 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 public class Score {
+	
+	/**
+	 * Definition of seki (a Go term):
+	 * Seki is a rare case that happens in a Go game. It happens when two groups of stones 
+	 * of different colors that are adjacent to each other are both alive because neither 
+	 * is able to capture the other. 
+	 * In other words, these two groups of stones have common point(s) as their liberties 
+	 * so that if one wants to capture the other by filling these point(s), it will run out 
+	 * of liberties first and be captured by the other. This is same with the other group.
+	 * Therefore, neither player attempts to fill these point(s) and they become neutral 
+	 * positions at the end of a game.
+	 */
 
-    private int blackScore, whiteScore, size;
+	private int size;
+    private double blackScore, whiteScore;
 
     private String finalBoardPositions;
     private Point[][] finalPositions;
@@ -19,21 +32,19 @@ public class Score {
     private ArrayList<Point> blackStones = new ArrayList<>();
 	private ArrayList<Point> whiteStones = new ArrayList<>();
 
-    private ArrayList<Area> blackAreas = new ArrayList<>();
-    private ArrayList<Area> whiteAreas = new ArrayList<>();
     private ArrayList<Point> neutralPositions = new ArrayList<>();
 
     public Score(Board b) {
     	this.size = b.getSize();
-    	//	areas = new ArrayList<Area>();
-    	//	emptyLocations = new ArrayList<Point>();
     	ArrayList<String> boardPositions = b.getBoardPositions();
     	finalBoardPositions = boardPositions.get(boardPositions.size() - 1);
     	finalPositions = new Point[size][size];
     }
 
     /**
-     * Categorizes each point/intersection on the board into 3 groups: black, white, empty
+     * According to the final board positions, 
+     * this method categorizes each point on the board into 3 groups: 
+     * black, white, and empty.
      */
     public void categorizePoints() {
     	String[] point = finalBoardPositions.split(",");
@@ -59,10 +70,9 @@ public class Score {
 	    }
 	}
     
-
     /**
      * Given the positions of the dead stones selected by the players,
-     * returns a HashSet that stores all the DeadStone objects
+     * this method returns a HashSet that stores all the DeadStone objects.
      * @param deadStonePositions
      * @return deadStones
      */
@@ -84,8 +94,8 @@ public class Score {
     }
 
     /**
-     * Replaces the dead stones with empty locations for score calculation
-     * since dead stones/prisoners don't count under Chinese rules
+     * This method replaces the dead stones with empty locations 
+     * in order to calculate the scores correctly.
      * @param deadStones
      */
     public void removeDeadStones(HashSet<DeadStone> deadStones) {
@@ -104,110 +114,118 @@ public class Score {
     	}
     }
 
-    /**
-     * Groups empty locations into areas
-     */
-    public void combineEmptyLocations() {
-    	int count = 0;
-    	for (Point emptyLocation : emptyLocations) {
-    		boolean hasEmptyAdjacentPositions = false;
-    		for (Point adjacent : Helper.getAdjacentPoints(emptyLocation, size, finalPositions)) {
-    			if (adjacent.getStatus().equals("e")) {
-    				hasEmptyAdjacentPositions = true;
-    				if (Helper.checkContainEmptyLocation(adjacent, areas)) {
-    					adjacent.getArea().addEmptyLocation(emptyLocation);
-    				} else {
-    					Area a = new Area();
-    					a.addEmptyLocation(emptyLocation);
-    					areas.add(a);
-    				}
-    				break;
-    			}
-    		}
-    		if (!hasEmptyAdjacentPositions) {
-    			Area a = new Area();
-    			a.addEmptyLocation(emptyLocation);
-    			areas.add(a);
-    		}
-    		count++;
-    		System.out.println(count);
-    	}
-    }
-
 	/**
-     * Identifies if an area belongs to black or white, or if it is neutral 
+     * This method determines the ownership of all the areas on the board.
+     * An area belongs to either black or white, or does not belong to any side (neutral). 
      */
-    public void checkAreaBlackOrWhite() {
+    public void checkAreaOwnership() {
+    	for (Point empty : emptyLocations) {
+    		if (empty.getArea() != null) {
+    			continue;
+    		} else {
+    			ArrayList<HashSet<Point>> emptyPointsAndBorders = ScoreHelper.getChainAndFindReach(empty, size, finalPositions);
+        		HashSet<Point> emptyPoints = emptyPointsAndBorders.get(0);
+        		Area area = new Area();
+        		area.setEmptyLocation(emptyPoints);
+            	HashSet<Point> borders = emptyPointsAndBorders.get(1); 
+            	ArrayList<Point> borderList = new ArrayList<>();
+            	borderList.addAll(borders);
+        		String possibleBorderColor = borderList.get(0).getStatus();
+        		boolean sameBorderColor = true;
+        		for (Point borderPoint : borders) {
+        			if (!borderPoint.getStatus().equals(possibleBorderColor)) {
+        				sameBorderColor = false;
+        				break;
+        			}
+        		}
+        		if (sameBorderColor) {
+        			area.setAreaColor(possibleBorderColor);
+        		} else {
+        			area.setAreaColor("e");
+        		}
+        		areas.add(area);
+    		}
+    	}
+    	
     	for (Area a : areas) {
-    		HashSet<String> recordSurroundings = new HashSet<>();
-    		for (Point emptyLocation : a.getEmptyLocations()) {
-    			for (Point adjacent : Helper.getAdjacentPoints(emptyLocation, size, finalPositions)) {
-    				if (adjacent.getStatus().equals("b")) {
-    					recordSurroundings.add("b");
-    				} else if (adjacent.getStatus().equals("w")) {
-    					recordSurroundings.add("w");
-    				} else {
-    					recordSurroundings.add("e");
-    				}
+    		if (a.getAreaColor() == Color.GRAY) {
+    			for (Point neutral : a.getEmptyLocations()) {
+    				neutralPositions.add(neutral);
     			}
-    		}
-    		if (recordSurroundings.contains("b") && recordSurroundings.contains("w")) { // record neutral position
-    			for (Point p : a.getEmptyLocations()) {
-    				neutralPositions.add(p);
-    			}
-    		} else {
-    			a.setAreaColor(recordSurroundings.toString());
-    		}
-    		if (a.getAreaColor() == Color.BLACK) {
-    			blackAreas.add(a);
-    		} else if (a.getAreaColor() == Color.WHITE) {
-    			whiteAreas.add(a);
     		}
     	}
     }
-
+    
     /**
-     * Fills the neutral positions with stones
-     * If the number of neutral positions is even, each player gets half of all the neutral positions
-     * If the number of neutral positions is odd, alternate the assignment of neutral positions to each player
-     * by starting with the one that didn't make the last move
-     * @param lastMove
+     * This method checks whether a rare case called seki is present on the board
+     * and returns the number of neutral positions that occur because of seki.
+     * @return sekiCount
      */
-    public void fillNeutralPositions(String lastMove) {
-    	boolean addToBlack = true;
-    	if (neutralPositions.size() % 2 != 0) { 
-    		if (lastMove.contains("b")) {
-    			addToBlack = !addToBlack;
-    		}
+    public int checkSeki() {
+    	int sekiCount = 0;
+    	Point[][] pseudoBlack = finalPositions;
+    	Point[][] pseudoWhite = finalPositions;
+    	for (Point neutral : neutralPositions) {
+    		Point original = finalPositions[neutral.getxPosition()][neutral.getyPosition()];
+    		Point black = new Point("b", neutral.getxPosition(), neutral.getyPosition());
+    		pseudoBlack[neutral.getxPosition()][neutral.getyPosition()] = black;
+    		ArrayList<HashSet<Point>> pseudoBlackChainsAndBorders = ScoreHelper.getChainAndFindReach(black, size, pseudoBlack);
+    		HashSet<Point> pseudoBlackReach = pseudoBlackChainsAndBorders.get(1);
+    		int pseudoBlackLiberties = ScoreHelper.countLiberties(pseudoBlackReach);
+    		Point white = new Point("w", neutral.getxPosition(), neutral.getyPosition());
+    		pseudoWhite[neutral.getxPosition()][neutral.getyPosition()] = white;
+    		ArrayList<HashSet<Point>> pseudoWhiteChainsAndBorders = ScoreHelper.getChainAndFindReach(white, size, pseudoWhite);
+    		HashSet<Point> pseudoWhiteReach = pseudoWhiteChainsAndBorders.get(1);
+    		int pseudoWhiteLiberties = ScoreHelper.countLiberties(pseudoWhiteReach);
+    		if ((pseudoBlackLiberties == 1) && (pseudoWhiteLiberties == 1)) {
+    			sekiCount++;
+    		} 
+    		pseudoBlack[neutral.getxPosition()][neutral.getyPosition()] = original;
+    		pseudoWhite[neutral.getxPosition()][neutral.getyPosition()] = original;
     	}
-    	for (Point p : neutralPositions) {
-    		if (addToBlack) {
-    			blackStones.add(p);
-    			addToBlack = !addToBlack;
-    			emptyLocations.remove(p);
-    		} else {
-    			whiteStones.add(p);
-    			addToBlack = !addToBlack;
-    			emptyLocations.remove(p);
-    		}
-    	}
+    	return sekiCount;
     }
 
     /**
-     * Calculates the score by adding the number of stones and the number of empty locations
-     * within all the areas captured by the same color
+     * This method calculates and returns the scores of both black and white.
+     * The base score is calculated by adding the number of stones and the number of empty locations
+     * within all the areas owned by the same color.
+     * Additional score consists of half of the number of neutral positions in the seki case and 
+     * half of the remaining neutral positions (called dames).
+     * The neutral positions in the seki case are evenly divided between the two players exactly, 
+     * meaning if the number of these neutral positions is odd, a .5 score will occur.
+     * If the number of dames is even, each player will get exactly half of the total dames.
+     * If the number of dames is odd, the player who made the last move will get one score less than 
+     * the other.
+     * @param lastMove
+     * @param sekiCount
      * @return scores
      */
-    public HashMap<String, Integer> scoring() {
-    	HashMap<String, Integer> scores = new HashMap<>();
+    public HashMap<String, Double> scoring(String lastMove, int sekiCount) {
+    	HashMap<String, Double> scores = new HashMap<>();
     	blackScore = blackStones.size();
     	whiteScore = whiteStones.size();
-    	for (Area a : blackAreas) {
-    		blackScore += a.getEmptyLocations().size();
+    	int countNeutralPositions = 0;
+    	for (Area a : areas) {
+    		if (a.getAreaColor() == Color.BLACK) {
+    			blackScore += a.getEmptyLocations().size();
+    		} else if (a.getAreaColor() == Color.WHITE) {
+    			whiteScore += a.getEmptyLocations().size();
+    		} else {
+    			countNeutralPositions += a.getEmptyLocations().size();
+    		}
     	}
-    	for (Area a : whiteAreas) {
-    		whiteScore += a.getEmptyLocations().size();
+    	blackScore += (countNeutralPositions - sekiCount) / 2;
+		whiteScore += (countNeutralPositions - sekiCount) / 2;
+		if ((countNeutralPositions - sekiCount) % 2 != 0) {
+    		if (lastMove.contains("b")) {
+    			whiteScore++;
+    		} else {
+    			blackScore++;
+    		}
     	}
+		blackScore += sekiCount / 2.0;
+		whiteScore += sekiCount / 2.0;
     	scores.put("blackScore", blackScore);
     	scores.put("whiteScore", whiteScore);
     	return scores;
