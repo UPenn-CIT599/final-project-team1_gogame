@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.util.HashMap;
 
 import javax.swing.JOptionPane;
 
@@ -13,6 +14,7 @@ public class Player {
     private String name;
     private Color color;
     private boolean isBlack;
+    private String colorString;
     private boolean isComputer;
     private Object notifier;
     private static int computerMoveDelay = 1000; // the number of milliseconds a
@@ -51,8 +53,10 @@ public class Player {
 	this.isComputer = isComputer;
 	if (isBlack) {
 	    this.color = Color.BLACK;
+	    this.colorString = "black";
 	} else {
 	    this.color = Color.WHITE;
+	    this.colorString = "white";
 	}
 	if (isComputer) {
 	    initializeComputer();
@@ -92,56 +96,76 @@ public class Player {
 			Thread.sleep(computerMoveDelay);
 		    } catch (InterruptedException e) {
 			e.printStackTrace();
-		    }
-		    // pass when doing so will end the game (for testing
-		    // purposes) TODO
+		    }		    
+		    
+		    // if the last move was pass, computer could end the game by
+		    // passing
 		    if (game.wasLastMovePass()) {
+			// check what the final score would be if the current
+			// position were the final position
+			Score scorekeeper = new Score(game.getBoard());
+			scorekeeper.categorizePoints();
+			if (scorekeeper.checkIfStonesArePlaced()) {
+			    scorekeeper.checkAreaOwnership();
+			    int sekiCount = scorekeeper.checkSeki();
+			    HashMap<String, Double> score = scorekeeper
+				    .scoring(colorString, sekiCount);
+			    double blackScore = score.get("blackScore");
+			    double whiteScore = score.get("whiteScore");
+			    boolean blackWins = (blackScore > (whiteScore +
+				    game.getKomi()));
+			    
+			    // pass if doing so would win the game
+			    if (blackWins == isBlack) {
+				pass();
+				game.nextPlayersTurn();
+				return;
+			    }
+			}			
+		    } 
+		    boolean movedYet = false;
+		    int count = 0;
+		    // try to place a stone up to the maximum number of
+		    // times
+		    while (!movedYet && (count < maxAttempts)) {
+			// attempt to place a stone in a random location
+			try {
+			    int x = (int) (Math.random() *
+				    game.getNumRows());
+			    int y = (int) (Math.random() *
+				    game.getNumRows());
+			    game.getBoard().placeStone(color, x, y);
+			    if (game.getHandicapCounter() <= 0) {
+				game.getGui().setMessage(name, false);
+				game.nextPlayersTurn();
+			    } else if (game.getHandicapCounter() == 1) {
+				game.decrementHandicapCounter();
+				game.getGui().setMessage(name, false);
+				game.nextPlayersTurn();
+			    }
+			    else {
+				game.decrementHandicapCounter();
+				game.getGui().handicapMessage();
+			    }
+			    game.setLastMoveWasPass(false);
+			    movedYet = true;
+			}
+			catch (IllegalArgumentException e) {
+			    // if handicap stones haven't all been placed,
+			    // don't increase the counter in order to
+			    // prevent passing
+			    if (game.getHandicapCounter() <= 0) {
+				count++;
+			    }
+			}
+		    }
+		    // pass if the maximum number of attempts was reached
+		    // and all attempts were unsuccessful
+		    if (count == maxAttempts) {
 			pass();
 			game.nextPlayersTurn();
-		    } else {
-			boolean movedYet = false;
-			int count = 0;
-			// try to place a stone up to the maximum number of
-			// times
-			while (!movedYet && (count < maxAttempts)) {
-			    // attempt to place a stone in a random location
-			    try {
-				int x = (int) (Math.random() *
-					game.getNumRows());
-				int y = (int) (Math.random() *
-					game.getNumRows());
-				game.getBoard().placeStone(color, x, y);
-				if (game.getHandicapCounter() <= 0) {
-				    game.getGui().setMessage(name, false);
-				    game.nextPlayersTurn();
-				} else if (game.getHandicapCounter() == 1) {
-				    game.decrementHandicapCounter();
-				    game.getGui().setMessage(name, false);
-				    game.nextPlayersTurn();
-				}
-				else {
-				    game.decrementHandicapCounter();
-				    game.getGui().handicapMessage();
-				}
-				game.setLastMoveWasPass(false);
-				movedYet = true;
-			    }
-			    catch (IllegalArgumentException e) {
-				// if handicap stones haven't all been placed,
-				// don't increase the counter in order to
-				// prevent passing
-				if (game.getHandicapCounter() <= 0) {
-				    count++;
-				}
-			    }
-			}
-			// pass if the maximum number of attempts was reached
-			// and all attempts were unsuccessful
-			if (count == maxAttempts) {
-			    pass();
-			    game.nextPlayersTurn();
-			}
 		    }
+
 		    game.getGui().drawBoard();
 		}
 	    }
@@ -155,10 +179,10 @@ public class Player {
     private void pass() {
 	game.getBoard().pass();
 	if (game.wasLastMovePass()) {
-	    String colorString = "white";
-	    if (isBlack) {
-		colorString = "black";
-	    }
+//	    String colorString = "white";
+//	    if (isBlack) {
+//		colorString = "black";
+//	    }
 	    game.setFinalMoveColor(colorString);
 	    game.gameOver();
 	} else {
@@ -171,7 +195,8 @@ public class Player {
      * This method indicates that the Player is resigning.
      */
     private void resign() {
-	if ((isBlack && game.wasLastMovePass()) || (!isBlack && !game.wasLastMovePass())) {
+	if ((isBlack && game.wasLastMovePass()) ||
+		(!isBlack && !game.wasLastMovePass())) {
 	    game.setFinalMoveColor("black");
 	} else {
 	    game.setFinalMoveColor("white");
