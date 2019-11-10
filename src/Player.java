@@ -24,11 +24,11 @@ public class Player {
     /**
      * Used to indicate that the Pass button has been clicked.
      */
-    public static final int PASS = 8675309;
+    public static final int PASS = -1;
     /**
      * Used to indicate that the Resign button has been clicked.
      */
-    public static final int RESIGN = 314159;
+    public static final int RESIGN = -2;
 
     public String getName() {
 	return name;

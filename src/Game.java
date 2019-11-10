@@ -8,7 +8,7 @@ import javax.swing.JOptionPane;
  * @author Chris Hartung
  *
  */
-public class Game {
+public class Game implements GameViewer {
     private UserInterface gui;
     private Board board; //TODO
     //private TestBoard board; // TODO
