@@ -49,7 +49,7 @@ public interface GameViewer {
     /**
      * @return the finalScore
      */
-    HashMap<String, Integer> getFinalScore();
+    HashMap<String, Double> getFinalScore();
 
     /**
      * @return the gui
