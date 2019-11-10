@@ -50,7 +50,7 @@ public class EndGameMenu {
 	pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
 	blackPlayerName = gui.blackPlayerName();
 	whitePlayerName = gui.whitePlayerName();
-	HashMap<String, Integer> scores = gui.getGame().getFinalScore();
+	HashMap<String, Double> scores = gui.getGame().getFinalScore();
 	blackScore = scores.get("blackScore");
 	whiteScore = scores.get("whiteScore") + gui.getGame().getKomi();
 	scoreDifferential = Math.abs(blackScore - whiteScore);
