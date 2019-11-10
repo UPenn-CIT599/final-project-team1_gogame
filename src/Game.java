@@ -29,7 +29,7 @@ public class Game implements GameViewer {
     private Score scorekeeper;
     private boolean selectingDeadStones = false;
     private DeadStoneSelector selector;
-    private HashMap<String, Integer> finalScore;
+    private HashMap<String, Double> finalScore;
 
     /**
      * @return the gui
@@ -174,7 +174,7 @@ public class Game implements GameViewer {
     /**
      * @return the finalScore
      */
-    public HashMap<String, Integer> getFinalScore() {
+    public HashMap<String, Double> getFinalScore() {
 	return finalScore;
     }
     
@@ -220,10 +220,11 @@ public class Game implements GameViewer {
 		    scorekeeper.getDeadStones(selector.deadStoneHashSet()));
 	    selectionPhaseOver();
 	}
-	scorekeeper.combineEmptyLocations();
-	scorekeeper.checkAreaBlackOrWhite();
-	scorekeeper.fillNeutralPositions(finalMoveColor);
-	finalScore = scorekeeper.scoring();
+	//scorekeeper.combineEmptyLocations();
+	scorekeeper.checkAreaOwnership();
+	//scorekeeper.fillNeutralPositions(finalMoveColor);
+	int sekiCount = scorekeeper.checkSeki();
+	finalScore = scorekeeper.scoring(finalMoveColor, sekiCount);
 	gui.gameOver();
     }
     
