@@ -35,16 +35,11 @@ public class sgfHandler {
 		}
 	}
 
-	public static Board constructBoard() {
-		Board board;
-		
-		// Get the size of the board, specified by SZ[size]. If no tag is found, default to 19x19
-		Matcher boardSize = Pattern.compile("SZ\\[(\\d+)\\]").matcher(sgfText);
-		if (boardSize.find()) {
-			board = new Board(Integer.parseInt(boardSize.group(1)));
-		} else {
-			board = new Board(19);
-		}
+	public static Problem constructProblem() {
+
+		Board board = new Board(getBoardSize());
+		String caption = getCaption();
+		Boolean blackToPlay = getPlayerToMove();
 
 		// Find lines that correspond to "Add black" or "Add white"
 		Matcher w = stonePositions.matcher(sgfText);
@@ -70,8 +65,49 @@ public class sgfHandler {
 			e.printStackTrace();
 		}
 
-		return board;
+		ArrayList<String> solution = new ArrayList<String>();
+
+		Problem problem = new Problem(board, blackToPlay, caption, solution);
+		return problem;
 	}
-	
+
+	/**
+	 * Finds the size of the game board based on the tag SZ. If now tag is found, it defaults to returning 19x19
+	 * @return
+	 */
+	public static int getBoardSize() {
+		int boardSize = 19;
+		Matcher boardSizeTag = Pattern.compile("SZ\\[(\\d+)\\]").matcher(sgfText);
+		if (boardSizeTag.find()) {
+			boardSize = Integer.parseInt(boardSizeTag.group(1));
+		} 
+		return boardSize;
+	}
+
+	/**
+	 * Finds the caption for the board based on the tag GN. Defaults to an empty string if none is found.
+	 * @return
+	 */
+	public static String getCaption() {
+		String caption = "Problem";
+		Matcher problemCaptionTag = Pattern.compile("GN\\[(\\w+)\\]").matcher(sgfText);
+		if (problemCaptionTag.find()) {
+			caption = problemCaptionTag.group(1);
+		} 
+		return caption;
+	}
+
+	/**
+	 * Gets the player to move in the current position based on the PL tag.
+	 * @return
+	 */
+	public static Boolean getPlayerToMove() {
+		Boolean blackToPlay = null;
+		Matcher playerToMoveTag = Pattern.compile("PL\\[(B|W)\\]").matcher(sgfText);
+		if (playerToMoveTag.find()) {
+			blackToPlay = playerToMoveTag.group(1).equals("B") ? true : false;
+		}
+		return blackToPlay;
+	}
 
 }
