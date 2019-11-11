@@ -14,14 +14,21 @@ public class sgfHandler {
 	private static Pattern stonePositions = Pattern.compile("(A(B|W)(\\[\\w\\w\\])+)");
 	private static Pattern stoneIntersections = Pattern.compile("\\[(\\w\\w)\\]");
 	private static String sgfText;
+	private static Problem problem;
+	
+	/**
+	 * Gets the problem
+	 * @return
+	 */
+	public Problem getProblem() {
+		return problem;
+	}
 
 	/**
 	 * Method to read and extract the text from a .sgf file
 	 * @param sgfFile
 	 */
-	public static void readSgfFile(String sgfFile) {
-
-		File file = new File(sgfFile);
+	public static void readSgfFile(File file) {
 		sgfText = "";
 		try {
 			Scanner s = new Scanner(file);
@@ -33,9 +40,11 @@ public class sgfHandler {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
+		
+		constructProblem();
 	}
 
-	public static Problem constructProblem() {
+	public static void constructProblem() {
 
 		Board board = new Board(getBoardSize());
 		String caption = getCaption();
@@ -67,8 +76,7 @@ public class sgfHandler {
 
 		ArrayList<String> solution = new ArrayList<String>();
 
-		Problem problem = new Problem(board, blackToPlay, caption, solution);
-		return problem;
+		problem = new Problem(board, blackToPlay, caption, solution);
 	}
 
 	/**

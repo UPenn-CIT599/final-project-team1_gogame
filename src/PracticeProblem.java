@@ -1,17 +1,16 @@
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class PracticeProblem implements GameViewer {
 	
-	private sgfHandler sgf;
+	private sgfHandler sgf = new sgfHandler();
 	private UserInterface gui;
     private Board board;
     private boolean blackToMove;
     private String finalMoveColor;
     private int numRows;
-    private ArrayList<Problem> problems;
-    private int problemNumber = 0;
-    private Problem currentProblem;
+    private Problem problem;
 
 	@Override
 	public boolean blackToMove() {
@@ -109,12 +108,14 @@ public class PracticeProblem implements GameViewer {
 		return false;
 	}
 	
-	public PracticeProblem(UserInterface gui, ArrayList<Problem> problems) {
+	public PracticeProblem(UserInterface gui, MainMenu mainMenu) {
 		this.gui = gui;
-		this.problems = problems;
-		currentProblem = problems.get(problemNumber);
+		File sgfFile = mainMenu.getReplayFile();
+		sgf.readSgfFile(sgfFile);
+		problem = sgf.getProblem();
 		
-		
+		board = problem.getBoard();
+				
 	}
 
 }

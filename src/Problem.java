@@ -9,7 +9,13 @@ public class Problem {
 	private ArrayList<String> solution;
 	
 	public Problem(Board board, Boolean blackToMove, String caption, ArrayList<String> solution) {
-		
+		this.board = board;
+		this.blackToMove = blackToMove;
+		this.caption = caption;
+	}
+	
+	public Board getBoard() {
+		return this.board;
 	}
 
 }

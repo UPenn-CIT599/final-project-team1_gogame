@@ -31,6 +31,7 @@ public class UserInterface extends Canvas implements MouseListener {
     private GameViewer game;
     private boolean isPlayer1Black;
     private boolean replayMode;
+    private boolean practiceProblem;
     private String player1Name;
     private String player2Name;
     private boolean onePlayerGame;
@@ -158,6 +159,7 @@ public class UserInterface extends Canvas implements MouseListener {
      */
     public void initializeGame() {
 	replayMode = mainMenu.isReplayMode();
+	practiceProblem = mainMenu.isPracticeProblem();
 	onePlayerGame = mainMenu.isOnePlayerGame();
 	numRows = mainMenu.getNumRows();
 	int maxBoardSize = imageSize - (2 * borderSize);
@@ -166,6 +168,9 @@ public class UserInterface extends Canvas implements MouseListener {
 	boardSize = lineSpacing * (numRows - 1);
 	if (replayMode) {
 	    // TODO
+	} else if (practiceProblem) {
+		game = new PracticeProblem(this, mainMenu);
+		
 	} else {
 	    game = new Game(this, mainMenu);
 	    isPlayer1Black = ((Game) game).isPlayer1Black();
@@ -249,7 +254,7 @@ public class UserInterface extends Canvas implements MouseListener {
 		    stop);
 	}
 	drawPieces(g);
-	if (!replayMode) {
+	if (!replayMode && !practiceProblem) {
 	    if (((Game) game).isSelectingDeadStones()) {
 		drawDeadStones(g);
 	    }
@@ -335,6 +340,8 @@ public class UserInterface extends Canvas implements MouseListener {
 	    drawButton(g, previousButton, "Previous", 28);
 	    drawButton(g, nextButton, "Next", 43);
 	    drawButton(g, replayMainMenuButton, "Main Menu", 20);
+	} else if (practiceProblem) {
+		// TODO
 	} else if (((Game) game).isSelectingDeadStones()) {
 	    drawButton(g, calculateScoreButton, "Calculate Score", 41);
 	    drawButton(g, continuePlayButton, "Continue Play", 47);
@@ -429,6 +436,9 @@ public class UserInterface extends Canvas implements MouseListener {
 		    run();
 		}
 	    }
+	} else if (practiceProblem) {
+		// TODO
+		((PracticeProblem) game).processMouseClick(mouseX, mouseY);
 	} else if (((Game) game).isSelectingDeadStones()) {
 	    if (buttonClicked(calculateScoreButton, mouseX, mouseY)) {
 		game.finalizeScore();

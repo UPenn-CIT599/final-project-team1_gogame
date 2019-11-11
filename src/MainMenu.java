@@ -114,6 +114,10 @@ public class MainMenu implements ActionListener {
     public boolean isReadyToPlay() {
 	return readyToPlay;
     }
+    
+    public File getReplayFile() {
+    	return replayFile;
+    }
 
     /**
      * This method creates a MainMenu associated with the given UserInterface.
@@ -660,6 +664,9 @@ public class MainMenu implements ActionListener {
 	    practiceProblem = true;
 	} else if (command.equals(START_REPLAY)) {
 	    System.out.println("opening " + replayFile.getName()); // TODO
+	    frame.dispose();
+	    gui.initializeGame();
+	    
 	} else if (command.contains(START_GAME)) {
 	    int numPlayers = Integer.parseInt(command.substring(0, 1));
 	    if (numPlayers == 1) {
