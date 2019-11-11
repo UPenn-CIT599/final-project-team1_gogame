@@ -43,8 +43,7 @@ public interface GameViewer {
     /**
      * @return the finalMoveColor
      */
-    String getFinalMoveColor(); // this shouldn't be needed once the scoring
-				// system is fixed TODO
+    String getFinalMoveColor();
 
     /**
      * @return the finalScore
@@ -140,9 +139,7 @@ public interface GameViewer {
     /**
      * @param finalMoveColor the finalMoveColor to set
      */
-    void setFinalMoveColor(String finalMoveColor); // this shouldn't be needed
-						   // once the scoring system is
-						   // fixed TODO
+    void setFinalMoveColor(String finalMoveColor);
 
     /**
      * @param lastMoveWasPass the lastMoveWasPass to set

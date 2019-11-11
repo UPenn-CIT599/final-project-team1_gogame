@@ -374,6 +374,7 @@ public class UserInterface extends Canvas implements MouseListener {
 //	    selectingDeadStones = true;
 //	    selector = new DeadStoneSelector(game.getBoard());
 //	}
+	drawBoard();
 	endGameMenu = new EndGameMenu(this);
     }
     
