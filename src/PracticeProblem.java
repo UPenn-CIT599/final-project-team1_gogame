@@ -1,16 +1,17 @@
+import java.awt.Color;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class PracticeProblem implements GameViewer {
-	
+
 	private sgfHandler sgf = new sgfHandler();
 	private UserInterface gui;
-    private Board board;
-    private boolean blackToMove;
-    private String finalMoveColor;
-    private int numRows;
-    private Problem problem;
+	private Board board;
+	private boolean blackToMove;
+	private String finalMoveColor;
+	private int numRows;
+	private Problem problem;
 
 	@Override
 	public boolean blackToMove() {
@@ -25,7 +26,7 @@ public class PracticeProblem implements GameViewer {
 	@Override
 	public void gameOver() {
 		// Called when the problem is over
-		
+
 	}
 
 	@Override
@@ -75,31 +76,39 @@ public class PracticeProblem implements GameViewer {
 	@Override
 	public void processMouseClick(int buttonID) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void processMouseClick(int x, int y) {
-		// TODO Auto-generated method stub
-		
+		Color color = (blackToMove) ? Color.BLACK : Color.WHITE;
+		try {
+			board.placeStone(color, x, y);
+			nextPlayersTurn();
+			gui.drawBoard();
+		} catch (IllegalArgumentException e) {
+			gui.invalidMove(e.getMessage());
+			gui.drawBoard();
+		}
+
 	}
 
 	@Override
 	public void setFinalMoveColor(String finalMoveColor) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void setLastMoveWasPass(boolean lastMoveWasPass) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void setResignedPlayer(String resignedPlayer) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -107,15 +116,20 @@ public class PracticeProblem implements GameViewer {
 		// TODO Auto-generated method stub
 		return false;
 	}
-	
+
+	public void nextPlayersTurn() {
+		blackToMove = !blackToMove;
+	}
+
 	public PracticeProblem(UserInterface gui, MainMenu mainMenu) {
 		this.gui = gui;
 		File sgfFile = mainMenu.getReplayFile();
 		sgf.readSgfFile(sgfFile);
 		problem = sgf.getProblem();
-		
+
 		board = problem.getBoard();
-				
+		blackToMove = problem.getBlackToMove();
+
 	}
 
 }

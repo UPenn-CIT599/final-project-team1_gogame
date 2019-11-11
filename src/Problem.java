@@ -14,8 +14,20 @@ public class Problem {
 		this.caption = caption;
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public Board getBoard() {
 		return this.board;
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public Boolean getBlackToMove() {
+		return blackToMove;
 	}
 
 }

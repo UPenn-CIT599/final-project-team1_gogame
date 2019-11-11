@@ -438,7 +438,7 @@ public class UserInterface extends Canvas implements MouseListener {
 	    }
 	} else if (practiceProblem) {
 		// TODO
-		((PracticeProblem) game).processMouseClick(mouseX, mouseY);
+		processMouseClick(mouseX, mouseY);;
 	} else if (((Game) game).isSelectingDeadStones()) {
 	    if (buttonClicked(calculateScoreButton, mouseX, mouseY)) {
 		game.finalizeScore();
