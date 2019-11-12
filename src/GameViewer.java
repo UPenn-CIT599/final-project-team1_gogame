@@ -95,6 +95,11 @@ public interface GameViewer {
 //     */
 //    DeadStoneSelector getSelector();
     
+//    /**
+//     * @return the sgfStringBuilder
+//     */
+//    public StringBuilder getSgfStringBuilder();
+    
     /**
      * @return gameOver
      */

@@ -150,8 +150,8 @@ public class EndGameMenu {
 
 	});
 	
-	// replay games cannot be saved
-	if (gui.isReplayMode()) {
+	// replay and practice problem games cannot be saved
+	if (gui.isReplayMode() || gui.isPracticeProblem()) {
 	    viewReplayButton.setEnabled(false);
 	    saveButton.setEnabled(false);
 	}

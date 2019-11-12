@@ -98,6 +98,13 @@ public class UserInterface extends Canvas implements MouseListener {
     }
     
     /**
+     * @return practiceProblem
+     */
+    public boolean isPracticeProblem() {
+	return practiceProblem;
+    }
+    
+    /**
      * @return the endGameMenu
      */
     public EndGameMenu getEndGameMenu() {
