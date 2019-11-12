@@ -91,6 +91,20 @@ public class UserInterface extends Canvas implements MouseListener {
     }
     
     /**
+     * @return replayMode
+     */
+    public boolean isReplayMode() {
+	return replayMode;
+    }
+    
+    /**
+     * @return the endGameMenu
+     */
+    public EndGameMenu getEndGameMenu() {
+	return endGameMenu;
+    }
+    
+    /**
      * This method returns the name of the Player who is playing black.
      * 
      * @return The black Player's name
@@ -255,7 +269,7 @@ public class UserInterface extends Canvas implements MouseListener {
 	}
 	drawPieces(g);
 	if (!replayMode && !practiceProblem) {
-	    if (((Game) game).isSelectingDeadStones()) {
+	    if (((Game) game).getSelector() != null) {
 		drawDeadStones(g);
 	    }
 	}

@@ -119,6 +119,9 @@ public class Player {
 			    if (blackWins == isBlack) {
 				pass();
 				game.nextPlayersTurn();
+//				game.updateStringBuilder(
+//					colorString.toUpperCase().charAt(0), 19,
+//					19);
 				return;
 			    }
 			}			
@@ -135,6 +138,8 @@ public class Player {
 			    int y = (int) (Math.random() *
 				    game.getNumRows());
 			    game.getBoard().placeStone(color, x, y);
+			    game.updateStringBuilder(
+				    colorString.toUpperCase().charAt(0), x, y);
 			    if (game.getHandicapCounter() <= 0) {
 				game.getGui().setMessage(name, false);
 				game.nextPlayersTurn();
@@ -164,6 +169,8 @@ public class Player {
 		    if (count == maxAttempts) {
 			pass();
 			game.nextPlayersTurn();
+			game.updateStringBuilder(
+				colorString.toUpperCase().charAt(0), 19, 19);
 		    }
 
 		    game.getGui().drawBoard();
@@ -178,6 +185,7 @@ public class Player {
      */
     private void pass() {
 	game.getBoard().pass();
+	game.updateStringBuilder(colorString.toUpperCase().charAt(0), 19, 19);
 	if (game.wasLastMovePass()) {
 //	    String colorString = "white";
 //	    if (isBlack) {
