@@ -20,7 +20,7 @@ public class MainMenu implements ActionListener {
     private String player1Name1 = "";
     private String player1Name2 = "";
     private String player2Name = "";
-    private boolean replayMode = false;
+    private boolean replayMode = true;
     private boolean onePlayerGame = false;
     private int handicap = 0;
     private int handicap1 = 0;
@@ -43,7 +43,7 @@ public class MainMenu implements ActionListener {
     private static String REPLAY = "Replay";
     private static String PRACTICE = "Practice Problem";
     private static String START_GAME = "Start Game";
-    private static String START_REPLAY = "Start Replay";
+    private static String START_REPLAY = "Start";
 
     /**
      * @return the player1Name
@@ -140,11 +140,11 @@ public class MainMenu implements ActionListener {
 	String select = "Select game mode";
 	String onePlayer = "1 Player Game";
 	String twoPlayer = "2 Player Game";
-	String replayMode = "Replay Mode";
+	String openFile = "Open File";
 	JPanel comboBoxPane = createBoxLayoutPanel();
 	JTextField welcome = createTextField("Welcome to Go!");
 	welcome.setFont(new Font(Font.DIALOG, Font.BOLD, 28));
-	String[] comboBoxItems = { select, onePlayer, twoPlayer, replayMode };
+	String[] comboBoxItems = { select, onePlayer, twoPlayer, openFile };
 	JComboBox<String> selectGameMode = new JComboBox<>(comboBoxItems);
 	selectGameMode.setEditable(false);
 	selectGameMode.setMaximumSize(new Dimension(135, 50));
@@ -280,7 +280,7 @@ public class MainMenu implements ActionListener {
 	cards.add(selectCard, select);
 	cards.add(onePlayerCard, onePlayer);
 	cards.add(twoPlayerCard, twoPlayer);
-	cards.add(replayCard, replayMode);
+	cards.add(replayCard, openFile);
 
 	Container pane = frame.getContentPane();
 	pane.add(comboBoxPane, BorderLayout.PAGE_START);
@@ -584,7 +584,7 @@ public class MainMenu implements ActionListener {
 	handicapChooser.setPaintLabels(true);
 	handicapPanel.add(handicapChooserLabel);
 	handicapPanel.add(handicapChooser);
-	return handicapPanel; // TODO
+	return handicapPanel;
     }
     
     /**
@@ -659,11 +659,13 @@ public class MainMenu implements ActionListener {
     public void actionPerformed(ActionEvent e) {
 	String command = e.getActionCommand();
 	if (command.equals(REPLAY)) {
+	    replayMode = true;
 	    practiceProblem = false;
 	} else if (command.equals(PRACTICE)) {
+	    replayMode = false;
 	    practiceProblem = true;
 	} else if (command.equals(START_REPLAY)) {
-	    System.out.println("opening " + replayFile.getName()); // TODO
+	    readyToPlay = true;
 	    frame.dispose();
 	    gui.initializeGame();
 	    
@@ -685,6 +687,7 @@ public class MainMenu implements ActionListener {
 		onePlayerGame = false;
 	    }
 	    replayMode = false;
+	    practiceProblem = false;
 	    readyToPlay = true;
 	    frame.dispose();
 	    gui.initializeGame();

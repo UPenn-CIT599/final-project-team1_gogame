@@ -348,17 +348,11 @@ public class Game implements GameViewer {
      * sgfStringBuilder
      * 
      * @param color Either 'B' if black moved or 'W' if white moved
-     * @param x     The column that was moved on, or either Player.PASS or 19 to
-     *              indicate a pass
-     * @param y     The row that was moved on, or either Player.PASS or 19 to
-     *              indicate a pass
+     * @param x     The column that was moved on, or 19 to indicate a pass
+     * @param y     The row that was moved on, or 19 to indicate a pass
      */
     public void updateStringBuilder(char color, int x, int y) {
-	if (x == Player.PASS) {
-	    // setting x and y to 19 will result in an output of tt, indicating
-	    // a pass
-//	    updateStringBuilder(color, 19, 19);
-	} else if ((x >= 0) && (x <= 19)) {
+	if ((x >= 0) && (x <= 19)) {
 	    // start a new line if necessary
 	    if (lineLength > (lineLengthLimit - 6)) {
 		sgfStringBuilder.append("\n");
@@ -449,26 +443,28 @@ public class Game implements GameViewer {
 	    try {
 		boolean player1Moved = player1.processMouseClick(x, y);
 		boolean player2Moved = player2.processMouseClick(x, y);
-		if (player1Moved || player2Moved) {
-//		    if ((player1Moved && isPlayer1Black) ||
-//			    (player2Moved && !isPlayer1Black)) {
-//			updateStringBuilder('B', x, y);
-//		    } else {
-//			updateStringBuilder('W', x, y);
-//		    }
+		if ((player1Moved || player2Moved) && !selectionPhase) {
+		    if ((player1Moved && isPlayer1Black) ||
+			    (player2Moved && !isPlayer1Black)) {
+			updateStringBuilder('B', x, y);
+		    } else {
+			updateStringBuilder('W', x, y);
+		    }
 		    if (handicapCounter > 1) {
 			decrementHandicapCounter();
 			gui.handicapMessage();
 		    } else if (handicapCounter == 1) {
 			decrementHandicapCounter();
 			nextPlayersTurn();
-		    } else if (!selectionPhase) {
-			if ((player1Moved && isPlayer1Black) ||
-				(player2Moved && !isPlayer1Black)) {
-			    updateStringBuilder('B', x, y);
-			} else {
-			    updateStringBuilder('W', x, y);
-			}
+		    } else {
+//			if ((player1Moved && isPlayer1Black) ||
+//				(player2Moved && !isPlayer1Black)) {
+//			    updateStringBuilder('B', x, y);
+//			    System.out.println("b");
+//			} else {
+//			    updateStringBuilder('W', x, y);
+//			    System.out.println("w");
+//			}
 			nextPlayersTurn();
 		    }
 		    gui.drawBoard();
