@@ -22,10 +22,25 @@ public class EndGameMenu {
     private double blackScore;
     private double whiteScore;
     private double scoreDifferential;
+    private char winnerColor;
     private JFileChooser fileChooser;
     private File replayFile;
-    
-    private static DecimalFormat scoreFormat = new DecimalFormat("#.#");
+
+    public static final DecimalFormat SCORE_FORMAT = new DecimalFormat("#.#");
+ 
+    /**
+     * @return the scoreDifferential
+     */
+    public double getScoreDifferential() {
+        return scoreDifferential;
+    }
+
+    /**
+     * @return the winnerColor
+     */
+    public char getWinnerColor() {
+        return winnerColor;
+    }
 
     /*
      * A portion of the below method is based on the following:
@@ -69,8 +84,8 @@ public class EndGameMenu {
 	 */
 	JTextPane scoreDisplay = new JTextPane();
 	scoreDisplay.setText("Game over.\n\nFinal Score:\n" + blackPlayerName +
-		": " + scoreFormat.format(blackScore) + "\n" + whitePlayerName +
-		": " + scoreFormat.format(whiteScore) + "\n\n" + winner());
+		": " + SCORE_FORMAT.format(blackScore) + "\n" + whitePlayerName +
+		": " + SCORE_FORMAT.format(whiteScore) + "\n\n" + winner());
 	scoreDisplay.setEditable(false);
 	StyledDocument doc = scoreDisplay.getStyledDocument();
 	SimpleAttributeSet center = new SimpleAttributeSet();
@@ -135,6 +150,12 @@ public class EndGameMenu {
 
 	});
 	
+	// replay and practice problem games cannot be saved
+	if (gui.isReplayMode() || gui.isPracticeProblem()) {
+	    viewReplayButton.setEnabled(false);
+	    saveButton.setEnabled(false);
+	}
+	
 	frame.pack();
 	frame.setVisible(true);
     }
@@ -164,7 +185,8 @@ public class EndGameMenu {
 	    try {
 		FileWriter fw = new FileWriter(replayFile);
 		PrintWriter pw = new PrintWriter(fw);
-		pw.println("Testing .sgf writer"); // TODO
+		Game game = (Game) gui.getGame();
+		pw.println(game.getSgfStringBuilder());
 		pw.flush();
 		pw.close();
 	    } catch (IOException e) {
@@ -198,7 +220,7 @@ public class EndGameMenu {
      *         tie.
      */
     private String winner() {
-	String winText = " wins by " + scoreFormat.format(scoreDifferential) +
+	String winText = " wins by " + SCORE_FORMAT.format(scoreDifferential) +
 		" points!";
 	String resignText = " resigned. ";
 	String resignWinText = " wins!";
@@ -207,15 +229,20 @@ public class EndGameMenu {
 	    String winningPlayer = "";
 	    if (resignedPlayer.equals(blackPlayerName)) {
 		winningPlayer = whitePlayerName;
+		winnerColor = 'W';
 	    } else {
 		winningPlayer = blackPlayerName;
+		winnerColor = 'B';
 	    }
 	    return resignedPlayer + resignText + winningPlayer + resignWinText;
 	} else if (blackScore > whiteScore) {
+	    winnerColor = 'B';
 	    return blackPlayerName + winText;
 	} else if (whiteScore > blackScore) {
+	    winnerColor = 'W';
 	    return whitePlayerName + winText;
 	} else {
+	    winnerColor = '0';
 	    return "Tie game!";
 	}
     }
