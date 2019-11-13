@@ -12,6 +12,7 @@ public class PracticeProblem implements GameViewer {
 	private String finalMoveColor;
 	private int numRows;
 	private Problem problem;
+	private Boolean hasSolution;
 
 	@Override
 	public boolean blackToMove() {
