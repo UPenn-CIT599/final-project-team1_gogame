@@ -14,7 +14,9 @@ public class sgfHandler {
 	private static Pattern stonePositions = Pattern.compile("(A(B|W)(\\[\\w\\w\\])+)");
 	private static Pattern stoneIntersections = Pattern.compile("\\[(\\w\\w)\\]");
 	private static String sgfText;
+	private static ArrayList<Move> moves = new ArrayList<Move>();
 	private static Problem problem;
+	private static File sgfFile;
 	
 	/**
 	 * Gets the problem
@@ -29,6 +31,7 @@ public class sgfHandler {
 	 * @param sgfFile
 	 */
 	public static void readSgfFile(File file) {
+		sgfFile = file;
 		sgfText = "";
 		try {
 			Scanner s = new Scanner(file);
@@ -41,12 +44,13 @@ public class sgfHandler {
 			e.printStackTrace();
 		}
 		
+		file.getPath();
+		
 		constructProblem();
 	}
 
 	public static void constructProblem() {
 
-		Board board = new Board(getBoardSize());
 		String caption = getCaption();
 		Boolean blackToPlay = getPlayerToMove();
 
@@ -65,7 +69,8 @@ public class sgfHandler {
 					int x = intersection.charAt(0) - 'a';
 					int y = intersection.charAt(1) - 'a';
 					// Place the stone on the board
-					board.placeStone(color, x, y);
+					Move move = new Move(color, x, y);
+					moves.add(move);
 				}
 			}
 		}
@@ -74,8 +79,10 @@ public class sgfHandler {
 			e.printStackTrace();
 		}
 
+		getSolution();
 		ArrayList<String> solution = new ArrayList<String>();
-
+		
+		Board board = new Board(getBoardSize(), moves);
 		problem = new Problem(board, blackToPlay, caption, solution);
 	}
 
@@ -116,6 +123,30 @@ public class sgfHandler {
 			blackToPlay = playerToMoveTag.group(1).equals("B") ? true : false;
 		}
 		return blackToPlay;
+	}
+	
+	public static void getSolution() {
+		String solText = "";
+		String path = sgfFile.getAbsolutePath();
+		String sol = path.replace(".sgf", "_sol.sgf");
+		
+		File solutionFile = new File(sol);
+		if (!solutionFile.exists()) {
+			// TODO: Prompt user if they want to provide a solution file
+			return;
+		}
+				
+		try {
+			Scanner s = new Scanner(solutionFile);
+			while (s.hasNextLine()) {
+				// Save all text as a single string
+				sgfText += s.nextLine();
+			}
+			s.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		
 	}
 
 }
