@@ -283,7 +283,7 @@ public class Game implements GameViewer {
     /**
      * This method writes game data to the sgfStringBuilder
      */
-    private void initializeSgfStringBuilder() {
+    public void initializeSgfStringBuilder() {
 	// indicate that this is a Go game with file format 4
 	sgfStringBuilder.append("(;FF[4]GM[1]");
 	
@@ -415,7 +415,7 @@ public class Game implements GameViewer {
      * This method is used to remove the record of two consecutive passes from
      * the sgfStringBuilder when those passes do not end the game.
      */
-    private void sgfRemovePasses() {
+    public void sgfRemovePasses() {
 	// since each move adds 6 characters, removing two passes is the same as
 	// removing the last 12 characters, or 13 if there is a line break
 	int length = sgfStringBuilder.length();

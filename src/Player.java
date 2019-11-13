@@ -183,7 +183,7 @@ public class Player {
     /**
      * This method indicates that the Player is passing.
      */
-    private void pass() {
+    public void pass() {
 	game.getBoard().pass();
 	game.updateStringBuilder(colorString.toUpperCase().charAt(0), 19, 19);
 	if (game.wasLastMovePass()) {
@@ -202,7 +202,7 @@ public class Player {
     /**
      * This method indicates that the Player is resigning.
      */
-    private void resign() {
+    public void resign() {
 	if ((isBlack && game.wasLastMovePass()) ||
 		(!isBlack && !game.wasLastMovePass())) {
 	    game.setFinalMoveColor("black");
