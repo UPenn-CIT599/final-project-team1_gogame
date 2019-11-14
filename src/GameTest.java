@@ -363,9 +363,10 @@ class GameTest {
 	} catch (NullPointerException e) {
 	    // should be white's turn
 	    assertFalse(game.blackToMove());
-	    
+
 	    // sgfStringBuilder should be updated
-	    assertTrue(game.getSgfStringBuilder().toString().contains(";B[ab]"));
+	    assertTrue(
+		    game.getSgfStringBuilder().toString().contains(";B[ab]"));
 	}
     }
 
@@ -383,9 +384,10 @@ class GameTest {
 	    // should be white's turn
 	    assertFalse(game.blackToMove());
 	    assertTrue(game.wasLastMovePass());
-	    
+
 	    // sgfStringBuilder should be updated
-	    assertTrue(game.getSgfStringBuilder().toString().contains(";B[tt]"));
+	    assertTrue(
+		    game.getSgfStringBuilder().toString().contains(";B[tt]"));
 	}
     }
 

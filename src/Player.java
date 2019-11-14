@@ -119,9 +119,6 @@ public class Player {
 			    if (blackWins == isBlack) {
 				pass();
 				game.nextPlayersTurn();
-//				game.updateStringBuilder(
-//					colorString.toUpperCase().charAt(0), 19,
-//					19);
 				return;
 			    }
 			}			
@@ -169,8 +166,6 @@ public class Player {
 		    if (count == maxAttempts) {
 			pass();
 			game.nextPlayersTurn();
-			game.updateStringBuilder(
-				colorString.toUpperCase().charAt(0), 19, 19);
 		    }
 
 		    game.getGui().drawBoard();
