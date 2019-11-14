@@ -198,6 +198,7 @@ public class Game implements GameViewer {
      */
     public void continuePlay() {
 	gameOver = false;
+	lastMoveWasPass = false;
 	selectionPhaseOver();
 	sgfRemovePasses();
 	gui.drawBoard();
