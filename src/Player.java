@@ -181,11 +181,10 @@ public class Player {
     public void pass() {
 	game.getBoard().pass();
 	game.updateStringBuilder(colorString.toUpperCase().charAt(0), 19, 19);
+
+	// end the game if this is the second consecutive pass, otherwise
+	// display a message stating that this Player passed
 	if (game.wasLastMovePass()) {
-//	    String colorString = "white";
-//	    if (isBlack) {
-//		colorString = "black";
-//	    }
 	    game.setFinalMoveColor(colorString);
 	    game.gameOver();
 	} else {
@@ -198,13 +197,19 @@ public class Player {
      * This method indicates that the Player is resigning.
      */
     public void resign() {
+	// determine which Player was the last to place a stone and update
+	// finalMoveColor accordingly
 	if ((isBlack && game.wasLastMovePass()) ||
 		(!isBlack && !game.wasLastMovePass())) {
 	    game.setFinalMoveColor("black");
 	} else {
 	    game.setFinalMoveColor("white");
 	}
+	
+	// state that this Player resigned
 	game.setResignedPlayer(name);
+	
+	// end the game
 	game.gameOver();
     }
 
@@ -220,16 +225,24 @@ public class Player {
      */
     public boolean processMouseClick(int x, int y)
 	    throws IllegalArgumentException {
+	// do nothing if this Player is a computer or if it is not this Player's
+	// turn
 	if (isComputer || (isBlack != game.blackToMove())) {
 	    return false;
-	} else if (x == PASS) {
+	}
+	// pass if the pass button was clicked, unless handicap stones still
+	// need to be placed
+	else if (x == PASS) {
 	    if (game.getHandicapCounter() > 0) {
 		throw new IllegalArgumentException(
 			"Place all handicap stones before passing.");
 	    }
 	    pass();
 	    return true;
-	} else if (x == RESIGN) {
+	}
+	// if the resign button was clicked, ask for confirmation before
+	// resigning
+	else if (x == RESIGN) {
 	    int confirm = JOptionPane.showOptionDialog(game.getGui().getFrame(),
 		    name + ", are you sure you want to resign?",
 		    "Resign Confirmation", JOptionPane.YES_NO_OPTION,
@@ -240,10 +253,16 @@ public class Player {
 	    } else {
 		return false;
 	    }
-	} else if (game.isSelectingDeadStones()) {
-	   game.getSelector().selectStone(x, y); 
-	   return true;
-	} else {
+	}
+	// if it is dead stone selection phase, inform the deadStoneSelector
+	// which space was clicked
+	else if (game.isSelectingDeadStones()) {
+	    game.getSelector().selectStone(x, y);
+	    return true;
+	}
+	// if an intersection is clicked during gameplay, attempt to place a
+	// stone on that intersection
+	else {
 	    game.getBoard().placeStone(color, x, y);
 	    game.setLastMoveWasPass(false);
 	    game.getGui().setMessage(name, false);

@@ -12,7 +12,7 @@ import javax.swing.filechooser.FileFilter;
  */
 /**
  * The ReplayFileFilter class is used to only allow the user to select .sgf
- * files to open
+ * files.
  * 
  * @author Chris Hartung
  *

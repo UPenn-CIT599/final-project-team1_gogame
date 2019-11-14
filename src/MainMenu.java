@@ -646,30 +646,47 @@ public class MainMenu implements ActionListener {
 	return field;
     }
     
-    
-    private JRadioButton createRadioButton(String text, int keyEvent) {
+    /**
+     * This method creates a radio button with the given text and mnemonic
+     * 
+     * @param text     The text that will be displayed on the radio button
+     * @param mnemonic The key code which represents the mnemonic for the button
+     * @return The JRadioButton that was created
+     */
+    private JRadioButton createRadioButton(String text, int mnemonic) {
 	JRadioButton button = new JRadioButton(text);
-	button.setMnemonic(keyEvent);
+	button.setMnemonic(mnemonic);
 	button.setActionCommand(text);
 	button.addActionListener(this);
 	return button;
     }
 
+    /**
+     * This method determines what happens when a JButton or JRadioButton is
+     * pressed.
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
 	String command = e.getActionCommand();
+	
+	// select replay mode if the replay button is pressed
 	if (command.equals(REPLAY)) {
 	    replayMode = true;
 	    practiceProblem = false;
-	} else if (command.equals(PRACTICE)) {
+	} 
+	// selection practice problem mode if the practice button is pressed
+	else if (command.equals(PRACTICE)) {
 	    replayMode = false;
 	    practiceProblem = true;
-	} else if (command.equals(START_REPLAY)) {
+	}
+	// start the replay or practice problem when the start button is pressed
+	else if (command.equals(START_REPLAY)) {
 	    readyToPlay = true;
 	    frame.dispose();
-	    gui.initializeGame();
-	    
-	} else if (command.contains(START_GAME)) {
+	    gui.initializeGame();	    
+	} 
+	// start the game if either start game button is pressed
+	else if (command.contains(START_GAME)) {
 	    int numPlayers = Integer.parseInt(command.substring(0, 1));
 	    if (numPlayers == 1) {
 		player1Name = player1Name1;

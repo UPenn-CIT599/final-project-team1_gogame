@@ -12,8 +12,7 @@ import javax.swing.JOptionPane;
  */
 public class Game implements GameViewer {
     private UserInterface gui;
-    private Board board; //TODO
-    //private TestBoard board; // TODO
+    private Board board;
     private Player player1;
     private Player player2;
     private boolean blackToMove;
@@ -216,13 +215,10 @@ public class Game implements GameViewer {
 	    lastMoveWasPass = false;
 	    sgfRemovePasses();
 	    gui.drawBoard();
-//	    JOptionPane.showMessageDialog(gui.getFrame(),
-//	            "No stone has been placed. Please place a stone.");
 	} else {
 	    gameOver = true;
 	    if (!onePlayerGame && (resignedPlayer == null)) {
 	        selectingDeadStones = true;
-//	        gui.selectDeadStones();
 	        selector = new DeadStoneSelector(this);
 	        gui.drawBoard();
 	        JOptionPane.showMessageDialog(gui.getFrame(), 
@@ -247,9 +243,7 @@ public class Game implements GameViewer {
 	    scorekeeper.removeDeadStones(deadStones);
 	    selectionPhaseOver();
 	}
-	//scorekeeper.combineEmptyLocations();
 	scorekeeper.checkAreaOwnership();
-	//scorekeeper.fillNeutralPositions(finalMoveColor);
 	int sekiCount = scorekeeper.checkSeki();
 	finalScore = scorekeeper.scoring(finalMoveColor, sekiCount);
 	sgfStringBuilder.append(")");
@@ -333,7 +327,7 @@ public class Game implements GameViewer {
     
     /**
      * This method returns a String indicating, in the format used by sgf files,
-     * where a stone was placed or removed
+     * where a stone was placed or removed.
      * 
      * @param x The column where the stone was placed/removed
      * @param y The row where the stone was placed/removed
@@ -341,12 +335,14 @@ public class Game implements GameViewer {
      *         used by sgf files
      */
     public String sgfLocationString(int x, int y) {
+	// 97 is added to x and y because ASCII values for lowercase letters
+	// start at 97
 	return "[" + ((char) (x + 97)) + ((char) (y + 97)) + "]";
     }
 
     /**
      * This method adds characters representing the indicated move to the
-     * sgfStringBuilder
+     * sgfStringBuilder.
      * 
      * @param color Either 'B' if black moved or 'W' if white moved
      * @param x     The column that was moved on, or 19 to indicate a pass
@@ -364,9 +360,7 @@ public class Game implements GameViewer {
 		sgfStringBuilder.append(";" + color);
 		lineLength += 2;
 	    }
-	    // ASCII values for lower case letters start at 97
-	    sgfStringBuilder
-		    .append(sgfLocationString(x, y));
+	    sgfStringBuilder.append(sgfLocationString(x, y));
 	    lineLength += 4;
 
 	    // start a new line after the last handicap stone is placed
@@ -397,6 +391,7 @@ public class Game implements GameViewer {
      * This method updates the results tag in the sgfStringBuilder.
      */
     public void updateSgfResult() {
+	// get the String representing the result
 	char winner = gui.getEndGameMenu().getWinnerColor();
 	double scoreDifferential = gui.getEndGameMenu().getScoreDifferential();
 	String results = "";
@@ -408,10 +403,12 @@ public class Game implements GameViewer {
 	    results = winner + "+" +
 		    EndGameMenu.SCORE_FORMAT.format(scoreDifferential);
 	}
+
+	// replace the % that was used as a placeholder with the result String
 	int location = sgfStringBuilder.indexOf("%");
 	sgfStringBuilder.replace(location, location + 1, results);
     }
-    
+
     /**
      * This method is used to remove the record of two consecutive passes from
      * the sgfStringBuilder when those passes do not end the game.
@@ -439,37 +436,50 @@ public class Game implements GameViewer {
      * @param y The row which was clicked
      */
     public void processMouseClick(int x, int y) {
+	// selectionPhase variable is used in case selectingDeadStones changes
 	boolean selectionPhase = selectingDeadStones;
+	
+	// mouse clicks do nothing if game is over and it isn't dead stone
+	// selection phase
 	if (!gameOver || selectionPhase) {
 	    try {
+		// both players process the mouse click; nothing happens if it
+		// is not their turn or if they are a computer
 		boolean player1Moved = player1.processMouseClick(x, y);
 		boolean player2Moved = player2.processMouseClick(x, y);
+
+		// no further action is needed if the mouse click had no effect
+		// or if it is dead stone selection phase
 		if ((player1Moved || player2Moved) && !selectionPhase) {
+		    // update sgfStringBuilder if a stone was placed
 		    if ((player1Moved && isPlayer1Black) ||
 			    (player2Moved && !isPlayer1Black)) {
 			updateStringBuilder('B', x, y);
 		    } else {
 			updateStringBuilder('W', x, y);
 		    }
+		    
+		    // decrement handicap counter if necessary
 		    if (handicapCounter > 1) {
 			decrementHandicapCounter();
 			gui.handicapMessage();
 		    } else if (handicapCounter == 1) {
 			decrementHandicapCounter();
+
+			// after the last handicap stone is placed, the other
+			// player gets to play
 			nextPlayersTurn();
 		    } else {
-//			if ((player1Moved && isPlayer1Black) ||
-//				(player2Moved && !isPlayer1Black)) {
-//			    updateStringBuilder('B', x, y);
-//			    System.out.println("b");
-//			} else {
-//			    updateStringBuilder('W', x, y);
-//			    System.out.println("w");
-//			}
+			// if no handicap stones need to be placed, once the
+			// current Player places a stone or passes, it is the
+			// next Player's turn
 			nextPlayersTurn();
 		    }
 		    gui.drawBoard();
 		}
+
+		// once the human player has made a move, the computer player
+		// needs to be notified that it is their turn
 		if (onePlayerGame) {
 		    player2.notifyComputer();
 		}
@@ -519,8 +529,7 @@ public class Game implements GameViewer {
 	} else if (player2Name.equals("")) {
 	    player2Name = "Player 2";
 	}
-	board = new Board(numRows); // TODO
-//	board = new Board(numRows); // TODO
+	board = new Board(numRows);
 	player1 = new Player(this, player1Name, isPlayer1Black, false);
 	player2 = new Player(this, player2Name, !isPlayer1Black, onePlayerGame);
 	lastMoveWasPass = false;
