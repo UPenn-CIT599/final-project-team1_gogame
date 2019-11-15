@@ -187,7 +187,7 @@ public class UserInterface extends Canvas implements MouseListener {
 	if (replayMode) {
 	    // TODO
 	} else if (practiceProblem) {
-//	    game = new PracticeProblem(this, mainMenu);
+	    game = new PracticeProblem(this, mainMenu);
 	} else {
 	    game = new Game(this, mainMenu);
 	    isPlayer1Black = ((Game) game).isPlayer1Black();
