@@ -28,7 +28,8 @@ public class UserInterface extends Canvas implements MouseListener {
     private JFrame frame;
     private static final long serialVersionUID = 1L;
     private BufferedImage image;
-    private GameViewer game;
+//    private GameViewer game;
+    private AbstractGame game;
     private boolean isPlayer1Black;
     private boolean replayMode;
     private boolean practiceProblem;
@@ -73,16 +74,16 @@ public class UserInterface extends Canvas implements MouseListener {
     }
 
 //    /**
-//     * @return the notifier
+//     * @return the game
 //     */
-//    public Object getNotifier() {
-//	return notifier;
+//    public GameViewer getGame() {
+//	return game;
 //    }
     
     /**
      * @return the game
      */
-    public GameViewer getGame() {
+    public AbstractGame getGame() {
 	return game;
     }
     
@@ -186,7 +187,7 @@ public class UserInterface extends Canvas implements MouseListener {
 	if (replayMode) {
 	    // TODO
 	} else if (practiceProblem) {
-	    game = new PracticeProblem(this, mainMenu);
+//	    game = new PracticeProblem(this, mainMenu);
 	} else {
 	    game = new Game(this, mainMenu);
 	    isPlayer1Black = ((Game) game).isPlayer1Black();
