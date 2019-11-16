@@ -20,7 +20,7 @@ public class MainMenu implements ActionListener {
     private String player1Name1 = "";
     private String player1Name2 = "";
     private String player2Name = "";
-    private boolean replayMode = false;
+    private boolean replayMode = true;
     private boolean onePlayerGame = false;
     private int handicap = 0;
     private int handicap1 = 0;
@@ -43,7 +43,7 @@ public class MainMenu implements ActionListener {
     private static String REPLAY = "Replay";
     private static String PRACTICE = "Practice Problem";
     private static String START_GAME = "Start Game";
-    private static String START_REPLAY = "Start Replay";
+    private static String START_REPLAY = "Start";
 
     /**
      * @return the player1Name
@@ -140,11 +140,11 @@ public class MainMenu implements ActionListener {
 	String select = "Select game mode";
 	String onePlayer = "1 Player Game";
 	String twoPlayer = "2 Player Game";
-	String replayMode = "Replay Mode";
+	String openFile = "Open File";
 	JPanel comboBoxPane = createBoxLayoutPanel();
 	JTextField welcome = createTextField("Welcome to Go!");
 	welcome.setFont(new Font(Font.DIALOG, Font.BOLD, 28));
-	String[] comboBoxItems = { select, onePlayer, twoPlayer, replayMode };
+	String[] comboBoxItems = { select, onePlayer, twoPlayer, openFile };
 	JComboBox<String> selectGameMode = new JComboBox<>(comboBoxItems);
 	selectGameMode.setEditable(false);
 	selectGameMode.setMaximumSize(new Dimension(135, 50));
@@ -280,7 +280,7 @@ public class MainMenu implements ActionListener {
 	cards.add(selectCard, select);
 	cards.add(onePlayerCard, onePlayer);
 	cards.add(twoPlayerCard, twoPlayer);
-	cards.add(replayCard, replayMode);
+	cards.add(replayCard, openFile);
 
 	Container pane = frame.getContentPane();
 	pane.add(comboBoxPane, BorderLayout.PAGE_START);
@@ -584,7 +584,7 @@ public class MainMenu implements ActionListener {
 	handicapChooser.setPaintLabels(true);
 	handicapPanel.add(handicapChooserLabel);
 	handicapPanel.add(handicapChooser);
-	return handicapPanel; // TODO
+	return handicapPanel;
     }
     
     /**
@@ -646,28 +646,47 @@ public class MainMenu implements ActionListener {
 	return field;
     }
     
-    
-    private JRadioButton createRadioButton(String text, int keyEvent) {
+    /**
+     * This method creates a radio button with the given text and mnemonic
+     * 
+     * @param text     The text that will be displayed on the radio button
+     * @param mnemonic The key code which represents the mnemonic for the button
+     * @return The JRadioButton that was created
+     */
+    private JRadioButton createRadioButton(String text, int mnemonic) {
 	JRadioButton button = new JRadioButton(text);
-	button.setMnemonic(keyEvent);
+	button.setMnemonic(mnemonic);
 	button.setActionCommand(text);
 	button.addActionListener(this);
 	return button;
     }
 
+    /**
+     * This method determines what happens when a JButton or JRadioButton is
+     * pressed.
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
 	String command = e.getActionCommand();
+	
+	// select replay mode if the replay button is pressed
 	if (command.equals(REPLAY)) {
+	    replayMode = true;
 	    practiceProblem = false;
-	} else if (command.equals(PRACTICE)) {
+	} 
+	// selection practice problem mode if the practice button is pressed
+	else if (command.equals(PRACTICE)) {
+	    replayMode = false;
 	    practiceProblem = true;
-	} else if (command.equals(START_REPLAY)) {
-	    System.out.println("opening " + replayFile.getName()); // TODO
+	}
+	// start the replay or practice problem when the start button is pressed
+	else if (command.equals(START_REPLAY)) {
+	    readyToPlay = true;
 	    frame.dispose();
-	    gui.initializeGame();
-	    
-	} else if (command.contains(START_GAME)) {
+	    gui.initializeGame();	    
+	} 
+	// start the game if either start game button is pressed
+	else if (command.contains(START_GAME)) {
 	    int numPlayers = Integer.parseInt(command.substring(0, 1));
 	    if (numPlayers == 1) {
 		player1Name = player1Name1;
@@ -685,6 +704,7 @@ public class MainMenu implements ActionListener {
 		onePlayerGame = false;
 	    }
 	    replayMode = false;
+	    practiceProblem = false;
 	    readyToPlay = true;
 	    frame.dispose();
 	    gui.initializeGame();

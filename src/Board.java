@@ -47,6 +47,17 @@ public class Board {
 		capturedBlackStones = 0;
 		capturedWhiteStones = 0;
 	}
+	
+	public Board(int size, ArrayList<Move> moves) { 
+		this(size);
+		try {
+			for (Move move : moves) {
+				this.placeStone(move.getColor(), move.getX(), move.getY());
+			}
+		} catch(Exception e) { 
+			System.out.println("Unable to construct board with given list of moves.");
+		}
+	}
 
 
 	/**

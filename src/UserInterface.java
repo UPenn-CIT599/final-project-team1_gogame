@@ -28,14 +28,14 @@ public class UserInterface extends Canvas implements MouseListener {
     private JFrame frame;
     private static final long serialVersionUID = 1L;
     private BufferedImage image;
-    private GameViewer game;
+//    private GameViewer game;
+    private AbstractGame game;
     private boolean isPlayer1Black;
     private boolean replayMode;
     private boolean practiceProblem;
     private String player1Name;
     private String player2Name;
-    private boolean onePlayerGame;
-//    private Object notifier = new Object();
+//    private boolean onePlayerGame;
     private static final int imageSize = 700;
     private static final int borderSize = 100;
     private int numRows;
@@ -59,9 +59,6 @@ public class UserInterface extends Canvas implements MouseListener {
     private String messageLine1 = "";
     private String messageLine2 = "";
     private MainMenu mainMenu;
-//    private DeadStoneSelector selector;
-//    private boolean selectingDeadStones = false;
-//    private Score scorekeeper;
     private EndGameMenu endGameMenu;
     
     private static String CONFIRM_MAIN_MENU = 
@@ -77,17 +74,38 @@ public class UserInterface extends Canvas implements MouseListener {
     }
 
 //    /**
-//     * @return the notifier
+//     * @return the game
 //     */
-//    public Object getNotifier() {
-//	return notifier;
+//    public GameViewer getGame() {
+//	return game;
 //    }
     
     /**
      * @return the game
      */
-    public GameViewer getGame() {
+    public AbstractGame getGame() {
 	return game;
+    }
+    
+    /**
+     * @return replayMode
+     */
+    public boolean isReplayMode() {
+	return replayMode;
+    }
+    
+    /**
+     * @return practiceProblem
+     */
+    public boolean isPracticeProblem() {
+	return practiceProblem;
+    }
+    
+    /**
+     * @return the endGameMenu
+     */
+    public EndGameMenu getEndGameMenu() {
+	return endGameMenu;
     }
     
     /**
@@ -160,7 +178,7 @@ public class UserInterface extends Canvas implements MouseListener {
     public void initializeGame() {
 	replayMode = mainMenu.isReplayMode();
 	practiceProblem = mainMenu.isPracticeProblem();
-	onePlayerGame = mainMenu.isOnePlayerGame();
+//	onePlayerGame = mainMenu.isOnePlayerGame();
 	numRows = mainMenu.getNumRows();
 	int maxBoardSize = imageSize - (2 * borderSize);
 	lineSpacing = maxBoardSize / numRows;
@@ -169,8 +187,7 @@ public class UserInterface extends Canvas implements MouseListener {
 	if (replayMode) {
 	    // TODO
 	} else if (practiceProblem) {
-		game = new PracticeProblem(this, mainMenu);
-		
+	    game = new PracticeProblem(this, mainMenu);
 	} else {
 	    game = new Game(this, mainMenu);
 	    isPlayer1Black = ((Game) game).isPlayer1Black();
@@ -242,8 +259,12 @@ public class UserInterface extends Canvas implements MouseListener {
      */
     public void drawBoard() {
 	Graphics g = image.getGraphics();
+	
+	// clear the image
 	g.setColor(backgroundColor);
 	g.fillRect(0, 0, imageSize, imageSize);
+	
+	// draw the lines for the board
 	g.setColor(lineColor);
 	int start = borderSize + pieceRadius;
 	int stop = borderSize + pieceRadius + boardSize;
@@ -253,13 +274,17 @@ public class UserInterface extends Canvas implements MouseListener {
 	    g.drawLine(start + i * lineSpacing, start, start + i * lineSpacing,
 		    stop);
 	}
+	
+	// draw the pieces, dead stones (if applicable), and buttons
 	drawPieces(g);
 	if (!replayMode && !practiceProblem) {
-	    if (((Game) game).isSelectingDeadStones()) {
+	    if (((Game) game).getSelector() != null) {
 		drawDeadStones(g);
 	    }
 	}
 	drawButtons(g);
+	
+	// draw the message text
 	if (game.isGameOver()) {
 	    messageLine1 = "";
 	    messageLine2 = "Game Over";
@@ -270,6 +295,8 @@ public class UserInterface extends Canvas implements MouseListener {
 	g.setFont(new Font(Font.DIALOG, Font.PLAIN, 28));
 	g.drawString(messageLine1, borderSize, 50);
 	g.drawString(messageLine2, borderSize, 90);
+	
+	// run the paint method
 	repaint();
     }
 
@@ -341,7 +368,7 @@ public class UserInterface extends Canvas implements MouseListener {
 	    drawButton(g, nextButton, "Next", 43);
 	    drawButton(g, replayMainMenuButton, "Main Menu", 20);
 	} else if (practiceProblem) {
-		// TODO
+	    // TODO
 	} else if (((Game) game).isSelectingDeadStones()) {
 	    drawButton(g, calculateScoreButton, "Calculate Score", 41);
 	    drawButton(g, continuePlayButton, "Continue Play", 47);
@@ -375,38 +402,10 @@ public class UserInterface extends Canvas implements MouseListener {
      * This method is run when the game ends.
      */
     public void gameOver() {
-//	scorekeeper = new Score(game.getBoard());
-//	scorekeeper.categorizePoints();
-//	if (!onePlayerGame) {
-//	    selectingDeadStones = true;
-//	    selector = new DeadStoneSelector(game.getBoard());
-//	}
 	drawBoard();
 	endGameMenu = new EndGameMenu(this);
     }
     
-//    public void finalizeScore() {
-//	if (selectingDeadStones) {
-//	    scorekeeper.removeDeadStones(
-//		    scorekeeper.getDeadStones(selector.deadStoneHashSet()));
-//	    selectionPhaseOver();
-//	}
-//	scorekeeper.combineEmptyLocations();
-//	scorekeeper.checkAreaBlackOrWhite();
-//	scorekeeper.fillNeutralPositions(game.getFinalMoveColor());
-//	
-//    }
-    
-//    public void selectDeadStones() {
-////	selectingDeadStones = true;
-//	selector = new DeadStoneSelector(game);
-//    }
-    
-//    public void selectionPhaseOver() {
-//	selectingDeadStones = false;
-//	selector = null;
-//    }
-
     /**
      * This method runs the UserInterface.
      */
@@ -419,9 +418,9 @@ public class UserInterface extends Canvas implements MouseListener {
      * This method processes a mouse click.
      */
     @Override
-    public void mouseClicked(MouseEvent arg0) {
-	int mouseX = arg0.getX();
-	int mouseY = arg0.getY();
+    public void mouseClicked(MouseEvent e) {
+	int mouseX = e.getX();
+	int mouseY = e.getY();
 	if (replayMode) {
 	    if (buttonClicked(previousButton, mouseX, mouseY)) {
 		// TODO
@@ -463,17 +462,6 @@ public class UserInterface extends Canvas implements MouseListener {
 		    }
 		}
 	    } else {
-//		for (int i = 0; i < numRows; i++) {
-//		    for (int j = 0; j < numRows; j++) {
-//			if (buttonClicked(
-//				new Rectangle(borderSize + i * lineSpacing,
-//					borderSize + j * lineSpacing,
-//					2 * pieceRadius, 2 * pieceRadius),
-//				mouseX, mouseY)) {
-//			    game.processMouseClick(i, j);
-//			}
-//		    }
-//		}
 		processMouseClick(mouseX, mouseY);
 	    }
 	}
@@ -493,33 +481,42 @@ public class UserInterface extends Canvas implements MouseListener {
 				2 * pieceRadius, 2 * pieceRadius),
 			mouseX, mouseY)) {
 		    game.processMouseClick(i, j);
+		    return;
 		}
 	    }
 	}
     }
 
+    /**
+     * This method does nothing.
+     */
     @Override
-    public void mouseEntered(MouseEvent arg0) {
+    public void mouseEntered(MouseEvent e) {
 	// do nothing
-
     }
 
+    /**
+     * This method does nothing.
+     */
     @Override
-    public void mouseExited(MouseEvent arg0) {
+    public void mouseExited(MouseEvent e) {
 	// do nothing
-
     }
 
+    /**
+     * This method does nothing.
+     */
     @Override
-    public void mousePressed(MouseEvent arg0) {
+    public void mousePressed(MouseEvent e) {
 	// do nothing
-
     }
 
+    /**
+     * This method does nothing.
+     */
     @Override
-    public void mouseReleased(MouseEvent arg0) {
+    public void mouseReleased(MouseEvent e) {
 	// do nothing
-
     }
 
 }
