@@ -3,6 +3,13 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * This class represents the "Practice Problem" mode, in which a problem sgf file is loaded with a tree of 
+ * possible moves and responses. If the player chooses plays that are defined in the tree of the problem,
+ * the computer automatically plays the response.
+ * @author morrowch
+ *
+ */
 public class PracticeProblem extends AbstractGame {
 
 	private sgfHandler sgf = new sgfHandler();
@@ -17,15 +24,17 @@ public class PracticeProblem extends AbstractGame {
 	@Override
 	public void gameOver() {
 		// Called when the problem is over
-
 	}
 
 	@Override
 	public void processMouseClick(int buttonID) {
 		// TODO Auto-generated method stub
-
 	}
 
+	/**
+	 * Called when a player makes a move. If a solution exists for the problem and the move is on the path of the solution,
+	 * the computer makes the appropriate response.
+	 */
 	@Override
 	public void processMouseClick(int x, int y) {
 		Color color = (blackToMove) ? Color.BLACK : Color.WHITE;
@@ -35,8 +44,11 @@ public class PracticeProblem extends AbstractGame {
 			nextPlayersTurn();
 			gui.drawBoard();
 
+			// Check if the move is one the path
 			if (hasSolution && onPath) {
 				Respond();
+			} else if (hasSolution) {
+				// TODO: Let the player no that they're off path
 			}
 		} catch (IllegalArgumentException e) {
 			gui.invalidMove(e.getMessage());
@@ -45,10 +57,16 @@ public class PracticeProblem extends AbstractGame {
 
 	}
 
+	/**
+	 * Constructor for the practice problem mode
+	 * @param gui
+	 * @param mainMenu
+	 */
 	public PracticeProblem(UserInterface gui, MainMenu mainMenu) {
 		this.gui = gui;
 		File sgfFile = mainMenu.getReplayFile();
 		sgf.readSgfFile(sgfFile);
+		sgf.constructProblem();
 		problem = sgf.getProblem();
 
 		if (problem.getSolution() != null) {
@@ -62,6 +80,10 @@ public class PracticeProblem extends AbstractGame {
 
 	}
 
+	/**
+	 * If a solution was constructed for the given problem, this makes the responses to a players move based on the
+	 * solution tree defined in the problem sgf file
+	 */
 	public void Respond() {
 		try {
 
@@ -92,15 +114,21 @@ public class PracticeProblem extends AbstractGame {
 
 	}
 
+	/**
+	 * 
+	 */
 	@Override
 	public boolean blackToMove() {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
+	/**
+	 * 
+	 */
 	@Override
 	public void finalizeScore() {
-		// TODO Auto-generated method stub
+		// TODO This doesn't apply to Practice Problem mode
 		
 	}
 

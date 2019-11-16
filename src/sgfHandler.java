@@ -47,10 +47,11 @@ public class sgfHandler {
 		}
 
 		file.getPath();
-
-		constructProblem();
 	}
 
+	/**
+	 * Construct a problem from a given sgf file.
+	 */
 	public static void constructProblem() {
 
 		String caption = getCaption();
@@ -132,40 +133,5 @@ public class sgfHandler {
 		}
 		return blackToPlay;
 	}
-	
-	public static void getSolution() {
-		String solText = "";
-		String path = sgfFile.getAbsolutePath();
-		String sol = path.replace(".sgf", "_sol.sgf");
-		
-		File solutionFile = new File(sol);
-		if (!solutionFile.exists()) {
-			// TODO: Prompt user if they want to provide a solution file
-			return;
-		}
-				
-		try {
-			Scanner s = new Scanner(solutionFile);
-			while (s.hasNextLine()) {
-				// Save all text as a single string
-				sgfText += s.nextLine();
-			}
-			s.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		
-	}
-
-	//	public static void getSolutionOld() {
-	//		String solText = "";
-	//		String path = sgfFile.getAbsolutePath();
-	//		String sol = path.replace(".sgf", "_sol.sgf");
-	//		
-	//		File solutionFile = new File(sol);
-	//		if (!solutionFile.exists()) {
-	//			// TODO: Prompt user if they want to provide a solution file
-	//			return;
-	//		}
 	
 }

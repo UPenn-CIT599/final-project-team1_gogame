@@ -27,7 +27,7 @@ public class ProblemSolutionTest {
 		ps.ParseSolution();
 	}
 
-	@Test
+	//@Test
 	final void test4() {
 		String sgfText = "(;GM[1]FF[4]SZ[19]HA[0]KM[0]GN[Cho L&D (abc)]AB[ab][bb][cb][db][eb]AW[ca][ea][fb][ac][bc][cc][dc][ec][fc]C[Elementary](;B[ba]C[Correct.])(;B[da]WV[];W[ba];B[fa];W[hb]C[Wrong.]))";
 		ProblemSolution ps = new ProblemSolution(sgfText);
