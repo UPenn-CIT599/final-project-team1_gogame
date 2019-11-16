@@ -15,7 +15,10 @@ public class sgfHandler {
 	private static Pattern stoneIntersections = Pattern.compile("\\[(\\w\\w)\\]");
 	private static String sgfText;
 	private static Problem problem;
-	
+	private static File sgfFile;
+
+	private static String UNABLE_TO_PARSE_SOLUTION = "Unable to parse solution of problem.";
+
 	/**
 	 * Gets the problem
 	 * @return
@@ -40,7 +43,9 @@ public class sgfHandler {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-		
+
+		file.getPath();
+
 		constructProblem();
 	}
 
@@ -74,8 +79,16 @@ public class sgfHandler {
 			e.printStackTrace();
 		}
 
-		ArrayList<String> solution = new ArrayList<String>();
-
+		ProblemSolution solution = new ProblemSolution(sgfText);
+		try {
+			solution.ParseSolution();
+		} catch(Exception e)
+		{
+			System.out.println(UNABLE_TO_PARSE_SOLUTION);
+			System.out.println(e);
+			solution = null;
+		}
+		Board board = new Board(getBoardSize(), moves);
 		problem = new Problem(board, blackToPlay, caption, solution);
 	}
 
@@ -110,7 +123,7 @@ public class sgfHandler {
 	 * @return
 	 */
 	public static Boolean getPlayerToMove() {
-		Boolean blackToPlay = null;
+		Boolean blackToPlay = true; // Default to having black play first (TODO: glean this from the move order of the solution)
 		Matcher playerToMoveTag = Pattern.compile("PL\\[(B|W)\\]").matcher(sgfText);
 		if (playerToMoveTag.find()) {
 			blackToPlay = playerToMoveTag.group(1).equals("B") ? true : false;
@@ -118,4 +131,15 @@ public class sgfHandler {
 		return blackToPlay;
 	}
 
+	//	public static void getSolutionOld() {
+	//		String solText = "";
+	//		String path = sgfFile.getAbsolutePath();
+	//		String sol = path.replace(".sgf", "_sol.sgf");
+	//		
+	//		File solutionFile = new File(sol);
+	//		if (!solutionFile.exists()) {
+	//			// TODO: Prompt user if they want to provide a solution file
+	//			return;
+	//		}
+	
 }

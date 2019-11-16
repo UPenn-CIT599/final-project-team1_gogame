@@ -6,12 +6,13 @@ public class Problem {
 	private Boolean blackToMove;
 	private String caption;
 	private Boolean hasSolution;
-	private ArrayList<String> solution;
+	private ProblemSolution solution;
 	
-	public Problem(Board board, Boolean blackToMove, String caption, ArrayList<String> solution) {
+	public Problem(Board board, Boolean blackToMove, String caption, ProblemSolution solution) {
 		this.board = board;
 		this.blackToMove = blackToMove;
 		this.caption = caption;
+		this.solution = solution;
 	}
 	
 	/**
@@ -28,6 +29,14 @@ public class Problem {
 	 */
 	public Boolean getBlackToMove() {
 		return blackToMove;
+	}
+	
+	public void setSolution(ProblemSolution solution) {
+		this.solution = solution;
+	}
+	
+	public ProblemSolution getSolution() {
+		return solution;
 	}
 
 }

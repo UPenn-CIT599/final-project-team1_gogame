@@ -12,16 +12,12 @@ public class PracticeProblem implements GameViewer {
 	private String finalMoveColor;
 	private int numRows;
 	private Problem problem;
-
-	@Override
-	public boolean blackToMove() {
-		return blackToMove;
-	}
-
-	@Override
-	public void finalizeScore() {
-		// This method is not used in Practice Problem mode		
-	}
+	private Boolean hasSolution = false; // Indicates whether the problem has a solution
+	private Boolean onPath = true; // Indicates whether the solver is on a solution path
+	private ProblemSolution solution = null;
+	private ArrayList<Move> onPathMoves = null;
+	private Move lastMove;
+	private int RESPONSE_DELAY = 1000;
 
 	@Override
 	public void gameOver() {
@@ -82,10 +78,15 @@ public class PracticeProblem implements GameViewer {
 	@Override
 	public void processMouseClick(int x, int y) {
 		Color color = (blackToMove) ? Color.BLACK : Color.WHITE;
+		lastMove = new Move(color, x, y);
 		try {
 			board.placeStone(color, x, y);
 			nextPlayersTurn();
 			gui.drawBoard();
+
+			if (hasSolution && onPath) {
+				Respond();
+			}
 		} catch (IllegalArgumentException e) {
 			gui.invalidMove(e.getMessage());
 			gui.drawBoard();
@@ -127,9 +128,57 @@ public class PracticeProblem implements GameViewer {
 		sgf.readSgfFile(sgfFile);
 		problem = sgf.getProblem();
 
+		if (problem.getSolution() != null) {
+			hasSolution = true;
+			solution = problem.getSolution();
+			onPathMoves = solution.getResponses();
+		}
+
 		board = problem.getBoard();
 		blackToMove = problem.getBlackToMove();
 
+	}
+
+	public void Respond() {
+		try {
+
+			for (Move move : onPathMoves) {
+				if (move.equals(lastMove)) {
+					if (move.getIsLastMove()) {
+						System.out.println("End of path");
+						onPath = false;
+					} else {
+						try {
+							Thread.sleep(RESPONSE_DELAY);
+							Move computerMove = move.getResponses().get(0);
+							board.placeStone(computerMove.getColor(), computerMove.getX(), computerMove.getY());
+							nextPlayersTurn();
+							gui.drawBoard();
+
+						} catch (IllegalArgumentException e) {
+							gui.invalidMove(e.getMessage());
+							gui.drawBoard();
+						}
+					}
+				}
+			}
+
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	@Override
+	public boolean blackToMove() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void finalizeScore() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
