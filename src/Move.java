@@ -12,7 +12,7 @@ public class Move {
 	private Color color;
 	private int x;
 	private int y;
-	private String annotation;
+	private String annotation = "";
 	private ArrayList<Move> responses = new ArrayList<Move>(); // Possible responses to a move, defined in a problem file
 	private Move parent; // Parent move in a solution tree
 	private Boolean isLastMove = false;

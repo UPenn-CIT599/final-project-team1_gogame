@@ -18,6 +18,7 @@ public class Board {
 	private int capturedBlackStones;
 	private int size;
 	private ArrayList<String> boardPositions; // Keeps a record of the game position after each move
+	private String annotation = "";
 
 	// Invalid move messages
 	public String NO_LIBERTIES_MESSAGE = "Placed stone has no liberties";
@@ -57,6 +58,19 @@ public class Board {
 		} catch(Exception e) { 
 			System.out.println("Unable to construct board with given list of moves.");
 		}
+	}
+	
+	/**
+	 * placeStone method with move as an input
+	 * @param move
+	 * @throws IllegalArgumentException
+	 */
+	public void placeStone(Move move) throws IllegalArgumentException {
+		Color color = move.getColor();
+		int x = move.getX();
+		int y = move.getY();
+		this.annotation = move.getAnnotation();
+		this.placeStone(color, x, y);
 	}
 
 
@@ -336,6 +350,10 @@ public class Board {
 			color = intersections[x][y].getStone().getColor();
 		}
 		return color;
+	}
+	
+	public String getAnnotation() {
+		return annotation;
 	}
 
 }
