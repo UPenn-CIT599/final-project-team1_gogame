@@ -223,7 +223,8 @@ public class EndGameMenu {
 	String winText = " wins by " + SCORE_FORMAT.format(scoreDifferential) +
 		" points!";
 	String resignText = " resigned. ";
-	String resignWinText = " wins!";
+	String timedOutText = " timed out. ";
+	String alternateWinText = " wins!";
 	if (gui.getGame().getResignedPlayer() != null) {
 	    String resignedPlayer = gui.getGame().getResignedPlayer();
 	    String winningPlayer = "";
@@ -234,7 +235,20 @@ public class EndGameMenu {
 		winningPlayer = blackPlayerName;
 		winnerColor = 'B';
 	    }
-	    return resignedPlayer + resignText + winningPlayer + resignWinText;
+	    return resignedPlayer + resignText + winningPlayer +
+		    alternateWinText;
+	} else if (gui.getGame().getTimedOutPlayer() != null) {
+	    String timedOutPlayer = gui.getGame().getTimedOutPlayer();
+	    String winningPlayer = "";
+	    if (timedOutPlayer.equals(blackPlayerName)) {
+		winningPlayer = whitePlayerName;
+		winnerColor = 'W';
+	    } else {
+		winningPlayer = blackPlayerName;
+		winnerColor = 'B';
+	    }
+	    return timedOutPlayer + timedOutText + winningPlayer +
+		    alternateWinText;
 	} else if (blackScore > whiteScore) {
 	    winnerColor = 'B';
 	    return blackPlayerName + winText;

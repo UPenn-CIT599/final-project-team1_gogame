@@ -21,6 +21,8 @@ public abstract class AbstractGame {
     protected boolean gameOver;
     protected String resignedPlayer; // the name of the player who resigned, or
 				     // null if no one has resigned
+    protected String timedOutPlayer; // the name of the player who timed out,
+				     // or null if no one has timed out
     protected Score scorekeeper;
     protected boolean selectingDeadStones = false;
     protected DeadStoneSelector selector;
@@ -95,6 +97,27 @@ public abstract class AbstractGame {
     }
 
     /**
+     * @param resignedPlayer the resignedPlayer to set
+     */
+    public void setResignedPlayer(String resignedPlayer) {
+	this.resignedPlayer = resignedPlayer;
+    }
+
+    /**
+     * @return the timedOutPlayer
+     */
+    public String getTimedOutPlayer() {
+	return timedOutPlayer;
+    }
+
+    /**
+     * @param timedOutPlayer the timedOutPlayer to set
+     */
+    public void setTimedOutPlayer(String timedOutPlayer) {
+	this.timedOutPlayer = timedOutPlayer;
+    }
+
+    /**
      * @param lastMoveWasPass the lastMoveWasPass to set
      */
     public void setLastMoveWasPass(boolean lastMoveWasPass) {
@@ -106,13 +129,6 @@ public abstract class AbstractGame {
      */
     public boolean isGameOver() {
 	return gameOver;
-    }
-
-    /**
-     * @param resignedPlayer the resignedPlayer to set
-     */
-    public void setResignedPlayer(String resignedPlayer) {
-	this.resignedPlayer = resignedPlayer;
     }
 
     /**
@@ -279,6 +295,8 @@ public abstract class AbstractGame {
 	String results = "";
 	if (resignedPlayer != null) {
 	    results = winner + "+R";
+	} else if (timedOutPlayer != null) {
+	    results = winner + "+T";
 	} else if (winner == '0') {
 	    results = "0";
 	} else {
