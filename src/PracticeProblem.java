@@ -21,6 +21,7 @@ public class PracticeProblem extends AbstractGame {
 	private Move lastMove;
 	private int RESPONSE_DELAY = 1000;
 	private Object notifier;
+	private String caption;
 
 	@Override
 	public void gameOver() {
@@ -40,24 +41,32 @@ public class PracticeProblem extends AbstractGame {
 	public void processMouseClick(int x, int y) {
 		Color color = (blackToMove) ? Color.BLACK : Color.WHITE;
 		lastMove = new Move(color, x, y);
+		caption = "Solver plays " + lastMove + ". " + lastMove.getAnnotation();
+		onPath = false;
+		Boolean moveIsOnPath = false;
+		if (!gameOver) {
+			for (Move move : onPathMoves) {
+				if (move.equals(lastMove)) {
+					onPath = true;
+					moveIsOnPath = true;
+					lastMove = move;
+					caption += move.getAnnotation();
 
-		for (Move move : onPathMoves) {
-			if (move.equals(lastMove)) {
-				lastMove = move;
-				System.out.println("The last move made was " + move + " which has " + lastMove.getResponses().size() + " responses.");
+					if (move.getIsLastMove() || move.getResponses().size() == 0) {
+						caption += " End of path.";
+						onPath = false;
+						gameOver = true;
+						System.out.println(caption); // TODO: Plug this into board annotations
+						// Determine whether path is correct or not
+					}
+				}
+			}
 
-				if (move.getAnnotation() != "") {
-					System.out.println(move.getAnnotation());
-				}
-
-				if (move.getIsLastMove()) {
-					System.out.println("End of path");
-					onPath = false;
-				}
-				if (move.getResponses().size() == 0) {
-					System.out.println("End of path");
-					onPath = false;
-				}
+			if (!moveIsOnPath) {
+				caption += ". Move is off path. ";
+				gameOver = true;
+				onPath = false;
+				System.out.println(caption); // TODO: Plug this into board annotations
 			}
 		}
 
@@ -101,7 +110,8 @@ public class PracticeProblem extends AbstractGame {
 
 		board = problem.getBoard();
 		blackToMove = problem.getBlackToMove();
-		
+		gameOver = false;
+
 		InitializeResponder();
 
 	}
@@ -138,15 +148,18 @@ public class PracticeProblem extends AbstractGame {
 		try {
 			Thread.sleep(RESPONSE_DELAY);
 			Move computerMove = lastMove.getResponses().get(0);
-			
-			System.out.println(computerMove.getAnnotation()); // TODO: Plug this into board annotations
-			
+
+			caption += "\nComputer responds with " + computerMove + ". " + computerMove.getAnnotation();
+
+			System.out.println(caption); // TODO: Plug this into board annotations
+
 			board.placeStone(computerMove);
 			if (computerMove.getResponses().size() > 0) {
 				onPathMoves = computerMove.getResponses();
 			} else {
 				System.out.println("End of path");
 				onPath = false;
+				gameOver = true;
 			}
 			nextPlayersTurn();
 			gui.drawBoard();
