@@ -46,10 +46,10 @@ public class ProblemSolution {
 	public void ParseSolution() {
 		moveStrings = solutionText.split(";");
 
-		for (String mString : moveStrings) {
-			System.out.println(mString);
-		}
-		System.out.println("\n\n");
+//		for (String mString : moveStrings) {
+//			System.out.println(mString);
+//		}
+//		System.out.println("\n\n");
 
 		Move parentMove = new Move();
 		parentMove.setMoveNumber(0);
@@ -70,7 +70,7 @@ public class ProblemSolution {
 		Move child = parseMove(childString);
 		parent.addResponse(child);
 		child.setMoveNumber(parent.getMoveNumber() + 1);
-		System.out.println("Adding " + child + " to " + parent);
+		//System.out.println("Adding " + child + " to " + parent);
 
 		parent = child;
 
@@ -116,6 +116,11 @@ public class ProblemSolution {
 			int x = moveMatch.group(2).charAt(0) - 'a';
 			int y = moveMatch.group(2).charAt(1) - 'a';
 			Move move = new Move(color, x, y);
+			Matcher moveAnnotation = Pattern.compile("C\\[(.+)\\]").matcher(moveString);
+			if (moveAnnotation.find()) {
+				move.setAnnotation(moveAnnotation.group(1));
+				//System.out.println("Adding the annotation \"" + move.getAnnotation() + "\" to " + move);
+			}			
 			return move;
 		}
 		return null;

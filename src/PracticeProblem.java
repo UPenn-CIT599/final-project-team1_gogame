@@ -20,6 +20,7 @@ public class PracticeProblem extends AbstractGame {
 	private ArrayList<Move> onPathMoves = null;
 	private Move lastMove;
 	private int RESPONSE_DELAY = 1000;
+	private Object notifier;
 
 	@Override
 	public void gameOver() {
@@ -39,14 +40,37 @@ public class PracticeProblem extends AbstractGame {
 	public void processMouseClick(int x, int y) {
 		Color color = (blackToMove) ? Color.BLACK : Color.WHITE;
 		lastMove = new Move(color, x, y);
+
+		for (Move move : onPathMoves) {
+			if (move.equals(lastMove)) {
+				lastMove = move;
+				System.out.println("The last move made was " + move + " which has " + lastMove.getResponses().size() + " responses.");
+
+				if (move.getAnnotation() != "") {
+					System.out.println(move.getAnnotation());
+				}
+
+				if (move.getIsLastMove()) {
+					System.out.println("End of path");
+					onPath = false;
+				}
+				if (move.getResponses().size() == 0) {
+					System.out.println("End of path");
+					onPath = false;
+				}
+			}
+		}
+
 		try {
-			board.placeStone(color, x, y);
+			board.placeStone(lastMove);
 			nextPlayersTurn();
 			gui.drawBoard();
 
 			// Check if the move is one the path
 			if (hasSolution && onPath) {
-				Respond();
+				synchronized (notifier) {
+					notifier.notify();
+				}
 			} else if (hasSolution) {
 				// TODO: Let the player no that they're off path
 			}
@@ -77,7 +101,33 @@ public class PracticeProblem extends AbstractGame {
 
 		board = problem.getBoard();
 		blackToMove = problem.getBlackToMove();
+		
+		InitializeResponder();
 
+	}
+
+	private void InitializeResponder() {
+
+		notifier = new Object();
+
+		Thread responderThread = new Thread() {
+			public void run() {
+				while (onPath) {
+					while (blackToMove) {
+						synchronized (notifier) {
+							try {
+								// wait until it's this player's turn
+								notifier.wait();
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
+						}
+					}
+					Respond();
+				}
+			}
+		};
+		responderThread.start();
 	}
 
 	/**
@@ -86,31 +136,26 @@ public class PracticeProblem extends AbstractGame {
 	 */
 	public void Respond() {
 		try {
-
-			for (Move move : onPathMoves) {
-				if (move.equals(lastMove)) {
-					if (move.getIsLastMove()) {
-						System.out.println("End of path");
-						onPath = false;
-					} else {
-						try {
-							Thread.sleep(RESPONSE_DELAY);
-							Move computerMove = move.getResponses().get(0);
-							board.placeStone(computerMove.getColor(), computerMove.getX(), computerMove.getY());
-							nextPlayersTurn();
-							gui.drawBoard();
-
-						} catch (IllegalArgumentException e) {
-							gui.invalidMove(e.getMessage());
-							gui.drawBoard();
-						}
-					}
-				}
+			Thread.sleep(RESPONSE_DELAY);
+			Move computerMove = lastMove.getResponses().get(0);
+			
+			System.out.println(computerMove.getAnnotation()); // TODO: Plug this into board annotations
+			
+			board.placeStone(computerMove);
+			if (computerMove.getResponses().size() > 0) {
+				onPathMoves = computerMove.getResponses();
+			} else {
+				System.out.println("End of path");
+				onPath = false;
 			}
-
+			nextPlayersTurn();
+			gui.drawBoard();
+		} catch (IllegalArgumentException e) {
+			gui.invalidMove(e.getMessage());
+			gui.drawBoard();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
-		}
+		} 
 
 	}
 
@@ -129,7 +174,7 @@ public class PracticeProblem extends AbstractGame {
 	@Override
 	public void finalizeScore() {
 		// TODO This doesn't apply to Practice Problem mode
-		
+
 	}
 
 }
