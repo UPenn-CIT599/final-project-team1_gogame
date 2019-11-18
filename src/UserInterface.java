@@ -24,18 +24,16 @@ import javax.swing.*;
  * @author Chris Hartung
  *
  */
-public class UserInterface extends Canvas implements MouseListener {
+public class UserInterface extends JPanel implements MouseListener {
     private JFrame frame;
     private static final long serialVersionUID = 1L;
     private BufferedImage image;
-//    private GameViewer game;
     private AbstractGame game;
     private boolean isPlayer1Black;
     private boolean replayMode;
     private boolean practiceProblem;
     private String player1Name;
     private String player2Name;
-//    private boolean onePlayerGame;
     private static final int imageSize = 700;
     private static final int borderSize = 100;
     private int numRows;
@@ -73,13 +71,6 @@ public class UserInterface extends Canvas implements MouseListener {
 	return frame;
     }
 
-//    /**
-//     * @return the game
-//     */
-//    public GameViewer getGame() {
-//	return game;
-//    }
-    
     /**
      * @return the game
      */
@@ -140,6 +131,7 @@ public class UserInterface extends Canvas implements MouseListener {
     public UserInterface() {
 	setBackground(backgroundColor);
 	setSize(imageSize, imageSize);
+	setDoubleBuffered(true);
 	frame = new JFrame("Go");
 	frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 	frame.addWindowListener(new WindowAdapter() {
@@ -178,7 +170,6 @@ public class UserInterface extends Canvas implements MouseListener {
     public void initializeGame() {
 	replayMode = mainMenu.isReplayMode();
 	practiceProblem = mainMenu.isPracticeProblem();
-//	onePlayerGame = mainMenu.isOnePlayerGame();
 	numRows = mainMenu.getNumRows();
 	int maxBoardSize = imageSize - (2 * borderSize);
 	lineSpacing = maxBoardSize / numRows;

@@ -14,6 +14,7 @@ public class Game extends AbstractGame {
     private Player player2;
     private boolean onePlayerGame;
     private boolean isPlayer1Black;
+    private GameTimer timer;
 
     /**
      * @return player1
@@ -34,6 +35,13 @@ public class Game extends AbstractGame {
      */
     public boolean isPlayer1Black() {
 	return isPlayer1Black;
+    }
+    
+    /**
+     * @return the timer
+     */
+    public GameTimer getTimer() {
+	return timer;
     }
 
     /**
@@ -62,9 +70,10 @@ public class Game extends AbstractGame {
 	    gui.drawBoard();
 	} else {
 	    gameOver = true;
-	    if (!onePlayerGame && (resignedPlayer == null)) {
-	        selectingDeadStones = true;
-	        selector = new DeadStoneSelector(this);
+	    if (!onePlayerGame && (resignedPlayer == null) &&
+		    (timedOutPlayer == null)) {
+		selectingDeadStones = true;
+		selector = new DeadStoneSelector(this);
 	        gui.drawBoard();
 	        JOptionPane.showMessageDialog(gui.getFrame(), 
 		        "Please select all dead stones. Once both players\n" + 
@@ -161,6 +170,10 @@ public class Game extends AbstractGame {
 			updateStringBuilder('W', x, y);
 		    }
 		    
+		    // reset byo-yomi timers
+		    if (timer != null) {
+			timer.resetByoYomi();
+		    }
 		    // decrement handicap counter if necessary
 		    if (handicapCounter > 1) {
 			decrementHandicapCounter();
@@ -234,6 +247,9 @@ public class Game extends AbstractGame {
 	board = new Board(numRows);
 	player1 = new Player(this, player1Name, isPlayer1Black, false);
 	player2 = new Player(this, player2Name, !isPlayer1Black, onePlayerGame);
+	if (menu.isTimed()) {
+	    timer = new GameTimer(this, menu);
+	}
 	lastMoveWasPass = false;
 	gameOver = false;
 	initializeSgfStringBuilder();
