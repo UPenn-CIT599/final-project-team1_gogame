@@ -34,6 +34,8 @@ public class MainMenu implements ActionListener, ItemListener, ChangeListener {
     private boolean readyToPlay = false;
     
     private JPanel cards;
+    private JPanel replayCard;
+    private JPanel selectedFilePanel;
     private JPanel player2NamePanel;
     private JPanel komiPanel;
     private JPanel timerComboBoxPanel;
@@ -186,22 +188,14 @@ public class MainMenu implements ActionListener, ItemListener, ChangeListener {
 	comboBoxPane.add(welcome);
 	comboBoxPane.add(selectGameMode);
 	
-	JPanel numPlayersPanel = createNumPlayersPanel();
-	
+	JPanel numPlayersPanel = createNumPlayersPanel();	
 	JPanel player1NamePanel = createNamePanel(1);
-	JPanel player2NamePanel = createNamePanel(2);
-	
+	JPanel player2NamePanel = createNamePanel(2);	
 	JPanel colorPanel = createColorPanel();
-
-	JPanel boardSizePanel = createBoardSizePanel();
-
-	
+	JPanel boardSizePanel = createBoardSizePanel();	
 	JPanel komiPanel = createKomiPanel();
-
-	JPanel handicapPanel = createHandicapPanel();
-	
-	JPanel timerPanel = createTimerPanel(); 
-	
+	JPanel handicapPanel = createHandicapPanel();	
+	JPanel timerPanel = createTimerPanel(); 	
 	JPanel buttonPanel = createStartButtonPanel();
 	
 	JPanel selectCard = new JPanel();
@@ -216,92 +210,8 @@ public class MainMenu implements ActionListener, ItemListener, ChangeListener {
 	playGameCard.add(komiPanel);
 	playGameCard.add(timerPanel);
 	playGameCard.add(buttonPanel);
-
-	JPanel replayCard = createBoxLayoutPanel();
-
-	JPanel selectedFilePanel = createBoxLayoutPanel();
-	JTextField selectedFileLabel = createTextField("");
-	JTextField selectedFileName = createTextField("");
-	selectedFilePanel.add(selectedFileLabel);
-	selectedFilePanel.add(selectedFileName);
 	
-	JPanel isPracticeProblemPanel = createBoxLayoutPanel();
-	JTextField isPracticeProblemLabel = createTextField(
-		"Is the selected file a replay or a practice problem?");
-	isPracticeProblemLabel.setEnabled(false);
-	JRadioButton replayButton = createRadioButton(REPLAY, KeyEvent.VK_R);
-	replayButton.setSelected(true);
-	replayButton.setEnabled(false);
-	JRadioButton practiceProblemButton = createRadioButton(PRACTICE,
-		KeyEvent.VK_P);
-	practiceProblemButton.setEnabled(false);
-	ButtonGroup buttonGroup = new ButtonGroup();
-	buttonGroup.add(replayButton);
-	buttonGroup.add(practiceProblemButton);
-	JPanel isPracticeProblemButtonPanel = createBoxLayoutPanel(false);
-	isPracticeProblemButtonPanel.add(replayButton);
-	isPracticeProblemButtonPanel.add(practiceProblemButton);
-	isPracticeProblemPanel.add(isPracticeProblemLabel);
-	isPracticeProblemPanel.add(isPracticeProblemButtonPanel);
-	isPracticeProblemPanel
-		.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
-
-	JPanel startReplayPanel = new JPanel();
-	JButton startReplayButton = new JButton(START_REPLAY);
-	startReplayButton.setEnabled(false);
-	startReplayButton.setActionCommand(START_REPLAY);
-	startReplayButton.addActionListener(this);
-	startReplayPanel.add(startReplayButton);
-
-	JPanel chooseFilePanel = createBoxLayoutPanel();
-	JTextField chooseFileLabel = createTextField(
-		"Please choose a file.");
-	chooseFileLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-	/*
-	 * A portion of the below code is based on the following:
-	 * 
-	 * Title: FileChooserDemo 
-	 * Author: Oracle 
-	 * Date: 2008 
-	 * Availability:
-	 * https://docs.oracle.com/javase/tutorial/uiswing/examples/components/FileChooserDemoProject/src/components/FileChooserDemo.java
-	 */
-	fileChooser = new JFileChooser();
-	fileChooser.setFileFilter(new ReplayFileFilter());
-	fileChooser.setAcceptAllFileFilterUsed(false);
-	JButton chooseFileButton = new JButton(SELECT_FILE);
-	chooseFileButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-	
-	// The choose file button uses its own ActionListener rather than the
-	// one used by the other buttons so that it can more easily reference
-	// the components it needs to enable.
-	chooseFileButton.addActionListener(new ActionListener() {
-
-	    @Override
-	    public void actionPerformed(ActionEvent arg0) {
-		int returnVal = fileChooser.showOpenDialog(replayCard);
-		if (returnVal == JFileChooser.APPROVE_OPTION) {
-		    replayFile = fileChooser.getSelectedFile();
-		    isPracticeProblemLabel.setEnabled(true);
-		    replayButton.setEnabled(true);
-		    practiceProblemButton.setEnabled(true);
-		    startReplayButton.setEnabled(true);
-		    selectedFileLabel
-			    .setText("You selected the following file:");
-		    selectedFileName.setText(replayFile.getName());
-		}
-	    }
-
-	});
-	chooseFilePanel.add(chooseFileLabel);
-	chooseFilePanel.add(chooseFileButton);
-	chooseFilePanel
-		.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
-
-	replayCard.add(chooseFilePanel);
-	replayCard.add(selectedFilePanel);
-	replayCard.add(isPracticeProblemPanel);
-	replayCard.add(startReplayPanel);
+	replayCard = createReplayPanel();
 
 	cards = new JPanel(new CardLayout());
 	cards.add(selectCard, SELECT_GAME_MODE);
@@ -394,6 +304,79 @@ public class MainMenu implements ActionListener, ItemListener, ChangeListener {
 	} else {
 	    player1Name = name;
 	}
+    }
+    
+    /**
+     * This method creates a JPanel to select and open an sgf file.
+     * @return The JPanel to select and open an sgf file
+     */
+    private JPanel createReplayPanel() {
+	JPanel replayPanel = createBoxLayoutPanel();
+
+	selectedFilePanel = createBoxLayoutPanel();
+	JTextField selectedFileLabel = createTextField("");
+	JTextField selectedFileName = createTextField("");
+	selectedFilePanel.add(selectedFileLabel);
+	selectedFilePanel.add(selectedFileName);
+	
+	JPanel isPracticeProblemPanel = createBoxLayoutPanel();
+	JTextField isPracticeProblemLabel = createTextField(
+		"Is the selected file a replay or a practice problem?");
+	isPracticeProblemLabel.setEnabled(false);
+	JRadioButton replayButton = createRadioButton(REPLAY, KeyEvent.VK_R);
+	replayButton.setSelected(true);
+	replayButton.setEnabled(false);
+	JRadioButton practiceProblemButton = createRadioButton(PRACTICE,
+		KeyEvent.VK_P);
+	practiceProblemButton.setEnabled(false);
+	ButtonGroup buttonGroup = new ButtonGroup();
+	buttonGroup.add(replayButton);
+	buttonGroup.add(practiceProblemButton);
+	JPanel isPracticeProblemButtonPanel = createBoxLayoutPanel(false);
+	isPracticeProblemButtonPanel.add(replayButton);
+	isPracticeProblemButtonPanel.add(practiceProblemButton);
+	isPracticeProblemPanel.add(isPracticeProblemLabel);
+	isPracticeProblemPanel.add(isPracticeProblemButtonPanel);
+	isPracticeProblemPanel
+		.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
+
+	JPanel startReplayPanel = new JPanel();
+	JButton startReplayButton = new JButton(START_REPLAY);
+	startReplayButton.setEnabled(false);
+	startReplayButton.setActionCommand(START_REPLAY);
+	startReplayButton.addActionListener(this);
+	startReplayPanel.add(startReplayButton);
+
+	JPanel chooseFilePanel = createBoxLayoutPanel();
+	JTextField chooseFileLabel = createTextField("Please choose a file.");
+	chooseFileLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+	/*
+	 * A portion of the below code is based on the following:
+	 * 
+	 * Title: FileChooserDemo 
+	 * Author: Oracle 
+	 * Date: 2008 
+	 * Availability:
+	 * https://docs.oracle.com/javase/tutorial/uiswing/examples/components/FileChooserDemoProject/src/components/FileChooserDemo.java
+	 */
+	fileChooser = new JFileChooser();
+	fileChooser.setFileFilter(new ReplayFileFilter());
+	fileChooser.setAcceptAllFileFilterUsed(false);
+	JButton chooseFileButton = new JButton(SELECT_FILE);
+	chooseFileButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+	chooseFileButton.setActionCommand(SELECT_FILE);
+	chooseFileButton.addActionListener(this);
+	chooseFilePanel.add(chooseFileLabel);
+	chooseFilePanel.add(chooseFileButton);
+	chooseFilePanel
+		.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
+
+	replayPanel.add(chooseFilePanel);
+	replayPanel.add(selectedFilePanel);
+	replayPanel.add(isPracticeProblemPanel);
+	replayPanel.add(startReplayPanel);
+	
+	return replayPanel;
     }
     
     /**
@@ -495,16 +478,6 @@ public class MainMenu implements ActionListener, ItemListener, ChangeListener {
 	JSlider boardSizeChooser = new JSlider(JSlider.HORIZONTAL, 5, 19, 19);
 	boardSizeChooser.setName(BOARD_SIZE);
 	boardSizeChooser.addChangeListener(this);
-//	boardSizeChooser.addChangeListener(new ChangeListener() {
-//
-//	    @Override
-//	    public void stateChanged(ChangeEvent arg0) {
-//		if (!boardSizeChooser.getValueIsAdjusting()) {
-//		    numRows = (int) boardSizeChooser.getValue();
-//		}
-//	    }
-//
-//	});
 	boardSizeChooser.setMajorTickSpacing(1);
 	boardSizeChooser.setPaintTicks(true);
 	boardSizeChooser.setPaintLabels(true);
@@ -540,16 +513,6 @@ public class MainMenu implements ActionListener, ItemListener, ChangeListener {
 	komiChooser.setLabelTable(komiLabelTable);	
 	komiChooser.setName(KOMI);
 	komiChooser.addChangeListener(this);
-//	komiChooser.addChangeListener(new ChangeListener() {
-//
-//	    @Override
-//	    public void stateChanged(ChangeEvent arg0) {
-//		if (!komiChooser.getValueIsAdjusting()) {
-//		    komi = komiChooser.getValue() + 0.5;
-//		}
-//	    }
-//
-//	});
 	komiChooser.setMajorTickSpacing(1);
 	komiChooser.setPaintTicks(true);
 	komiChooser.setPaintLabels(true);
@@ -569,22 +532,6 @@ public class MainMenu implements ActionListener, ItemListener, ChangeListener {
 	JSlider handicapChooser = new JSlider(JSlider.HORIZONTAL, 0, 9, 0);
 	handicapChooser.setName(HANDICAP);
 	handicapChooser.addChangeListener(this);
-//	handicapChooser.addChangeListener(new ChangeListener() {
-//
-//	    @Override
-//	    public void stateChanged(ChangeEvent arg0) {
-//		if (!handicapChooser.getValueIsAdjusting()) {
-//		    handicap = (int) handicapChooser.getValue();
-//
-//		    if (handicap == 0) {
-//			setEnabledAllComponents(komiPanel, true);
-//		    } else {
-//			setEnabledAllComponents(komiPanel, false);
-//		    }
-//		}
-//	    }
-//
-//	});
 	handicapChooser.setMajorTickSpacing(1);
 	handicapChooser.setPaintTicks(true);
 	handicapChooser.setPaintLabels(true);
@@ -647,7 +594,11 @@ public class MainMenu implements ActionListener, ItemListener, ChangeListener {
      */
     private void setEnabledAllComponents(JPanel panel, boolean enabled) {
 	for (Component component : panel.getComponents()) {
-	    component.setEnabled(enabled);
+	    if (component instanceof JPanel) {
+		setEnabledAllComponents((JPanel) component, enabled);
+	    } else {
+		component.setEnabled(enabled);
+	    }
 	}
     }
     
@@ -804,6 +755,17 @@ public class MainMenu implements ActionListener, ItemListener, ChangeListener {
 	} else if (command.equals(TIMER_OFF)) {
 	    timed = false;
 	    setEnabledAllComponents(timerComboBoxPanel, false);
+	}
+	else if (command.equals(SELECT_FILE)) {
+	    int returnVal = fileChooser.showOpenDialog(replayCard);
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+		    replayFile = fileChooser.getSelectedFile();
+		setEnabledAllComponents(replayCard, true);
+		((JTextField) selectedFilePanel.getComponent(0))
+			.setText("You selected the following file:");
+		((JTextField) selectedFilePanel.getComponent(1))
+			.setText(replayFile.getName());
+		}
 	}
 	// select replay mode if the replay button is pressed
 	else if (command.equals(REPLAY)) {
