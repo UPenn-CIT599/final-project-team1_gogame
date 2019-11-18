@@ -13,7 +13,7 @@ import javax.swing.text.*;
  * @author Chris Hartung
  *
  */
-public class MainMenu implements ActionListener {
+public class MainMenu implements ActionListener, ItemListener, ChangeListener {
     private UserInterface gui;
     private JFrame frame;
     private String player1Name = "";
@@ -33,10 +33,19 @@ public class MainMenu implements ActionListener {
     private boolean practiceProblem = false;
     private boolean readyToPlay = false;
     
+    private JPanel cards;
     private JPanel player2NamePanel;
     private JPanel komiPanel;
     private JPanel timerComboBoxPanel;
     
+    private static String SELECT_GAME_MODE = "Select game mode";
+    private static String COLOR = "Color";
+    private static String BOARD_SIZE = "Board Size";
+    private static String HANDICAP = "Handicap";
+    private static String KOMI = "Komi";
+    private static String MAIN_TIMER = "Main Timer";
+    private static String NUM_BYO_YOMI = "Num Byo-Yomi";
+    private static String BYO_YOMI_LENGTH = "Byo-Yomi Length";
     private static String SELECT_FILE = "Select File";
     private static String REPLAY = "Replay";
     private static String PRACTICE = "Practice Problem";
@@ -165,13 +174,12 @@ public class MainMenu implements ActionListener {
 	this.gui = gui;
 	frame = new JFrame("Go - Main Menu");
 	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	String select = "Select game mode";
 	String playGame = "Play Game";
 	String openFile = "Open File";
 	JPanel comboBoxPane = createBoxLayoutPanel();
 	JTextField welcome = createTextField("Welcome to Go!");
 	welcome.setFont(new Font(Font.DIALOG, Font.BOLD, 28));
-	String[] comboBoxItems = { select, playGame, openFile };
+	String[] comboBoxItems = { SELECT_GAME_MODE, playGame, openFile };
 	JComboBox<String> selectGameMode = new JComboBox<>(comboBoxItems);
 	selectGameMode.setEditable(false);
 	selectGameMode.setMaximumSize(new Dimension(135, 50));
@@ -295,8 +303,8 @@ public class MainMenu implements ActionListener {
 	replayCard.add(isPracticeProblemPanel);
 	replayCard.add(startReplayPanel);
 
-	JPanel cards = new JPanel(new CardLayout());
-	cards.add(selectCard, select);
+	cards = new JPanel(new CardLayout());
+	cards.add(selectCard, SELECT_GAME_MODE);
 	cards.add(playGameCard, playGame);
 	cards.add(replayCard, openFile);
 
@@ -304,15 +312,8 @@ public class MainMenu implements ActionListener {
 	pane.add(comboBoxPane, BorderLayout.PAGE_START);
 	pane.add(cards, BorderLayout.CENTER);
 
-	selectGameMode.addItemListener(new ItemListener() {
-
-	    @Override
-	    public void itemStateChanged(ItemEvent evt) {
-		CardLayout cl = (CardLayout) (cards.getLayout());
-		cl.show(cards, (String) evt.getItem());
-	    }
-
-	});
+	selectGameMode.setName(SELECT_GAME_MODE);
+	selectGameMode.addItemListener(this);
 
 	frame.pack();
 	frame.setVisible(true);
@@ -465,15 +466,8 @@ public class MainMenu implements ActionListener {
 	JTextField colorChooserLabel = createTextField(
 		"Player 1, please choose a color: ");
 	JComboBox<String> colorChooser = new JComboBox<>(colorChoices);
-	colorChooser.addItemListener(new ItemListener() {
-
-	    @Override
-	    public void itemStateChanged(ItemEvent evt) {
-		String color = (String) evt.getItem();
-		player1Color = color;
-	    }
-
-	});
+	colorChooser.setName(COLOR);
+	colorChooser.addItemListener(this);
 	colorPanel.add(colorChooserLabel);
 	colorPanel.add(colorChooser);
 	return colorPanel;
@@ -499,16 +493,18 @@ public class MainMenu implements ActionListener {
 	JTextField boardSizeChooserLabel = createTextField(
 		"Please choose a board size:");
 	JSlider boardSizeChooser = new JSlider(JSlider.HORIZONTAL, 5, 19, 19);
-	boardSizeChooser.addChangeListener(new ChangeListener() {
-
-	    @Override
-	    public void stateChanged(ChangeEvent arg0) {
-		if (!boardSizeChooser.getValueIsAdjusting()) {
-		    numRows = (int) boardSizeChooser.getValue();
-		}
-	    }
-
-	});
+	boardSizeChooser.setName(BOARD_SIZE);
+	boardSizeChooser.addChangeListener(this);
+//	boardSizeChooser.addChangeListener(new ChangeListener() {
+//
+//	    @Override
+//	    public void stateChanged(ChangeEvent arg0) {
+//		if (!boardSizeChooser.getValueIsAdjusting()) {
+//		    numRows = (int) boardSizeChooser.getValue();
+//		}
+//	    }
+//
+//	});
 	boardSizeChooser.setMajorTickSpacing(1);
 	boardSizeChooser.setPaintTicks(true);
 	boardSizeChooser.setPaintLabels(true);
@@ -542,16 +538,18 @@ public class MainMenu implements ActionListener {
 	    komiLabelTable.put(i, new JLabel(komiDecimalFormat.format(i + 0.5)));
 	}
 	komiChooser.setLabelTable(komiLabelTable);	
-	komiChooser.addChangeListener(new ChangeListener() {
-
-	    @Override
-	    public void stateChanged(ChangeEvent arg0) {
-		if (!komiChooser.getValueIsAdjusting()) {
-		    komi = komiChooser.getValue() + 0.5;
-		}
-	    }
-
-	});
+	komiChooser.setName(KOMI);
+	komiChooser.addChangeListener(this);
+//	komiChooser.addChangeListener(new ChangeListener() {
+//
+//	    @Override
+//	    public void stateChanged(ChangeEvent arg0) {
+//		if (!komiChooser.getValueIsAdjusting()) {
+//		    komi = komiChooser.getValue() + 0.5;
+//		}
+//	    }
+//
+//	});
 	komiChooser.setMajorTickSpacing(1);
 	komiChooser.setPaintTicks(true);
 	komiChooser.setPaintLabels(true);
@@ -569,28 +567,24 @@ public class MainMenu implements ActionListener {
 	JTextField handicapChooserLabel = createTextField(
 		"Please choose a handicap:");
 	JSlider handicapChooser = new JSlider(JSlider.HORIZONTAL, 0, 9, 0);
-	handicapChooser.addChangeListener(new ChangeListener() {
-
-	    @Override
-	    public void stateChanged(ChangeEvent arg0) {
-		if (!handicapChooser.getValueIsAdjusting()) {
-		    handicap = (int) handicapChooser.getValue();
-
-		    JTextField komiChooserLabel = (JTextField) komiPanel
-			    .getComponent(0);
-		    JSlider komiChooser = (JSlider) komiPanel.getComponent(1);
-		    if (handicap == 0) {
-			komiChooserLabel.setEnabled(true);
-			komiChooser.setEnabled(true);
-		    } else {
-			komiChooser.setValue(0);
-			komiChooserLabel.setEnabled(false);
-			komiChooser.setEnabled(false);
-		    }
-		}
-	    }
-
-	});
+	handicapChooser.setName(HANDICAP);
+	handicapChooser.addChangeListener(this);
+//	handicapChooser.addChangeListener(new ChangeListener() {
+//
+//	    @Override
+//	    public void stateChanged(ChangeEvent arg0) {
+//		if (!handicapChooser.getValueIsAdjusting()) {
+//		    handicap = (int) handicapChooser.getValue();
+//
+//		    if (handicap == 0) {
+//			setEnabledAllComponents(komiPanel, true);
+//		    } else {
+//			setEnabledAllComponents(komiPanel, false);
+//		    }
+//		}
+//	    }
+//
+//	});
 	handicapChooser.setMajorTickSpacing(1);
 	handicapChooser.setPaintTicks(true);
 	handicapChooser.setPaintLabels(true);
@@ -677,11 +671,17 @@ public class MainMenu implements ActionListener {
 	JTextField byoYomiLengthLabel = createTextField("Byo-Yomi Length:");
 	JComboBox<String> mainTimerComboBox = new JComboBox<>(timerLengthOptions());
 	mainTimerComboBox.setSelectedIndex(6);
+	mainTimerComboBox.setName(MAIN_TIMER);
+	mainTimerComboBox.addItemListener(this);
 	JComboBox<String> numByoYomiComboBox = new JComboBox<>(numByoYomiOptions());
 	numByoYomiComboBox.setSelectedIndex(5);
-	JComboBox<String> byuYomiLengthComboBox = new JComboBox<>(
+	numByoYomiComboBox.setName(NUM_BYO_YOMI);
+	numByoYomiComboBox.addItemListener(this);
+	JComboBox<String> byoYomiLengthComboBox = new JComboBox<>(
 		byoYomiLengthLabel());
-	byuYomiLengthComboBox.setSelectedIndex(3);
+	byoYomiLengthComboBox.setSelectedIndex(3);
+	byoYomiLengthComboBox.setName(BYO_YOMI_LENGTH);
+	byoYomiLengthComboBox.addItemListener(this);
 	
 	JPanel timerRadioButtonPanel = new JPanel();
 	timerRadioButtonPanel.add(isTimedLabel);
@@ -695,7 +695,7 @@ public class MainMenu implements ActionListener {
 	timerComboBoxPanel.add(byoYomiLengthLabel);
 	timerComboBoxPanel.add(mainTimerComboBox);
 	timerComboBoxPanel.add(numByoYomiComboBox);
-	timerComboBoxPanel.add(byuYomiLengthComboBox);
+	timerComboBoxPanel.add(byoYomiLengthComboBox);
 	
 	setEnabledAllComponents(timerComboBoxPanel, false);
 	
@@ -781,6 +781,8 @@ public class MainMenu implements ActionListener {
     /**
      * This method determines what happens when a JButton or JRadioButton is
      * pressed.
+     * 
+     * @param e The ActionEvent to be processed
      */
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -819,13 +821,79 @@ public class MainMenu implements ActionListener {
 	    frame.dispose();
 	    gui.initializeGame();	    
 	} 
-	// start the game if either start game button is pressed
+	// start the game if start game button is pressed
 	else if (command.equals(START_GAME)) {
 	    replayMode = false;
 	    practiceProblem = false;
 	    readyToPlay = true;
 	    frame.dispose();
 	    gui.initializeGame();
+	}
+    }
+
+    /**
+     * This method determines what happens when an option in a JComboBox is
+     * selected.
+     * 
+     * @param e The ItemEvent to be processed
+     */
+    @Override
+    public void itemStateChanged(ItemEvent e) {
+	String name = ((Component) e.getSource()).getName();
+	String item = (String) e.getItem();
+	
+	// choose the appropriate card when an item in the game mode combo box
+	// is selected
+	if (name.equals(SELECT_GAME_MODE)) {
+	    CardLayout cl = (CardLayout) (cards.getLayout());
+	    cl.show(cards, item);
+	} 
+	// adjuct the color
+	else if (name.equals(COLOR)) {
+	    player1Color = item;
+	} 
+	// adjust the main timer length
+	else if (name.equals(MAIN_TIMER)) {
+	    String[] words = item.split(" ");
+	    mainTime = (60 * Integer.parseInt(words[0])) +
+		    Integer.parseInt(words[2]);
+	}
+	// adjust number of byo-yomi periods
+	else if (name.equals(NUM_BYO_YOMI)) {
+	    numByoYomiPeriods = Integer.parseInt(item);
+	}
+	// adjust length of byo-yomi periods
+	else if (name.equals(BYO_YOMI_LENGTH)) {
+	    String[] words = item.split(" ");
+	    byoYomiLength = (60 * Integer.parseInt(words[0])) +
+		    Integer.parseInt(words[2]);
+	}
+    }
+
+    /**
+     * This method determines what happens when a JSlider is adjusted.
+     * 
+     * @param e The ChangeEvent to be processed
+     */
+    @Override
+    public void stateChanged(ChangeEvent e) {
+	String name = ((Component) e.getSource()).getName();
+	JSlider source = ((JSlider) e.getSource());
+	int value = source.getValue();
+	if (!source.getValueIsAdjusting()) {
+	    if (name.equals(BOARD_SIZE)) {
+		numRows = value;
+	    } else if (name.equals(HANDICAP)) {
+		handicap = value;
+
+		if (handicap == 0) {
+		    setEnabledAllComponents(komiPanel, true);
+		} else {
+		    setEnabledAllComponents(komiPanel, false);
+		}
+	    } else if (name.equals(KOMI)) {
+		komi = value + 0.5;
+	    }
 	}
     }
 }
