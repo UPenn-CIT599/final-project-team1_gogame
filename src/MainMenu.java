@@ -176,6 +176,9 @@ public class MainMenu implements ActionListener, ItemListener, ChangeListener {
 	this.gui = gui;
 	frame = new JFrame("Go - Main Menu");
 	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	
+	// create the combo box panel that determines which card in the
+	// CardLayout is visible
 	String playGame = "Play Game";
 	String openFile = "Open File";
 	JPanel comboBoxPane = createBoxLayoutPanel();
@@ -188,6 +191,7 @@ public class MainMenu implements ActionListener, ItemListener, ChangeListener {
 	comboBoxPane.add(welcome);
 	comboBoxPane.add(selectGameMode);
 	
+	// create the JPanels for the "Play Game" card
 	JPanel numPlayersPanel = createNumPlayersPanel();	
 	JPanel player1NamePanel = createNamePanel(1);
 	JPanel player2NamePanel = createNamePanel(2);	
@@ -198,8 +202,10 @@ public class MainMenu implements ActionListener, ItemListener, ChangeListener {
 	JPanel timerPanel = createTimerPanel(); 	
 	JPanel buttonPanel = createStartButtonPanel();
 	
+	// create the default "Select Game Mode" card
 	JPanel selectCard = new JPanel();
 
+	// create the "Play Game" card and add all necessary panels
 	JPanel playGameCard = createBoxLayoutPanel();
 	playGameCard.add(numPlayersPanel);
 	playGameCard.add(player1NamePanel);
@@ -211,20 +217,21 @@ public class MainMenu implements ActionListener, ItemListener, ChangeListener {
 	playGameCard.add(timerPanel);
 	playGameCard.add(buttonPanel);
 	
+	// create the "Open File" card
 	replayCard = createReplayPanel();
 
+	// set up the CardLayout
 	cards = new JPanel(new CardLayout());
 	cards.add(selectCard, SELECT_GAME_MODE);
 	cards.add(playGameCard, playGame);
 	cards.add(replayCard, openFile);
-
 	Container pane = frame.getContentPane();
 	pane.add(comboBoxPane, BorderLayout.PAGE_START);
 	pane.add(cards, BorderLayout.CENTER);
-
 	selectGameMode.setName(SELECT_GAME_MODE);
 	selectGameMode.addItemListener(this);
 
+	// assemble the main menu and make it visible
 	frame.pack();
 	frame.setVisible(true);
     }
@@ -770,6 +777,7 @@ public class MainMenu implements ActionListener, ItemListener, ChangeListener {
 	    timed = false;
 	    setEnabledAllComponents(timerComboBoxPanel, false);
 	}
+	// choose a file when select file button is pressed
 	else if (command.equals(SELECT_FILE)) {
 	    int returnVal = fileChooser.showOpenDialog(replayCard);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -857,9 +865,12 @@ public class MainMenu implements ActionListener, ItemListener, ChangeListener {
 	JSlider source = ((JSlider) e.getSource());
 	int value = source.getValue();
 	if (!source.getValueIsAdjusting()) {
+	    // set the board size
 	    if (name.equals(BOARD_SIZE)) {
 		numRows = value;
-	    } else if (name.equals(HANDICAP)) {
+	    } 
+	    // set the handicap
+	    else if (name.equals(HANDICAP)) {
 		handicap = value;
 
 		if (handicap == 0) {
@@ -867,7 +878,9 @@ public class MainMenu implements ActionListener, ItemListener, ChangeListener {
 		} else {
 		    setEnabledAllComponents(komiPanel, false);
 		}
-	    } else if (name.equals(KOMI)) {
+	    } 
+	    // set the komi
+	    else if (name.equals(KOMI)) {
 		komi = value + 0.5;
 	    }
 	}
