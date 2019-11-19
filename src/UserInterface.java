@@ -1,5 +1,6 @@
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.Point2D;
 import java.awt.image.*;
 import javax.swing.*;
 
@@ -49,6 +50,7 @@ public class UserInterface extends JPanel implements MouseListener {
     private Rectangle gameMainMenuButton = new Rectangle(480, 610, 120, 30);
     private Rectangle calculateScoreButton = new Rectangle(100, 610, 200, 30);
     private Rectangle continuePlayButton = new Rectangle(400, 610, 200, 30);
+    private Rectangle annotationArea = new Rectangle(100, 60, 500, 30);
     private static Color backgroundColor = Color.LIGHT_GRAY;
     private static Color lineColor = Color.DARK_GRAY;
     private static Color textColor = Color.BLACK;
@@ -61,6 +63,7 @@ public class UserInterface extends JPanel implements MouseListener {
     private String messageLine2 = "";
     private MainMenu mainMenu;
     private EndGameMenu endGameMenu;
+    private String annotation;
     
     private static String CONFIRM_MAIN_MENU = 
 	    "Are you sure you want to return to the main menu?";
@@ -164,6 +167,7 @@ public class UserInterface extends JPanel implements MouseListener {
 	image = new BufferedImage(imageSize, imageSize,
 		BufferedImage.TYPE_INT_ARGB);
 	this.addMouseListener(this);
+	setToolTipText("Go");
     }
 
     /**
@@ -283,12 +287,18 @@ public class UserInterface extends JPanel implements MouseListener {
 	    messageLine1 = "";
 	    messageLine2 = "Game Over";
 	} else if (replayMode || practiceProblem) {
-//	    String annotation = game.getAnnotation();
-//	    if (annotation.length() > 40) {
-//		messageLine2 = annotation.substring(0, 40) + "...";
-//	    } else {
-//		messageLine2 = annotation;
-//	    }
+//	    annotation = game.getAnnotation();
+	    if (annotation == null) {
+		messageLine2 = "";
+	    } else if (annotation.length() > 35) {
+		messageLine2 = annotation.substring(0, 35) + "...";
+	    } else if (annotation.equals("")) {
+		annotation = null;
+		messageLine2 = "";
+	    } else {
+		messageLine2 = annotation;
+	    }
+
 	} else {
 	    messageLine2 = currentPlayersName() + ", it is your turn.";
 	}
@@ -573,6 +583,18 @@ public class UserInterface extends JPanel implements MouseListener {
     @Override
     public void mouseReleased(MouseEvent e) {
 	// do nothing
+    }
+    
+    /**
+     * This method displays a tooltip containing the annotation whenever there
+     * is an annotation and the mouse is hovering over the annotation area.
+     */
+    @Override public String getToolTipText(MouseEvent e) {
+	if (annotationArea.contains(e.getX(), e.getY())) {
+	    return annotation;
+	} else {
+	    return null;
+	}
     }
 
 }

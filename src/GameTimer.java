@@ -83,6 +83,11 @@ public class GameTimer {
 	    timedOutPlayer = game.getPlayer2().getName();
 	}
 	game.setTimedOutPlayer(timedOutPlayer);
+	if (isBlack) {
+	    game.setFinalMoveColor("white");
+	} else {
+	    game.setFinalMoveColor("black");
+	}
 	game.gameOver();
     }
 
