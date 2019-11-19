@@ -27,6 +27,7 @@ public abstract class AbstractGame {
     protected boolean selectingDeadStones = false;
     protected DeadStoneSelector selector;
     protected HashMap<String, Double> finalScore;
+    protected GameTimer timer;
     protected StringBuilder sgfStringBuilder = new StringBuilder();
     protected static final int lineLengthLimit = 80; // maximum line length for
 						     // output sgf file
@@ -164,6 +165,13 @@ public abstract class AbstractGame {
      */
     public HashMap<String, Double> getFinalScore() {
 	return finalScore;
+    }
+    
+    /**
+     * @return the timer
+     */
+    public GameTimer getTimer() {
+	return timer;
     }
 
     /**

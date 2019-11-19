@@ -54,6 +54,9 @@ public class UserInterface extends JPanel implements MouseListener {
     private static Color textColor = Color.BLACK;
     private static Color buttonColor = Color.WHITE;
     private static Color deadStoneColor = Color.RED;
+    private static final Font MESSAGE = new Font(Font.DIALOG, Font.PLAIN, 28);
+    private static final Font BUTTON = new Font(Font.DIALOG, Font.BOLD, 16);
+    private static final Font TIMER = new Font(Font.DIALOG, Font.BOLD, 22);
     private String messageLine1 = "";
     private String messageLine2 = "";
     private MainMenu mainMenu;
@@ -279,13 +282,24 @@ public class UserInterface extends JPanel implements MouseListener {
 	if (game.isGameOver()) {
 	    messageLine1 = "";
 	    messageLine2 = "Game Over";
+	} else if (replayMode || practiceProblem) {
+//	    String annotation = game.getAnnotation();
+//	    if (annotation.length() > 40) {
+//		messageLine2 = annotation.substring(0, 40) + "...";
+//	    } else {
+//		messageLine2 = annotation;
+//	    }
 	} else {
 	    messageLine2 = currentPlayersName() + ", it is your turn.";
 	}
 	g.setColor(textColor);
-	g.setFont(new Font(Font.DIALOG, Font.PLAIN, 28));
+	g.setFont(MESSAGE);
 	g.drawString(messageLine1, borderSize, 50);
 	g.drawString(messageLine2, borderSize, 90);
+	
+	if (game.getTimer() != null) {
+	    drawTimer(g);
+	}
 	
 	// run the paint method
 	repaint();
@@ -343,7 +357,7 @@ public class UserInterface extends JPanel implements MouseListener {
 	g.setColor(lineColor);
 	g.drawRect(button.x, button.y, button.width, button.height);
 	g.setColor(textColor);
-	g.setFont(new Font(Font.DIALOG, Font.BOLD, 16));
+	g.setFont(BUTTON);
 	g.drawString(text, button.x + offset, button.y + 22);
     }
 
@@ -387,6 +401,57 @@ public class UserInterface extends JPanel implements MouseListener {
 		}
 	    }
 	}
+    }
+    
+    /**
+     * This method draws the text representing the timer.
+     * 
+     * @param g The Graphics on which the timer will be drawn.
+     */
+    private void drawTimer(Graphics g) {
+	g.setFont(BUTTON);
+	g.setColor(textColor);
+	g.drawString("Black", 10, 150);
+	g.drawString("Timer", 10, 180);
+	g.setFont(TIMER);
+	String blackCountdown = game.getTimer().formatTime(true);
+	if (blackCountdown.startsWith("0:00:0")) {
+	    g.setColor(Color.RED);
+	}
+	g.drawString(blackCountdown, 10, 205);
+	g.setColor(textColor);
+	g.setFont(BUTTON);
+	g.drawString("Byo-Yomi", 10, 235);
+	g.drawString("Remaining:", 10, 255);
+	String blackByoYomi = Integer
+		.toString(game.getTimer().remainingByoYomiPeriods(true));
+	if (blackByoYomi.equals("0")) {
+	    g.setColor(Color.RED);
+	}
+	g.setFont(TIMER);
+	g.drawString(blackByoYomi, 10, 280);
+
+	g.setFont(BUTTON);
+	g.setColor(textColor);
+	g.drawString("White", 10, 405);
+	g.drawString("Timer", 10, 435);
+	g.setFont(TIMER);
+	String whiteCountdown = game.getTimer().formatTime(false);
+	if (whiteCountdown.startsWith("0:00:0")) {
+	    g.setColor(Color.RED);
+	}
+	g.drawString(game.getTimer().formatTime(false), 10, 460);
+	g.setColor(textColor);
+	g.setFont(BUTTON);
+	g.drawString("Byo-Yomi", 10, 490);
+	g.drawString("Remaining:", 10, 510);
+	String whiteByoYomi = Integer
+		.toString(game.getTimer().remainingByoYomiPeriods(false));
+	if (whiteByoYomi.equals("0")) {
+	    g.setColor(Color.RED);
+	}
+	g.setFont(TIMER);
+	g.drawString(whiteByoYomi, 10, 535);
     }
 
     /**
