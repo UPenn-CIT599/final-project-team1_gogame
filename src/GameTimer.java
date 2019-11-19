@@ -112,6 +112,14 @@ public class GameTimer {
 	int minutes = remainingTime / 60000;
 	remainingTime -= (60000 * minutes);
 	int seconds = (int) Math.ceil(remainingTime / 1000.0);
+	if (seconds == 60) {
+	    seconds = 0;
+	    minutes++;
+	}
+	if (minutes == 60) {
+	    minutes = 0;
+	    hours++;
+	}
 	return hours + ":" + TIME_FORMAT.format(minutes) + ":" +
 		TIME_FORMAT.format(seconds);
     }

@@ -481,6 +481,8 @@ public class MainMenu implements ActionListener, ItemListener, ChangeListener {
 	boardSizeChooser.setMajorTickSpacing(1);
 	boardSizeChooser.setPaintTicks(true);
 	boardSizeChooser.setPaintLabels(true);
+	boardSizeChooser
+		.setToolTipText("The number of rows and columns on the board");
 	boardSizePanel.add(boardSizeChooserLabel);
 	boardSizePanel.add(boardSizeChooser);
 	return boardSizePanel;
@@ -496,7 +498,7 @@ public class MainMenu implements ActionListener, ItemListener, ChangeListener {
 	DecimalFormat komiDecimalFormat = new DecimalFormat("#.#");
 	
 	komiPanel = createBoxLayoutPanel();
-	JTextField komiChooserLabel = new JTextField(
+	JTextField komiChooserLabel = createTextField(
 		"If handicap is 0, please choose a komi:");
 	komiChooserLabel.setEditable(false);
 	komiChooserLabel
@@ -516,6 +518,8 @@ public class MainMenu implements ActionListener, ItemListener, ChangeListener {
 	komiChooser.setMajorTickSpacing(1);
 	komiChooser.setPaintTicks(true);
 	komiChooser.setPaintLabels(true);
+	komiChooser.setToolTipText("The number of points added to white's" +
+		" score to make up for black's first move advantage");
 	komiPanel.add(komiChooser);
 	return komiPanel;
     }
@@ -535,6 +539,8 @@ public class MainMenu implements ActionListener, ItemListener, ChangeListener {
 	handicapChooser.setMajorTickSpacing(1);
 	handicapChooser.setPaintTicks(true);
 	handicapChooser.setPaintLabels(true);
+	handicapChooser.setToolTipText("The number of stones black places" +
+		" at the beginning of the game before white gets to play");
 	handicapPanel.add(handicapChooserLabel);
 	handicapPanel.add(handicapChooser);
 	return handicapPanel;
@@ -624,16 +630,24 @@ public class MainMenu implements ActionListener, ItemListener, ChangeListener {
 	mainTimerComboBox.setSelectedIndex(6);
 	mainTimerComboBox.setName(MAIN_TIMER);
 	mainTimerComboBox.addItemListener(this);
+	mainTimerComboBox.setToolTipText("Each player has this much time in" +
+		" total for their moves before byo-yomi begins");
 	JComboBox<String> numByoYomiComboBox = new JComboBox<>(numByoYomiOptions());
 	numByoYomiComboBox.setSelectedIndex(5);
 	numByoYomiComboBox.setName(NUM_BYO_YOMI);
 	numByoYomiComboBox.addItemListener(this);
+	numByoYomiComboBox.setToolTipText("Players are allowed this many byo-yomi" + 
+		" periods. If a player's time runs out and they have no byo-yomi" +
+		" periods remaining, that player loses the game.");
 	JComboBox<String> byoYomiLengthComboBox = new JComboBox<>(
 		byoYomiLengthLabel());
 	byoYomiLengthComboBox.setSelectedIndex(3);
 	byoYomiLengthComboBox.setName(BYO_YOMI_LENGTH);
 	byoYomiLengthComboBox.addItemListener(this);
-	
+	byoYomiLengthComboBox.setToolTipText("Once the main timer runs out," +
+		" players have this much time per move, plus the specified number" +
+		" of byo-yomi periods that they may use as needed.");
+
 	JPanel timerRadioButtonPanel = new JPanel();
 	timerRadioButtonPanel.add(isTimedLabel);
 	timerRadioButtonPanel.add(timerOnButton);
