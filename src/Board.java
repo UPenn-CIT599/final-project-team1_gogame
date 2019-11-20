@@ -355,5 +355,9 @@ public class Board {
 	public String getAnnotation() {
 		return annotation;
 	}
+	
+	public void setAnnotation(String annotation) {
+		this.annotation = annotation;
+	}
 
 }

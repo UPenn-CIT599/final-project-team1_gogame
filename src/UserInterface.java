@@ -283,11 +283,11 @@ public class UserInterface extends JPanel implements MouseListener {
 	drawButtons(g);
 	
 	// draw the message text
-	if (game.isGameOver()) {
-	    messageLine1 = "";
+	if (game.isGameOver() && !practiceProblem) {
+		messageLine1 = "";
 	    messageLine2 = "Game Over";
 	} else if (replayMode || practiceProblem) {
-//	    annotation = game.getAnnotation();
+	    annotation = game.getAnnotation();
 	    if (annotation == null) {
 		messageLine2 = "";
 	    } else if (annotation.length() > 35) {

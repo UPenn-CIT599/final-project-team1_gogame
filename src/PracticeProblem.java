@@ -22,6 +22,7 @@ public class PracticeProblem extends AbstractGame {
 	private int RESPONSE_DELAY = 1000;
 	private Object notifier;
 	private String caption;
+	private Boolean solved = false;
 
 	@Override
 	public void gameOver() {
@@ -41,7 +42,6 @@ public class PracticeProblem extends AbstractGame {
 	public void processMouseClick(int x, int y) {
 		Color color = (blackToMove) ? Color.BLACK : Color.WHITE;
 		lastMove = new Move(color, x, y);
-		caption = "Solver plays " + lastMove + ". " + lastMove.getAnnotation();
 		onPath = false;
 		Boolean moveIsOnPath = false;
 		if (!gameOver) {
@@ -50,29 +50,28 @@ public class PracticeProblem extends AbstractGame {
 					onPath = true;
 					moveIsOnPath = true;
 					lastMove = move;
-					caption += move.getAnnotation();
+					caption = move.getAnnotation();
 
 					if (move.getIsLastMove() || move.getResponses().size() == 0) {
-						caption += " End of path.";
 						onPath = false;
+						solved = true;
 						gameOver = true;
-						System.out.println(caption); // TODO: Plug this into board annotations
-						// Determine whether path is correct or not
+						board.setAnnotation(caption);
 					}
 				}
 			}
 
 			if (!moveIsOnPath) {
-				caption += ". Move is off path. ";
+				caption = "Wrong. Off path.";
 				gameOver = true;
 				onPath = false;
-				System.out.println(caption); // TODO: Plug this into board annotations
 			}
 		}
 
 		try {
 			board.placeStone(lastMove);
 			nextPlayersTurn();
+			board.setAnnotation(caption);
 			gui.drawBoard();
 
 			// Check if the move is one the path
@@ -149,16 +148,17 @@ public class PracticeProblem extends AbstractGame {
 			Thread.sleep(RESPONSE_DELAY);
 			Move computerMove = lastMove.getResponses().get(0);
 
-			caption += "\nComputer responds with " + computerMove + ". " + computerMove.getAnnotation();
-
-			System.out.println(caption); // TODO: Plug this into board annotations
-
+			if (computerMove.getAnnotation().length() > 1)
+			{
+				caption = computerMove.getAnnotation();
+				board.setAnnotation(caption);
+			}
 			board.placeStone(computerMove);
 			if (computerMove.getResponses().size() > 0) {
 				onPathMoves = computerMove.getResponses();
 			} else {
-				System.out.println("End of path");
 				onPath = false;
+				solved = false;
 				gameOver = true;
 			}
 			nextPlayersTurn();
