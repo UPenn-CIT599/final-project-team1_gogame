@@ -79,8 +79,6 @@ public class PracticeProblem extends AbstractGame {
 				synchronized (notifier) {
 					notifier.notify();
 				}
-			} else if (hasSolution) {
-				// TODO: Let the player no that they're off path
 			}
 		} catch (IllegalArgumentException e) {
 			gui.invalidMove(e.getMessage());

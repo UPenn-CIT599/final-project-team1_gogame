@@ -45,11 +45,13 @@ public class ProblemSolution {
 	 */
 	public void ParseSolution() {
 		moveStrings = solutionText.split(";");
+		
+		//moveStrings = solutionText.split(("(?<=(;B))"));
 
-//		for (String mString : moveStrings) {
-//			System.out.println(mString);
-//		}
-//		System.out.println("\n\n");
+		for (String mString : moveStrings) {
+			System.out.println(mString);
+		}
+		System.out.println("\n\n");
 
 		Move parentMove = new Move();
 		parentMove.setMoveNumber(0);
