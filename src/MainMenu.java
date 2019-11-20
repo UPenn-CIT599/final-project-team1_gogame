@@ -176,6 +176,9 @@ public class MainMenu implements ActionListener, ItemListener, ChangeListener {
 	this.gui = gui;
 	frame = new JFrame("Go - Main Menu");
 	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	
+	// create the combo box panel that determines which card in the
+	// CardLayout is visible
 	String playGame = "Play Game";
 	String openFile = "Open File";
 	JPanel comboBoxPane = createBoxLayoutPanel();
@@ -188,6 +191,7 @@ public class MainMenu implements ActionListener, ItemListener, ChangeListener {
 	comboBoxPane.add(welcome);
 	comboBoxPane.add(selectGameMode);
 	
+	// create the JPanels for the "Play Game" card
 	JPanel numPlayersPanel = createNumPlayersPanel();	
 	JPanel player1NamePanel = createNamePanel(1);
 	JPanel player2NamePanel = createNamePanel(2);	
@@ -198,8 +202,10 @@ public class MainMenu implements ActionListener, ItemListener, ChangeListener {
 	JPanel timerPanel = createTimerPanel(); 	
 	JPanel buttonPanel = createStartButtonPanel();
 	
+	// create the default "Select Game Mode" card
 	JPanel selectCard = new JPanel();
 
+	// create the "Play Game" card and add all necessary panels
 	JPanel playGameCard = createBoxLayoutPanel();
 	playGameCard.add(numPlayersPanel);
 	playGameCard.add(player1NamePanel);
@@ -211,20 +217,21 @@ public class MainMenu implements ActionListener, ItemListener, ChangeListener {
 	playGameCard.add(timerPanel);
 	playGameCard.add(buttonPanel);
 	
+	// create the "Open File" card
 	replayCard = createReplayPanel();
 
+	// set up the CardLayout
 	cards = new JPanel(new CardLayout());
 	cards.add(selectCard, SELECT_GAME_MODE);
 	cards.add(playGameCard, playGame);
 	cards.add(replayCard, openFile);
-
 	Container pane = frame.getContentPane();
 	pane.add(comboBoxPane, BorderLayout.PAGE_START);
 	pane.add(cards, BorderLayout.CENTER);
-
 	selectGameMode.setName(SELECT_GAME_MODE);
 	selectGameMode.addItemListener(this);
 
+	// assemble the main menu and make it visible
 	frame.pack();
 	frame.setVisible(true);
     }
@@ -481,6 +488,8 @@ public class MainMenu implements ActionListener, ItemListener, ChangeListener {
 	boardSizeChooser.setMajorTickSpacing(1);
 	boardSizeChooser.setPaintTicks(true);
 	boardSizeChooser.setPaintLabels(true);
+	boardSizeChooser
+		.setToolTipText("The number of rows and columns on the board");
 	boardSizePanel.add(boardSizeChooserLabel);
 	boardSizePanel.add(boardSizeChooser);
 	return boardSizePanel;
@@ -496,7 +505,7 @@ public class MainMenu implements ActionListener, ItemListener, ChangeListener {
 	DecimalFormat komiDecimalFormat = new DecimalFormat("#.#");
 	
 	komiPanel = createBoxLayoutPanel();
-	JTextField komiChooserLabel = new JTextField(
+	JTextField komiChooserLabel = createTextField(
 		"If handicap is 0, please choose a komi:");
 	komiChooserLabel.setEditable(false);
 	komiChooserLabel
@@ -516,6 +525,8 @@ public class MainMenu implements ActionListener, ItemListener, ChangeListener {
 	komiChooser.setMajorTickSpacing(1);
 	komiChooser.setPaintTicks(true);
 	komiChooser.setPaintLabels(true);
+	komiChooser.setToolTipText("The number of points added to white's" +
+		" score to make up for black's first move advantage");
 	komiPanel.add(komiChooser);
 	return komiPanel;
     }
@@ -535,6 +546,8 @@ public class MainMenu implements ActionListener, ItemListener, ChangeListener {
 	handicapChooser.setMajorTickSpacing(1);
 	handicapChooser.setPaintTicks(true);
 	handicapChooser.setPaintLabels(true);
+	handicapChooser.setToolTipText("The number of stones black places" +
+		" at the beginning of the game before white gets to play");
 	handicapPanel.add(handicapChooserLabel);
 	handicapPanel.add(handicapChooser);
 	return handicapPanel;
@@ -624,16 +637,24 @@ public class MainMenu implements ActionListener, ItemListener, ChangeListener {
 	mainTimerComboBox.setSelectedIndex(6);
 	mainTimerComboBox.setName(MAIN_TIMER);
 	mainTimerComboBox.addItemListener(this);
+	mainTimerComboBox.setToolTipText("Each player has this much time in" +
+		" total for their moves before byo-yomi begins");
 	JComboBox<String> numByoYomiComboBox = new JComboBox<>(numByoYomiOptions());
 	numByoYomiComboBox.setSelectedIndex(5);
 	numByoYomiComboBox.setName(NUM_BYO_YOMI);
 	numByoYomiComboBox.addItemListener(this);
+	numByoYomiComboBox.setToolTipText("Players are allowed this many byo-yomi" + 
+		" periods. If a player's time runs out and they have no byo-yomi" +
+		" periods remaining, that player loses the game.");
 	JComboBox<String> byoYomiLengthComboBox = new JComboBox<>(
 		byoYomiLengthLabel());
 	byoYomiLengthComboBox.setSelectedIndex(3);
 	byoYomiLengthComboBox.setName(BYO_YOMI_LENGTH);
 	byoYomiLengthComboBox.addItemListener(this);
-	
+	byoYomiLengthComboBox.setToolTipText("Once the main timer runs out," +
+		" players have this much time per move, plus the specified number" +
+		" of byo-yomi periods that they may use as needed.");
+
 	JPanel timerRadioButtonPanel = new JPanel();
 	timerRadioButtonPanel.add(isTimedLabel);
 	timerRadioButtonPanel.add(timerOnButton);
@@ -756,6 +777,7 @@ public class MainMenu implements ActionListener, ItemListener, ChangeListener {
 	    timed = false;
 	    setEnabledAllComponents(timerComboBoxPanel, false);
 	}
+	// choose a file when select file button is pressed
 	else if (command.equals(SELECT_FILE)) {
 	    int returnVal = fileChooser.showOpenDialog(replayCard);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -843,9 +865,12 @@ public class MainMenu implements ActionListener, ItemListener, ChangeListener {
 	JSlider source = ((JSlider) e.getSource());
 	int value = source.getValue();
 	if (!source.getValueIsAdjusting()) {
+	    // set the board size
 	    if (name.equals(BOARD_SIZE)) {
 		numRows = value;
-	    } else if (name.equals(HANDICAP)) {
+	    } 
+	    // set the handicap
+	    else if (name.equals(HANDICAP)) {
 		handicap = value;
 
 		if (handicap == 0) {
@@ -853,7 +878,9 @@ public class MainMenu implements ActionListener, ItemListener, ChangeListener {
 		} else {
 		    setEnabledAllComponents(komiPanel, false);
 		}
-	    } else if (name.equals(KOMI)) {
+	    } 
+	    // set the komi
+	    else if (name.equals(KOMI)) {
 		komi = value + 0.5;
 	    }
 	}

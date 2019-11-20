@@ -14,7 +14,6 @@ public class Game extends AbstractGame {
     private Player player2;
     private boolean onePlayerGame;
     private boolean isPlayer1Black;
-    private GameTimer timer;
 
     /**
      * @return player1
@@ -36,13 +35,6 @@ public class Game extends AbstractGame {
     public boolean isPlayer1Black() {
 	return isPlayer1Black;
     }
-    
-    /**
-     * @return the timer
-     */
-    public GameTimer getTimer() {
-	return timer;
-    }
 
     /**
      * This method returns to game play if players pass consecutively to end the
@@ -62,7 +54,8 @@ public class Game extends AbstractGame {
     public void gameOver() {
 	scorekeeper = new Score(board);
 	scorekeeper.categorizePoints();
-	if (!scorekeeper.checkIfStonesArePlaced() && (resignedPlayer == null)) {
+	if (!scorekeeper.checkIfStonesArePlaced() && (resignedPlayer == null) &&
+		(timedOutPlayer == null)) {
 	    gameOver = false;
 	    gui.invalidMove("Board is empty - please place a stone.");
 	    lastMoveWasPass = false;

@@ -31,17 +31,10 @@ public class GameTimerTask extends TimerTask {
 		timer.getWhiteTimer().countdown();
 	    }
 	    count++;
-	    if (count >= (1000 / GameTimer.TIMER_REFRESH_RATE)) {
+	    // refresh the board 10 times per second
+	    if (count >= (100 / GameTimer.TIMER_REFRESH_RATE)) {
 		count = 0;
 		timer.getGame().getGui().drawBoard();
-		System.out.println("Black: Countdown: " +
-			timer.getBlackTimer().getCountdownTimer() +
-			" Byo-Yomi remaining: " +
-			timer.getBlackTimer().getByoYomiPeriods());
-		System.out.println("White: Countdown: " +
-			timer.getWhiteTimer().getCountdownTimer() +
-			" Byo-Yomi remaining: " +
-			timer.getWhiteTimer().getByoYomiPeriods());
 	    }
 	}
     }

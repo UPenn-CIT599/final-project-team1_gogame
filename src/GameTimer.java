@@ -1,3 +1,4 @@
+import java.text.DecimalFormat;
 import java.util.*;
 
 /**
@@ -12,6 +13,7 @@ public class GameTimer {
     private PlayerTimer whiteTimer;
     private Game game;
     private Timer timer;
+    private static final DecimalFormat TIME_FORMAT = new DecimalFormat("00");
 
     /**
      * This is the number of milliseconds that pass between timer refreshes.
@@ -58,7 +60,7 @@ public class GameTimer {
 	timer.scheduleAtFixedRate(new GameTimerTask(this), 500,
 		TIMER_REFRESH_RATE);
     }
-    
+
     /**
      * This method resets the byo-yomi timer for both players.
      */
@@ -81,6 +83,60 @@ public class GameTimer {
 	    timedOutPlayer = game.getPlayer2().getName();
 	}
 	game.setTimedOutPlayer(timedOutPlayer);
+	if (isBlack) {
+	    game.setFinalMoveColor("white");
+	} else {
+	    game.setFinalMoveColor("black");
+	}
 	game.gameOver();
+    }
+
+    /**
+     * This method returns the time on the countdown timer for the given player
+     * in the format in which it will be displayed.
+     * 
+     * @param isBlack True if checking the black player's timer and false if
+     *                checking the white player's timer
+     * @return The remaining time on the given player's countdown timer,
+     *         formatted as a String
+     */
+    public String formatTime(boolean isBlack) {
+	int remainingTime = 0;
+	if (isBlack) {
+	    remainingTime = blackTimer.getCountdownTimer();
+	} else {
+	    remainingTime = whiteTimer.getCountdownTimer();
+	}
+	int hours = remainingTime / 3600000;
+	remainingTime -= (3600000 * hours);
+	int minutes = remainingTime / 60000;
+	remainingTime -= (60000 * minutes);
+	int seconds = (int) Math.ceil(remainingTime / 1000.0);
+	if (seconds == 60) {
+	    seconds = 0;
+	    minutes++;
+	}
+	if (minutes == 60) {
+	    minutes = 0;
+	    hours++;
+	}
+	return hours + ":" + TIME_FORMAT.format(minutes) + ":" +
+		TIME_FORMAT.format(seconds);
+    }
+
+    /**
+     * This method returns the number of byo-yomi periods remaining for the
+     * specified player.
+     * 
+     * @param isBlack True if checking the black player and false if checking
+     *                the white player
+     * @return The number of byo-yomi periods remaining for the given player
+     */
+    public int remainingByoYomiPeriods(boolean isBlack) {
+	if (isBlack) {
+	    return blackTimer.getByoYomiPeriods();
+	} else {
+	    return whiteTimer.getByoYomiPeriods();
+	}
     }
 }
