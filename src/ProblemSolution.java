@@ -106,7 +106,6 @@ public class ProblemSolution {
 	/**
 	 * Parses an individual move from the solution text of a sgf file.
 	 * 
-	 *  TODO: Still some work to do on this part, including parsing out the comment tag, if it exists
 	 * @param moveString
 	 * @return
 	 */

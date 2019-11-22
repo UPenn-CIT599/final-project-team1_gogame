@@ -17,6 +17,7 @@ public class sgfHandler {
 	private static ArrayList<Move> moves = new ArrayList<Move>();
 	private static Problem problem;
 	private static File sgfFile;
+	private static ReplayGame replayGame;
 
 	private static String UNABLE_TO_PARSE_SOLUTION = "Unable to parse solution of problem.";
 
@@ -98,7 +99,8 @@ public class sgfHandler {
 	/**
 	 * Called when the sgf file loaded in is a game to replay
 	 */
-	public static void constructReplayGame() {
+	public void constructReplayGame() {
+		replayGame = new ReplayGame(sgfText, this);
 		
 	}
 
@@ -126,6 +128,10 @@ public class sgfHandler {
 			caption = problemCaptionTag.group(1);
 		} 
 		return caption;
+	}
+	
+	public ReplayGame getReplayGame() {
+		return replayGame;
 	}
 
 //	/**
