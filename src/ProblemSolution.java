@@ -20,9 +20,9 @@ public class ProblemSolution {
 	private static String solutionText;
 	private static String UNABLE_TO_PARSE_SOLUTION = "Unable to parse solution of problem.";
 
-	private Color solverColor = Color.BLACK; // TODO: Defaulting to black for now, as all the problems in the practice collection are for black
-	private static String[] moveStrings;
-	private int i = 1; // This represents the move being added in the solution tree. There is no real "order" to these
+	private Color solverColor = Color.BLACK;
+	private static ArrayList<String> moveStrings;
+	private int i = 0; // This represents the move being added in the solution tree. There is no real "order" to these
 	private ArrayList<Move> variations = new ArrayList<Move>(); // ArrayList of variations, used to keep track of nested variations in the recursive ParseSolution() method
 	private ArrayList<Move> responses;
 
@@ -33,6 +33,7 @@ public class ProblemSolution {
 	public ProblemSolution(String sgfText) {
 		Pattern movesPattern = Pattern.compile(";(B|W)\\[\\w\\w\\].*$");
 		Matcher movesMatcher = movesPattern.matcher(sgfText);
+
 		if (movesMatcher.find()) {
 			solutionText = movesMatcher.group();
 		} else {
@@ -44,21 +45,20 @@ public class ProblemSolution {
 	 * Parses the solution tree of an sgf file. This creates a "dummy" first move, for which all subsequent moves are children
 	 */
 	public void ParseSolution() {
-		moveStrings = solutionText.split(";");
+		moveStrings = new ArrayList<String>();  
 		
-		//moveStrings = solutionText.split(("(?<=(;B))"));
-
-		for (String mString : moveStrings) {
-			System.out.println(mString);
+		Pattern singleMove = Pattern.compile("([B|W]\\[\\w\\w\\].*?(?=(;B|;W|$)))");
+		Matcher singleMoveMatcher = singleMove.matcher(solutionText);
+		while (singleMoveMatcher.find()) {
+			moveStrings.add(singleMoveMatcher.group(1));
 		}
-		System.out.println("\n\n");
 
 		Move parentMove = new Move();
 		parentMove.setMoveNumber(0);
 		variations.add(parentMove);
 
-		AddChildProblem(parentMove, moveStrings[i]);
-		
+		AddChildProblem(parentMove, moveStrings.get(i));
+
 		responses = parentMove.getResponses();
 	}
 
@@ -70,17 +70,17 @@ public class ProblemSolution {
 	 */
 	public void AddChildProblem(Move parent, String childString) {
 		Move child = parseMove(childString);
+		if (i == 0) {
+			solverColor = child.getColor();
+		}
 		parent.addResponse(child);
 		child.setMoveNumber(parent.getMoveNumber() + 1);
-		//System.out.println("Adding " + child + " to " + parent);
 
 		parent = child;
 
 		// Checks if the move is the end of a variation
 		int variationEnds = GetNumberOfChars(childString, ')');
 		if (variationEnds > 0) {
-			String outcome = (child.getColor().equals(Color.BLACK)) ? "correct" : "incorrect";
-			//System.out.println("End of " + outcome + " variation");
 			child.setIsLastMove(true);
 			for (int j = 0; j < variationEnds; j++) {
 				if (variations.size() > 0) {
@@ -93,13 +93,12 @@ public class ProblemSolution {
 		// Checks if the move is the start of a variation
 		if (childString.contains("(")) {
 			variations.add(parent);
-			//System.out.println("Starting alternative branch from move " + parent);
 		}
 
 		// Increments to the next move in the tree, and recursively calls the same function again if another move exists
 		i++;
-		if (i < moveStrings.length) {
-			AddChildProblem(parent, moveStrings[i]);
+		if (i < moveStrings.size()) {
+			AddChildProblem(parent, moveStrings.get(i));
 		}
 
 	}
@@ -121,7 +120,6 @@ public class ProblemSolution {
 			Matcher moveAnnotation = Pattern.compile("C\\[(.+)\\]").matcher(moveString);
 			if (moveAnnotation.find()) {
 				move.setAnnotation(moveAnnotation.group(1));
-				//System.out.println("Adding the annotation \"" + move.getAnnotation() + "\" to " + move);
 			}			
 			return move;
 		}
@@ -143,13 +141,21 @@ public class ProblemSolution {
 		}
 		return count;
 	}
-	
+
 	/**
 	 * 
 	 * @return
 	 */
 	public ArrayList<Move> getResponses() {
 		return responses;
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public Color getSolverColor() {
+		return solverColor;
 	}
 
 }

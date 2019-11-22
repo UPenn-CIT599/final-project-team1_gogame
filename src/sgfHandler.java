@@ -55,7 +55,7 @@ public class sgfHandler {
 	public static void constructProblem() {
 
 		String caption = getCaption();
-		Boolean blackToPlay = getPlayerToMove();
+//		Boolean blackToPlay = getPlayerToMove();
 
 		// Find lines that correspond to "Add black" or "Add white"
 		Matcher w = stonePositions.matcher(sgfText);
@@ -92,7 +92,14 @@ public class sgfHandler {
 			solution = null;
 		}
 		Board board = new Board(getBoardSize(), moves);
-		problem = new Problem(board, blackToPlay, caption, solution);
+		problem = new Problem(board, caption, solution);
+	}
+	
+	/**
+	 * Called when the sgf file loaded in is a game to replay
+	 */
+	public static void constructReplayGame() {
+		
 	}
 
 	/**
@@ -114,24 +121,24 @@ public class sgfHandler {
 	 */
 	public static String getCaption() {
 		String caption = "Problem";
-		Matcher problemCaptionTag = Pattern.compile("GN\\[(\\w+)\\]").matcher(sgfText);
+		Matcher problemCaptionTag = Pattern.compile("GN\\[(\\.+)\\]").matcher(sgfText);
 		if (problemCaptionTag.find()) {
 			caption = problemCaptionTag.group(1);
 		} 
 		return caption;
 	}
 
-	/**
-	 * Gets the player to move in the current position based on the PL tag.
-	 * @return
-	 */
-	public static Boolean getPlayerToMove() {
-		Boolean blackToPlay = true; // Default to having black play first (TODO: glean this from the move order of the solution)
-		Matcher playerToMoveTag = Pattern.compile("PL\\[(B|W)\\]").matcher(sgfText);
-		if (playerToMoveTag.find()) {
-			blackToPlay = playerToMoveTag.group(1).equals("B") ? true : false;
-		}
-		return blackToPlay;
-	}
+//	/**
+//	 * Gets the player to move in the current position based on the PL tag.
+//	 * @return
+//	 */
+//	public static Boolean getPlayerToMove() {
+//		Boolean blackToPlay = null;
+//		Matcher playerToMoveTag = Pattern.compile("PL\\[(B|W)\\]").matcher(sgfText);
+//		if (playerToMoveTag.find()) {
+//			blackToPlay = playerToMoveTag.group(1).equals("B") ? true : false;
+//		}
+//		return blackToPlay;
+//	}
 	
 }

@@ -10,10 +10,11 @@ import java.util.HashMap;
  * @author morrowch
  *
  */
-public class PracticeProblem extends AbstractGame {
+public class PracticeProblemMode extends AbstractGame {
 
 	private sgfHandler sgf = new sgfHandler();
 	private Problem problem;
+	private Boolean solverIsBlack;
 	private Boolean hasSolution = false; // Indicates whether the problem has a solution
 	private Boolean onPath = true; // Indicates whether the solver is on a solution path
 	private ProblemSolution solution = null;
@@ -22,17 +23,7 @@ public class PracticeProblem extends AbstractGame {
 	private int RESPONSE_DELAY = 1000;
 	private Object notifier;
 	private String caption;
-	private Boolean solved = false;
-
-	@Override
-	public void gameOver() {
-		// Called when the problem is over
-	}
-
-	@Override
-	public void processMouseClick(int buttonID) {
-		// TODO Auto-generated method stub
-	}
+	private String problemTitle;
 
 	/**
 	 * Called when a player makes a move. If a solution exists for the problem and the move is on the path of the solution,
@@ -54,7 +45,6 @@ public class PracticeProblem extends AbstractGame {
 
 					if (move.getIsLastMove() || move.getResponses().size() == 0) {
 						onPath = false;
-						solved = true;
 						gameOver = true;
 						board.setAnnotation(caption);
 					}
@@ -92,7 +82,7 @@ public class PracticeProblem extends AbstractGame {
 	 * @param gui
 	 * @param mainMenu
 	 */
-	public PracticeProblem(UserInterface gui, MainMenu mainMenu) {
+	public PracticeProblemMode(UserInterface gui, MainMenu mainMenu) {
 		this.gui = gui;
 		File sgfFile = mainMenu.getReplayFile();
 		sgf.readSgfFile(sgfFile);
@@ -105,8 +95,10 @@ public class PracticeProblem extends AbstractGame {
 			onPathMoves = solution.getResponses();
 		}
 
+		solverIsBlack = (problem.getSolverColor().equals(Color.BLACK)) ? true : false;
+		blackToMove = (solverIsBlack) ? true : false;
+		problemTitle = problem.getCaption();
 		board = problem.getBoard();
-		blackToMove = problem.getBlackToMove();
 		gameOver = false;
 
 		InitializeResponder();
@@ -120,7 +112,7 @@ public class PracticeProblem extends AbstractGame {
 		Thread responderThread = new Thread() {
 			public void run() {
 				while (onPath) {
-					while (blackToMove) {
+					while (blackToMove == solverIsBlack) {
 						synchronized (notifier) {
 							try {
 								// wait until it's this player's turn
@@ -156,7 +148,6 @@ public class PracticeProblem extends AbstractGame {
 				onPathMoves = computerMove.getResponses();
 			} else {
 				onPath = false;
-				solved = false;
 				gameOver = true;
 			}
 			nextPlayersTurn();
@@ -169,23 +160,21 @@ public class PracticeProblem extends AbstractGame {
 		} 
 
 	}
-
-	/**
-	 * 
-	 */
-	@Override
-	public boolean blackToMove() {
-		// TODO Auto-generated method stub
-		return false;
+	
+	public String getProblemTitle() {
+		return problemTitle;
 	}
 
-	/**
-	 * 
-	 */
 	@Override
-	public void finalizeScore() {
-		// TODO This doesn't apply to Practice Problem mode
+	public void gameOver() {
+		// TODO Auto-generated method stub
+		
+	}
 
+	@Override
+	public void processMouseClick(int buttonID) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

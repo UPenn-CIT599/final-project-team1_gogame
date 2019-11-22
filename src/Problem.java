@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.util.*;
 
 /**
@@ -9,7 +10,7 @@ import java.util.*;
 public class Problem {
 	
 	private Board board;
-	private Boolean blackToMove;
+	private Color solverColor;
 	private String caption;
 	private Boolean hasSolution;
 	private ProblemSolution solution;
@@ -21,9 +22,9 @@ public class Problem {
 	 * @param caption
 	 * @param solution
 	 */
-	public Problem(Board board, Boolean blackToMove, String caption, ProblemSolution solution) {
+	public Problem(Board board, String caption, ProblemSolution solution) {
 		this.board = board;
-		this.blackToMove = blackToMove;
+		this.solverColor = solution.getSolverColor();
 		this.caption = caption;
 		this.solution = solution;
 	}
@@ -40,8 +41,8 @@ public class Problem {
 	 * 
 	 * @return
 	 */
-	public Boolean getBlackToMove() {
-		return blackToMove;
+	public Color getSolverColor() {
+		return solverColor;
 	}
 	
 	/**
@@ -58,6 +59,10 @@ public class Problem {
 	 */
 	public ProblemSolution getSolution() {
 		return solution;
+	}
+	
+	public String getCaption() {
+		return caption;
 	}
 
 }

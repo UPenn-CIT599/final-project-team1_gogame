@@ -185,7 +185,7 @@ public class UserInterface extends JPanel implements MouseListener {
 	if (replayMode) {
 	    // TODO
 	} else if (practiceProblem) {
-	    game = new PracticeProblem(this, mainMenu);
+	    game = new PracticeProblemMode(this, mainMenu);
 	} else {
 	    game = new Game(this, mainMenu);
 	    isPlayer1Black = ((Game) game).isPlayer1Black();
@@ -301,6 +301,10 @@ public class UserInterface extends JPanel implements MouseListener {
 
 	} else {
 	    messageLine2 = currentPlayersName() + ", it is your turn.";
+	}
+	if (practiceProblem) {
+		PracticeProblemMode practiceProblemMode = (PracticeProblemMode) game;
+		messageLine1 = practiceProblemMode.getProblemTitle();
 	}
 	g.setColor(textColor);
 	g.setFont(MESSAGE);
