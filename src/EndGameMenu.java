@@ -12,7 +12,7 @@ import javax.swing.text.*;
  * @author Chris Hartung
  *
  */
-public class EndGameMenu {
+public class EndGameMenu implements ActionListener {
     private UserInterface gui;
     private JFrame frame;
     private Container pane;
@@ -25,7 +25,15 @@ public class EndGameMenu {
     private char winnerColor;
     private JFileChooser fileChooser;
     private File replayFile;
+    
+    private static final String VIEW_REPLAY = "View Replay";
+    private static final String SAVE_REPLAY = "Save Replay";
+    private static final String PLAY_AGAIN = "Play Again";
+    private static final String MAIN_MENU = "Main Menu";
 
+    /**
+     * This is used to display scores.
+     */
     public static final DecimalFormat SCORE_FORMAT = new DecimalFormat("#.#");
  
     /**
@@ -65,10 +73,6 @@ public class EndGameMenu {
 	pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
 	blackPlayerName = gui.blackPlayerName();
 	whitePlayerName = gui.whitePlayerName();
-	HashMap<String, Double> scores = gui.getGame().getFinalScore();
-	blackScore = scores.get("blackScore");
-	whiteScore = scores.get("whiteScore") + gui.getGame().getKomi();
-	scoreDifferential = Math.abs(blackScore - whiteScore);
 	fileChooser = new JFileChooser();
 	fileChooser.setFileFilter(new ReplayFileFilter());
 	fileChooser.setAcceptAllFileFilterUsed(false);
@@ -83,9 +87,18 @@ public class EndGameMenu {
 	 * http://www.icsej.com/answers/747/center-align-text-in-jtextarea-jtextpane
 	 */
 	JTextPane scoreDisplay = new JTextPane();
-	scoreDisplay.setText("Game over.\n\nFinal Score:\n" + blackPlayerName +
-		": " + SCORE_FORMAT.format(blackScore) + "\n" + whitePlayerName +
-		": " + SCORE_FORMAT.format(whiteScore) + "\n\n" + winner());
+	HashMap<String, Double> scores = gui.getGame().getFinalScore();
+	if (scores == null) {
+	    scoreDisplay.setText("Game over.");
+	} else {
+	    blackScore = scores.get("blackScore");
+	    whiteScore = scores.get("whiteScore") + gui.getGame().getKomi();
+	    scoreDifferential = Math.abs(blackScore - whiteScore);
+	    scoreDisplay.setText("Game over.\n\nFinal Score:\n" +
+		    blackPlayerName + ": " + SCORE_FORMAT.format(blackScore) +
+		    "\n" + whitePlayerName + ": " +
+		    SCORE_FORMAT.format(whiteScore) + "\n\n" + winner());
+	}
 	scoreDisplay.setEditable(false);
 	StyledDocument doc = scoreDisplay.getStyledDocument();
 	SimpleAttributeSet center = new SimpleAttributeSet();
@@ -99,56 +112,10 @@ public class EndGameMenu {
 	buttonPanel.setLayout(new GridLayout(2, 2, 20, 10));
 	buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
 	pane.add(buttonPanel);
-	JButton viewReplayButton = addAButton("View Replay");
-	viewReplayButton.addActionListener(new ActionListener() {
-
-	    @Override
-	    public void actionPerformed(ActionEvent arg0) {
-		if (replayFile == null) {
-		    int confirm = JOptionPane.showOptionDialog(frame,
-			    "You must save your replay before viewing it.\n" +
-		            "Press OK to choose where to save it.",
-			    "Save Replay", JOptionPane.OK_CANCEL_OPTION,
-			    JOptionPane.INFORMATION_MESSAGE, null, null, null);
-		    if (confirm == 0) {
-			saveReplay();
-		    } else {
-			return;
-		    }
-		}
-		// TODO open the replay file
-	    }
-
-	});
-	JButton saveButton = addAButton("Save Replay");
-	saveButton.addActionListener(new ActionListener() {
-
-	    @Override
-	    public void actionPerformed(ActionEvent e) {
-		saveReplay();
-	    }
-
-	});
-	JButton playAgainButton = addAButton("Play Again");
-	playAgainButton.addActionListener(new ActionListener() {
-
-	    @Override
-	    public void actionPerformed(ActionEvent e) {
-		frame.dispose();
-		gui.initializeGame();
-	    }
-
-	});
-	JButton mainMenuButton = addAButton("Main Menu");
-	mainMenuButton.addActionListener(new ActionListener() {
-
-	    @Override
-	    public void actionPerformed(ActionEvent e) {
-		frame.dispose();
-		gui.run();
-	    }
-
-	});
+	JButton viewReplayButton = addAButton(VIEW_REPLAY);
+	JButton saveButton = addAButton(SAVE_REPLAY);
+	JButton playAgainButton = addAButton(PLAY_AGAIN);
+	JButton mainMenuButton = addAButton(MAIN_MENU);
 	
 	// replay and practice problem games cannot be saved
 	if (gui.isReplayMode() || gui.isPracticeProblem()) {
@@ -179,6 +146,7 @@ public class EndGameMenu {
 			"File Overwrite Warning", JOptionPane.YES_NO_OPTION,
 			JOptionPane.WARNING_MESSAGE, null, null, null);
 		if (confirm != 0) {
+		    replayFile = null;
 		    return;
 		}
 	    }
@@ -207,6 +175,8 @@ public class EndGameMenu {
      */
     private JButton addAButton(String text) {
 	JButton button = new JButton(text);
+	button.setActionCommand(text);
+	button.addActionListener(this);
 	button.setAlignmentX(Component.CENTER_ALIGNMENT);
 	buttonPanel.add(button);
 	return button;
@@ -258,6 +228,36 @@ public class EndGameMenu {
 	} else {
 	    winnerColor = '0';
 	    return "Tie game!";
+	}
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+	String command = e.getActionCommand();
+	if (command.equals(VIEW_REPLAY)) {
+	    if (replayFile == null) {
+		int confirm = JOptionPane.showOptionDialog(frame,
+			"You must save your replay before viewing it.\n" +
+				"Press OK to choose where to save it.",
+			"Save Replay", JOptionPane.OK_CANCEL_OPTION,
+			JOptionPane.INFORMATION_MESSAGE, null, null, null);
+		if (confirm == 0) {
+		    saveReplay();
+		} else {
+		    return;
+		}
+	    }
+	    if (replayFile != null) {
+		System.out.println("Opening file"); // TODO open the replay file
+	    }
+	} else if (command.equals(SAVE_REPLAY)) {
+	    saveReplay();
+	} else if (command.equals(PLAY_AGAIN)) {
+	    frame.dispose();
+	    gui.initializeGame();
+	} else if (command.equals(MAIN_MENU)) {
+	    frame.dispose();
+	    gui.run();
 	}
     }
 }

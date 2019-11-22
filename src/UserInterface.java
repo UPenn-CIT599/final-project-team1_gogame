@@ -1,6 +1,5 @@
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.Point2D;
 import java.awt.image.*;
 import javax.swing.*;
 
@@ -42,9 +41,11 @@ public class UserInterface extends JPanel implements MouseListener {
     private int pieceRadius;
     private int boardSize;
     private static double pieceRadiusAsPercentOfLineSpacing = 0.4;
-    private Rectangle previousButton = new Rectangle(100, 610, 120, 30);
-    private Rectangle nextButton = new Rectangle(290, 610, 120, 30);
+    private Rectangle restartReplayButton = new Rectangle(100, 610, 120, 30);
+    private Rectangle nextTurnButton = new Rectangle(290, 610, 120, 30);
     private Rectangle replayMainMenuButton = new Rectangle(480, 610, 120, 30);
+    private Rectangle restartPracticeButton = new Rectangle(180, 610, 120, 30);
+    private Rectangle practiceMainMenuButton = new Rectangle(400, 610, 120, 30);
     private Rectangle passButton = new Rectangle(100, 610, 120, 30);
     private Rectangle resignButton = new Rectangle(290, 610, 120, 30);
     private Rectangle gameMainMenuButton = new Rectangle(480, 610, 120, 30);
@@ -67,6 +68,7 @@ public class UserInterface extends JPanel implements MouseListener {
     
     private static String CONFIRM_MAIN_MENU = 
 	    "Are you sure you want to return to the main menu?";
+    private static String CONFIRM_RESTART = "Are you sure you want to restart?";
     private static String LOST_PROGRESS_WARNING = 
 	    "Your game progress will be lost.";
     
@@ -379,11 +381,12 @@ public class UserInterface extends JPanel implements MouseListener {
      */
     private void drawButtons(Graphics g) {
 	if (replayMode) {
-	    drawButton(g, previousButton, "Previous", 28);
-	    drawButton(g, nextButton, "Next", 43);
+	    drawButton(g, restartReplayButton, "Restart", 34);
+	    drawButton(g, nextTurnButton, "Next Turn", 24);
 	    drawButton(g, replayMainMenuButton, "Main Menu", 20);
 	} else if (practiceProblem) {
-	    // TODO
+	    drawButton(g, restartPracticeButton, "Restart", 34);
+	    drawButton(g, practiceMainMenuButton, "Main Menu", 20);
 	} else if (((Game) game).isSelectingDeadStones()) {
 	    drawButton(g, calculateScoreButton, "Calculate Score", 41);
 	    drawButton(g, continuePlayButton, "Continue Play", 47);
@@ -479,6 +482,37 @@ public class UserInterface extends JPanel implements MouseListener {
 	frame.setVisible(false);
 	mainMenu = new MainMenu(this);
     }
+    
+    /**
+     * This method confirms that the user wants to return to the main menu.
+     * 
+     * @param lostProgressWarning True if the user is being warned about
+     *                            possible lost progress
+     * @param mainMenu            True if a Main Menu button was pressed and
+     *                            false if a Restart button was pressed
+     */
+    private void confirmChoice(boolean lostProgressWarning, boolean mainMenu) {
+	String message = CONFIRM_MAIN_MENU;
+	String title = "Main Menu Confirmation";
+	int messageType = JOptionPane.QUESTION_MESSAGE;
+	if (!mainMenu) {
+	    message = CONFIRM_RESTART;
+	    title = "Restart Confirmation";
+	}
+	if (lostProgressWarning) {
+	    message = message + "\n" + LOST_PROGRESS_WARNING;
+	    messageType = JOptionPane.WARNING_MESSAGE;
+	}
+	int confirm = JOptionPane.showOptionDialog(frame, message, title,
+		JOptionPane.YES_NO_OPTION, messageType, null, null, null);
+	if (confirm == 0) {
+	    if (mainMenu) {
+		run();
+	    } else {
+		initializeGame();
+	    }
+	}
+    }
 
     /**
      * This method processes a mouse click.
@@ -488,22 +522,21 @@ public class UserInterface extends JPanel implements MouseListener {
 	int mouseX = e.getX();
 	int mouseY = e.getY();
 	if (replayMode) {
-	    if (buttonClicked(previousButton, mouseX, mouseY)) {
-		// TODO
-	    } else if (buttonClicked(nextButton, mouseX, mouseY)) {
+	    if (buttonClicked(restartReplayButton, mouseX, mouseY)) {
+		confirmChoice(false, false);
+	    } else if (buttonClicked(nextTurnButton, mouseX, mouseY)) {
 		// TODO
 	    } else if (buttonClicked(replayMainMenuButton, mouseX, mouseY)) {
-		int confirm = JOptionPane.showOptionDialog(frame,
-			CONFIRM_MAIN_MENU, "Main Menu Confirmation",
-			JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
-			null, null, null);
-		if (confirm == 0) {
-		    run();
-		}
+		confirmChoice(false, true);
 	    }
 	} else if (practiceProblem) {
-		// TODO
+	    if (buttonClicked(restartPracticeButton, mouseX, mouseY)) {
+		confirmChoice(true, false);
+	    } else if (buttonClicked(practiceMainMenuButton, mouseX, mouseY)) {
+		confirmChoice(true, true);
+	    } else {
 		processMouseClick(mouseX, mouseY);;
+	    }
 	} else if (((Game) game).isSelectingDeadStones()) {
 	    if (buttonClicked(calculateScoreButton, mouseX, mouseY)) {
 		game.finalizeScore();
@@ -519,13 +552,14 @@ public class UserInterface extends JPanel implements MouseListener {
 		game.processMouseClick(Player.RESIGN);
 	    } else if (buttonClicked(gameMainMenuButton, mouseX, mouseY)) {
 		if (!game.isGameOver()) {
-		    int confirm = JOptionPane.showOptionDialog(frame,
-			    CONFIRM_MAIN_MENU + "\n" + LOST_PROGRESS_WARNING,
-			    "Main Menu Confirmation", JOptionPane.YES_NO_OPTION,
-			    JOptionPane.WARNING_MESSAGE, null, null, null);
-		    if (confirm == 0) {
-			run();
-		    }
+//		    int confirm = JOptionPane.showOptionDialog(frame,
+//			    CONFIRM_MAIN_MENU + "\n" + LOST_PROGRESS_WARNING,
+//			    "Main Menu Confirmation", JOptionPane.YES_NO_OPTION,
+//			    JOptionPane.WARNING_MESSAGE, null, null, null);
+//		    if (confirm == 0) {
+//			run();
+//		    }
+		    confirmChoice(true, true);
 		}
 	    } else {
 		processMouseClick(mouseX, mouseY);
