@@ -22,6 +22,7 @@ public class ReplayMode extends AbstractGame {
 	public void NextMove() {
 		if (!gameOver) {
 			Move move = replayGame.getMove(moveNumber);
+			
 			if (move.getIsLastMove()) {
 				gameOver = true;
 			} else {
@@ -29,7 +30,6 @@ public class ReplayMode extends AbstractGame {
 			}
 			try {
 				board.placeStone(move);
-				// TODO: Check if last move
 				gui.drawBoard();
 			} catch (IllegalArgumentException e) {
 				gui.invalidMove(e.getMessage());
