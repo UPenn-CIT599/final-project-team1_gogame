@@ -8,25 +8,37 @@ public class ReplayGame {
 	private String sgfText;
 	private Board board;
 	private ArrayList<Move> moves;
-	private int boardSize;
 	
-	public ReplayGame(String sgfText, sgfHandler sgfHandler) {
+	public ReplayGame(String sgfText) {
 		this.sgfText = sgfText;
-		boardSize = sgfHandler.getBoardSize();
 	}
 	
 	public void ParseMoves() {
-		moveStrings = new ArrayList<String>();  
+		moves = new ArrayList<Move>();  
 		
 		Pattern singleMove = Pattern.compile("([B|W]\\[\\w\\w\\].*?(?=(;B|;W|$)))");
 		Matcher singleMoveMatcher = singleMove.matcher(sgfText);
 		while (singleMoveMatcher.find()) {
-			moveStrings.add(singleMoveMatcher.group(1));
+			Move move = new Move(singleMoveMatcher.group(1));
+			moves.add(move);
 		}
+		Move lastMove = moves.get(moves.size() - 1);
+		lastMove.setIsLastMove(true);
+		
+		int boardSize = 19;
+		Matcher boardSizeTag = Pattern.compile("SZ\\[(\\d+)\\]").matcher(sgfText);
+		if (boardSizeTag.find()) {
+			boardSize = Integer.parseInt(boardSizeTag.group(1));
+		}
+		board = new Board(boardSize);
 	}
 	
-	public int getBoardSize() {
-		return boardSize;
+	public Board getBoard() {
+		return board;
+	}
+	
+	public Move getMove(int moveNumber) {
+		return moves.get(moveNumber);
 	}
 
 }

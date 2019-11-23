@@ -185,7 +185,7 @@ public class UserInterface extends JPanel implements MouseListener {
 	pieceRadius = (int) (lineSpacing * pieceRadiusAsPercentOfLineSpacing);
 	boardSize = lineSpacing * (numRows - 1);
 	if (replayMode) {
-	    // TODO
+		game = new ReplayMode(this, mainMenu);
 	} else if (practiceProblem) {
 	    game = new PracticeProblemMode(this, mainMenu);
 	} else {
@@ -529,7 +529,7 @@ public class UserInterface extends JPanel implements MouseListener {
 	    if (buttonClicked(restartReplayButton, mouseX, mouseY)) {
 		confirmChoice(false, false);
 	    } else if (buttonClicked(nextTurnButton, mouseX, mouseY)) {
-		// TODO
+		((ReplayMode) game).NextMove();
 	    } else if (buttonClicked(replayMainMenuButton, mouseX, mouseY)) {
 		confirmChoice(false, true);
 	    }

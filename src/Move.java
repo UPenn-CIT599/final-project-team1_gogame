@@ -1,5 +1,7 @@
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Class representing a single move. When being imported from an sgf file, moves could potentially have annotations.
@@ -35,6 +37,25 @@ public class Move {
 	 */
 	public Move() {
 		color = Color.WHITE;
+	}
+	
+	/**
+	 * Parses an individual move from the solution text of a sgf file.
+	 * 
+	 * @param moveString
+	 * @return
+	 */
+	public Move(String moveString) {
+		Matcher moveMatch = Pattern.compile("(B|W)\\[(\\w\\w)\\]").matcher(moveString);
+		if (moveMatch.find()) {
+			this.color = (moveMatch.group(1).equals("B")) ? Color.BLACK : Color.WHITE;
+			this.x = moveMatch.group(2).charAt(0) - 'a';
+			this.y = moveMatch.group(2).charAt(1) - 'a';
+			Matcher moveAnnotation = Pattern.compile("C\\[(.+)\\]").matcher(moveString);
+			if (moveAnnotation.find()) {
+				this.annotation = moveAnnotation.group(1);
+			}			
+		}
 	}
 
 	/**

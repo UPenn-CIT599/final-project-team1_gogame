@@ -56,7 +56,6 @@ public class sgfHandler {
 	public static void constructProblem() {
 
 		String caption = getCaption();
-//		Boolean blackToPlay = getPlayerToMove();
 
 		// Find lines that correspond to "Add black" or "Add white"
 		Matcher w = stonePositions.matcher(sgfText);
@@ -100,8 +99,8 @@ public class sgfHandler {
 	 * Called when the sgf file loaded in is a game to replay
 	 */
 	public void constructReplayGame() {
-		replayGame = new ReplayGame(sgfText, this);
-		
+		replayGame = new ReplayGame(sgfText);
+		replayGame.ParseMoves();
 	}
 
 	/**
@@ -113,7 +112,7 @@ public class sgfHandler {
 		Matcher boardSizeTag = Pattern.compile("SZ\\[(\\d+)\\]").matcher(sgfText);
 		if (boardSizeTag.find()) {
 			boardSize = Integer.parseInt(boardSizeTag.group(1));
-		} 
+		}
 		return boardSize;
 	}
 
