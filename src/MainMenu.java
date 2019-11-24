@@ -749,6 +749,19 @@ public class MainMenu implements ActionListener, ItemListener, ChangeListener {
 	button.addActionListener(this);
 	return button;
     }
+    
+    /**
+     * This method is called when the "View Replay" button in the EndGameMenu is
+     * pressed in order to allow a replay to be viewed without returning to the
+     * main menu.
+     * 
+     * @param replayFile The file containing the replay
+     */
+    public void viewReplay(File replayFile) {
+	this.replayFile = replayFile;
+	replayMode = true;
+	practiceProblem = false;
+    }
 
     /**
      * This method determines what happens when a JButton or JRadioButton is

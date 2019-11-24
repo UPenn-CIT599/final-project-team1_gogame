@@ -248,7 +248,8 @@ public class EndGameMenu implements ActionListener {
 		}
 	    }
 	    if (replayFile != null) {
-		System.out.println("Opening file"); // TODO open the replay file
+		frame.dispose();
+		gui.viewReplay(replayFile);
 	    }
 	} else if (command.equals(SAVE_REPLAY)) {
 	    saveReplay();

@@ -284,8 +284,7 @@ public abstract class AbstractGame {
      */
     public void sgfRemoveDeadStones(HashSet<DeadStone> deadStones) {
 	if (deadStones.size() > 0) {
-	    sgfStringBuilder.append(
-		    "\nC[The following stones were considered dead and removed:]AE");
+	    sgfStringBuilder.append("\nDS");
 	    for (DeadStone deadStone : deadStones) {
 		sgfStringBuilder.append(sgfLocationString(
 			deadStone.getxPosition(), deadStone.getyPosition()));

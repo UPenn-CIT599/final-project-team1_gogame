@@ -1,6 +1,8 @@
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;
+import java.io.File;
+
 import javax.swing.*;
 
 /*
@@ -482,6 +484,16 @@ public class UserInterface extends JPanel implements MouseListener {
     public void gameOver() {
 	drawBoard();
 	endGameMenu = new EndGameMenu(this);
+    }
+    
+    /**
+     * This method plays a replay of the game that was just completed.
+     * 
+     * @param replayFile The file containing the replay
+     */
+    public void viewReplay(File replayFile) {
+	mainMenu.viewReplay(replayFile);
+	initializeGame();
     }
     
     /**
