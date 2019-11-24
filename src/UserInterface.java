@@ -386,7 +386,12 @@ public class UserInterface extends JPanel implements MouseListener {
     private void drawButtons(Graphics g) {
 	if (replayMode) {
 	    drawButton(g, restartReplayButton, "Restart", 34);
-	    drawButton(g, nextTurnButton, "Next Turn", 24);
+	    if (((ReplayMode)game).isOffPath()) {
+	    	drawButton(g, nextTurnButton, "Back to Game", 9);
+	    } else {
+	    	drawButton(g, nextTurnButton, "Next Turn", 24);
+	    }
+	    //drawButton(g, nextTurnButton, "Next Turn", 24);
 	    drawButton(g, replayMainMenuButton, "Main Menu", 20);
 	} else if (practiceProblem) {
 	    drawButton(g, restartPracticeButton, "Restart", 34);
@@ -532,6 +537,8 @@ public class UserInterface extends JPanel implements MouseListener {
 		((ReplayMode) game).NextMove();
 	    } else if (buttonClicked(replayMainMenuButton, mouseX, mouseY)) {
 		confirmChoice(false, true);
+	    } else {
+		processMouseClick(mouseX, mouseY);;
 	    }
 	} else if (practiceProblem) {
 	    if (buttonClicked(restartPracticeButton, mouseX, mouseY)) {

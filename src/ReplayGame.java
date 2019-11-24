@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -9,6 +10,8 @@ public class ReplayGame {
 	private Board board;
 	private ArrayList<Move> moves;
 	private String result = "";
+	private Boolean firstMoveBlack;
+	private int boardSize = 19;
 
 	public ReplayGame(String sgfText) {
 		this.sgfText = sgfText;
@@ -25,10 +28,10 @@ public class ReplayGame {
 			move.setAnnotation("Move: " + (move.getMoveNumber()+1) + ". " + move.getAnnotation());
 			moves.add(move);
 		}
+		firstMoveBlack = moves.get(0).getColor().equals(Color.BLACK) ? true : false;
 		Move lastMove = moves.get(moves.size() - 1);
 		lastMove.setIsLastMove(true);
 
-		int boardSize = 19;
 		Matcher boardSizeTag = Pattern.compile("SZ\\[(\\d+)\\]").matcher(sgfText);
 		if (boardSizeTag.find()) {
 			boardSize = Integer.parseInt(boardSizeTag.group(1));
@@ -44,16 +47,57 @@ public class ReplayGame {
 		}
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public Board getBoard() {
 		return board;
 	}
 
+	/**
+	 * 
+	 * @param moveNumber
+	 * @return
+	 */
 	public Move getMove(int moveNumber) {
 		return moves.get(moveNumber);
 	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public ArrayList<Move> getMoves() {
+		return moves;
+	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public String getResult() {
 		return result;
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public Boolean getFirstMoveBlack() {
+		return firstMoveBlack;
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public int getBoardSize() {
+		return boardSize;
+	}
+	
+	public void setBoard(Board board) {
+		this.board = board;
 	}
 
 }
