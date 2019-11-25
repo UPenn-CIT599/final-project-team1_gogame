@@ -182,10 +182,6 @@ public class UserInterface extends JPanel implements MouseListener {
 	replayMode = mainMenu.isReplayMode();
 	practiceProblem = mainMenu.isPracticeProblem();
 	numRows = mainMenu.getNumRows();
-	int maxBoardSize = imageSize - (2 * borderSize);
-	lineSpacing = maxBoardSize / numRows;
-	pieceRadius = (int) (lineSpacing * pieceRadiusAsPercentOfLineSpacing);
-	boardSize = lineSpacing * (numRows - 1);
 	if (replayMode) {
 		game = new ReplayMode(this, mainMenu);
 		numRows = game.getBoard().getSize();
@@ -203,6 +199,10 @@ public class UserInterface extends JPanel implements MouseListener {
 		messageLine1 = "";
 	    }
 	}
+	int maxBoardSize = imageSize - (2 * borderSize);
+	lineSpacing = maxBoardSize / numRows;
+	pieceRadius = (int) (lineSpacing * pieceRadiusAsPercentOfLineSpacing);
+	boardSize = lineSpacing * (numRows - 1);
 	frame.setVisible(true);
 	drawBoard();
     }
