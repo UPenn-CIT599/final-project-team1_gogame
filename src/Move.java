@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
  *
  */
 public class Move {
-	
+
 	private Color color;
 	private int x;
 	private int y;
@@ -19,7 +19,8 @@ public class Move {
 	private Move parent; // Parent move in a solution tree
 	private Boolean isLastMove = false;
 	private int moveNumber = 0;
-	
+	private Boolean isPass = false;
+
 	/**
 	 * Constructor
 	 * @param color
@@ -31,14 +32,14 @@ public class Move {
 		this.x = x;
 		this.y = y;
 	}
-	
+
 	/**
 	 * Constructor of place-holder move
 	 */
 	public Move() {
 		color = Color.WHITE;
 	}
-	
+
 	/**
 	 * Parses an individual move from the solution text of a sgf file.
 	 * 
@@ -46,11 +47,15 @@ public class Move {
 	 * @return
 	 */
 	public Move(String moveString) {
-		Matcher moveMatch = Pattern.compile("(B|W)\\[(\\w\\w)\\]").matcher(moveString);
+		Matcher moveMatch = Pattern.compile("(B|W)\\[(\\w\\w)?\\]").matcher(moveString);
 		if (moveMatch.find()) {
 			this.color = (moveMatch.group(1).equals("B")) ? Color.BLACK : Color.WHITE;
-			this.x = moveMatch.group(2).charAt(0) - 'a';
-			this.y = moveMatch.group(2).charAt(1) - 'a';
+			if (moveMatch.group(2) == null || moveMatch.group(2).equals("tt")) {
+				isPass = true;
+			} else {
+				this.x = moveMatch.group(2).charAt(0) - 'a';
+				this.y = moveMatch.group(2).charAt(1) - 'a';
+			}
 			Matcher moveAnnotation = Pattern.compile("C\\[(.+)\\]").matcher(moveString);
 			if (moveAnnotation.find()) {
 				this.annotation = moveAnnotation.group(1);
@@ -97,26 +102,29 @@ public class Move {
 	public int getY() {
 		return y;
 	}
-	
+
 	/**
 	 * Override of the toString method. Prints the color and location of the move, as well as the move number
 	 * if it is defined
 	 */
 	@Override
-    public String toString() { 
+	public String toString() { 
 		String colorString = (color.equals(Color.BLACK)) ? "Black" : "White";
 		if (moveNumber > 0) {
+			if (isPass) {
+				return moveNumber + ". " + colorString + " pass";
+			}
 			return moveNumber + ". " + colorString + " " + x + " " + y;
 		}
-        return colorString + " " + x + " " + y;
-    }
-	
+		return colorString + " " + x + " " + y;
+	}
+
 	/**
 	 * Override of the equals method. This checks if both the color and coordinates are the same (but note that
 	 * this does not check the move number)
 	 */
 	@Override
-    public boolean equals(Object o) { 
+	public boolean equals(Object o) { 
 		Move otherMove = (Move) o;
 		if (color.equals(otherMove.getColor()) && x == otherMove.getX() && y == otherMove.getY()) {
 			return true;
@@ -141,7 +149,7 @@ public class Move {
 		responses.add(response);
 		response.setParent(this);
 	}
-	
+
 	/**
 	 * 
 	 * @param parent
@@ -149,7 +157,7 @@ public class Move {
 	public void setParent(Move parent) {
 		this.parent = parent;
 	}
-	
+
 	/**
 	 * 
 	 * @return
@@ -173,7 +181,7 @@ public class Move {
 	public void setIsLastMove(Boolean isLastMove) {
 		this.isLastMove = isLastMove;
 	}
-	
+
 	/**
 	 * 
 	 * @param n
@@ -181,7 +189,7 @@ public class Move {
 	public void setMoveNumber(int n) {
 		moveNumber = n;
 	}
-	
+
 	/**
 	 * 
 	 * @return
@@ -189,5 +197,13 @@ public class Move {
 	public int getMoveNumber() {
 		return moveNumber;
 	}
-	
+
+	/**
+	 * 
+	 * @return
+	 */
+	public Boolean getIsPass() {
+		return isPass;
+	}
+
 }

@@ -38,7 +38,7 @@ public class ReplayMode extends AbstractGame {
 		}
 		else if (!gameOver) {
 			Move move = replayGame.getMove(moveNumber);
-			
+
 			if (move.getIsLastMove()) {
 				gameOver = true;
 			} else {
@@ -54,7 +54,7 @@ public class ReplayMode extends AbstractGame {
 			}
 		}
 	}
-	
+
 	public Boolean isOffPath() {
 		return offPath;
 	}

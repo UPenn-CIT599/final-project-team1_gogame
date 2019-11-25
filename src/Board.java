@@ -48,7 +48,7 @@ public class Board {
 		capturedBlackStones = 0;
 		capturedWhiteStones = 0;
 	}
-	
+
 	public Board(int size, ArrayList<Move> moves) { 
 		this(size);
 		try {
@@ -59,7 +59,7 @@ public class Board {
 			System.out.println("Unable to construct board with given list of moves.");
 		}
 	}
-	
+
 	/**
 	 * placeStone method with move as an input
 	 * @param move
@@ -67,10 +67,14 @@ public class Board {
 	 */
 	public void placeStone(Move move) throws IllegalArgumentException {
 		Color color = move.getColor();
-		int x = move.getX();
-		int y = move.getY();
 		this.annotation = move.getAnnotation();
-		this.placeStone(color, x, y);
+		if (move.getIsPass()) {
+			this.pass();
+		} else {
+			int x = move.getX();
+			int y = move.getY();
+			this.placeStone(color, x, y);
+		}
 	}
 
 
@@ -156,7 +160,7 @@ public class Board {
 		}
 
 		// Create a temporary group to validate that it will have liberties (i.e. that it is a valid group)
-		
+
 		Group validateGroup = new Group(placedStone);
 		for (Group mergedGroup : mergedGroups) {
 			validateGroup.addGroup(mergedGroup);
@@ -277,7 +281,7 @@ public class Board {
 				}
 			}
 		}
-		
+
 		boardPositions.add(boardPosition);
 	}
 
@@ -351,11 +355,11 @@ public class Board {
 		}
 		return color;
 	}
-	
+
 	public String getAnnotation() {
 		return annotation;
 	}
-	
+
 	public void setAnnotation(String annotation) {
 		this.annotation = annotation;
 	}

@@ -20,7 +20,7 @@ public class ReplayGame {
 	public void ParseMoves() {
 		moves = new ArrayList<Move>();  
 
-		Pattern singleMove = Pattern.compile("([B|W]\\[\\w\\w\\].*?(?=(;B|;W|$)))");
+		Pattern singleMove = Pattern.compile("([B|W]\\[(\\w\\w)?\\].*?(?=(;B|;W|$)))");
 		Matcher singleMoveMatcher = singleMove.matcher(sgfText);
 		while (singleMoveMatcher.find()) {
 			Move move = new Move(singleMoveMatcher.group(1));

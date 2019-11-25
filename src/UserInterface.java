@@ -188,8 +188,10 @@ public class UserInterface extends JPanel implements MouseListener {
 	boardSize = lineSpacing * (numRows - 1);
 	if (replayMode) {
 		game = new ReplayMode(this, mainMenu);
+		numRows = game.getBoard().getSize();
 	} else if (practiceProblem) {
 	    game = new PracticeProblemMode(this, mainMenu);
+	    numRows = game.getBoard().getSize();
 	} else {
 	    game = new Game(this, mainMenu);
 	    isPlayer1Black = ((Game) game).isPlayer1Black();
