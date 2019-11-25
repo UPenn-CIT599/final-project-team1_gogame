@@ -85,6 +85,7 @@ public class PracticeProblemMode extends AbstractGame {
 	public PracticeProblemMode(UserInterface gui, MainMenu mainMenu) {
 		this.gui = gui;
 		File sgfFile = mainMenu.getReplayFile();
+		sgf = new sgfHandler();
 		sgf.readSgfFile(sgfFile);
 		sgf.constructProblem();
 		problem = sgf.getProblem();

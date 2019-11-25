@@ -11,15 +11,15 @@ import java.util.regex.*;
  */
 public class sgfHandler {
 
-	private static Pattern stonePositions = Pattern.compile("(A(B|W)(\\[\\w\\w\\])+)");
-	private static Pattern stoneIntersections = Pattern.compile("\\[(\\w\\w)\\]");
-	private static String sgfText;
-	private static ArrayList<Move> moves = new ArrayList<Move>();
-	private static Problem problem;
-	private static File sgfFile;
-	private static ReplayGame replayGame;
+	private Pattern stonePositions = Pattern.compile("(A(B|W)(\\[\\w\\w\\])+)");
+	private Pattern stoneIntersections = Pattern.compile("\\[(\\w\\w)\\]");
+	private String sgfText;
+	private ArrayList<Move> moves = new ArrayList<Move>();
+	private Problem problem;
+	private File sgfFile;
+	private ReplayGame replayGame;
 
-	private static String UNABLE_TO_PARSE_SOLUTION = "Unable to parse solution of problem.";
+	private String UNABLE_TO_PARSE_SOLUTION = "Unable to parse solution of problem.";
 
 	/**
 	 * Gets the problem
@@ -33,7 +33,7 @@ public class sgfHandler {
 	 * Method to read and extract the text from a .sgf file
 	 * @param sgfFile
 	 */
-	public static void readSgfFile(File file) {
+	public void readSgfFile(File file) {
 		sgfFile = file;
 		sgfText = "";
 		try {
@@ -53,7 +53,7 @@ public class sgfHandler {
 	/**
 	 * Construct a problem from a given sgf file.
 	 */
-	public static void constructProblem() {
+	public void constructProblem() {
 
 		String caption = getCaption();
 
@@ -107,7 +107,7 @@ public class sgfHandler {
 	 * Finds the size of the game board based on the tag SZ. If now tag is found, it defaults to returning 19x19
 	 * @return
 	 */
-	public static int getBoardSize() {
+	public int getBoardSize() {
 		int boardSize = 19;
 		Matcher boardSizeTag = Pattern.compile("SZ\\[(\\d+)\\]").matcher(sgfText);
 		if (boardSizeTag.find()) {
@@ -120,7 +120,7 @@ public class sgfHandler {
 	 * Finds the caption for the board based on the tag GN. Defaults to an empty string if none is found.
 	 * @return
 	 */
-	public static String getCaption() {
+	public String getCaption() {
 		String caption = "Problem";
 		Matcher problemCaptionTag = Pattern.compile("GN\\[(\\.+)\\]").matcher(sgfText);
 		if (problemCaptionTag.find()) {
@@ -133,17 +133,4 @@ public class sgfHandler {
 		return replayGame;
 	}
 
-//	/**
-//	 * Gets the player to move in the current position based on the PL tag.
-//	 * @return
-//	 */
-//	public static Boolean getPlayerToMove() {
-//		Boolean blackToPlay = null;
-//		Matcher playerToMoveTag = Pattern.compile("PL\\[(B|W)\\]").matcher(sgfText);
-//		if (playerToMoveTag.find()) {
-//			blackToPlay = playerToMoveTag.group(1).equals("B") ? true : false;
-//		}
-//		return blackToPlay;
-//	}
-	
 }
