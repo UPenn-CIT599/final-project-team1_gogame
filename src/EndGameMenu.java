@@ -94,10 +94,11 @@ public class EndGameMenu implements ActionListener {
 	    blackScore = scores.get("blackScore");
 	    whiteScore = scores.get("whiteScore") + gui.getGame().getKomi();
 	    scoreDifferential = Math.abs(blackScore - whiteScore);
-	    scoreDisplay.setText("Game over.\n\nFinal Score:\n" +
-		    blackPlayerName + ": " + SCORE_FORMAT.format(blackScore) +
-		    "\n" + whitePlayerName + ": " +
-		    SCORE_FORMAT.format(whiteScore) + "\n\n" + winner());
+//	    scoreDisplay.setText("Game over.\n\nFinal Score:\n" +
+//		    blackPlayerName + ": " + SCORE_FORMAT.format(blackScore) +
+//		    "\n" + whitePlayerName + ": " +
+//		    SCORE_FORMAT.format(whiteScore) + "\n\n" + winner());
+	    scoreDisplay.setText("Game over.\n\n" + winner());
 	}
 	scoreDisplay.setEditable(false);
 	StyledDocument doc = scoreDisplay.getStyledDocument();

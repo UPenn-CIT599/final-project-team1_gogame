@@ -230,6 +230,24 @@ public abstract class AbstractGame {
     public void decrementHandicapCounter() {
 	handicapCounter--;
     }
+    
+    /**
+     * This method sets the final score based on the given point differential
+     * 
+     * @param pointDifferential The number of points the winner won by
+     * @param winnerColor       A char representing the color of the winner,
+     *                          either 'B' for black or 'W' for white
+     */
+    public void setFinalPointDifferential(char winnerColor,
+	    double pointDifferential) {
+	if (winnerColor == 'B') {
+	    finalScore.put("blackScore", pointDifferential);
+	    finalScore.put("whiteScore", 0.0);
+	} else if (winnerColor == 'W') {
+	    finalScore.put("blackScore", 0.0);
+	    finalScore.put("whiteScore", pointDifferential);
+	}
+    }
 
     /**
      * This method returns a String indicating, in the format used by sgf files,
