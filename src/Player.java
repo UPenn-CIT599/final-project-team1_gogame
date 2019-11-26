@@ -119,7 +119,9 @@ public class Player {
 			    if (blackWins == isBlack) {
 				pass();
 				game.nextPlayersTurn();
-				game.getTimer().resetByoYomi();
+				if (game.getTimer() != null) {
+				    game.getTimer().resetByoYomi();
+				}
 				return;
 			    }
 			}			
@@ -152,7 +154,9 @@ public class Player {
 			    }
 			    game.setLastMoveWasPass(false);
 			    movedYet = true;
-			    game.getTimer().resetByoYomi();
+			    if (game.getTimer() != null) {
+				game.getTimer().resetByoYomi();
+			    }
 			}
 			catch (IllegalArgumentException e) {
 			    // if handicap stones haven't all been placed,
