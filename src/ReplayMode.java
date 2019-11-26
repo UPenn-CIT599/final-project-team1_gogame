@@ -41,6 +41,10 @@ public class ReplayMode extends AbstractGame {
 
 			if (move.getIsLastMove()) {
 				gameOver = true;
+				selector = new DeadStoneSelector(this);
+				for (Intersection deadStoneIntersection : replayGame.getDeadStoneIntersections()) {
+					selector.selectStone(deadStoneIntersection.getxPosition(), deadStoneIntersection.getyPosition());
+				}
 			} else {
 				moveNumber++;
 			}
@@ -67,13 +71,18 @@ public class ReplayMode extends AbstractGame {
 
 	@Override
 	public void processMouseClick(int x, int y) {
-		offPath = true;
 		Color color = (blackToMove) ? Color.BLACK : Color.WHITE;
 		Move move = new Move(color, x, y);
-		board.placeStone(move);
-		board.setAnnotation("Branching off move " + moveNumber);
-		nextPlayersTurn();
-		gui.drawBoard();
+		try {
+			board.placeStone(move);
+			offPath = true;
+			board.setAnnotation("Branching off move " + moveNumber);
+			nextPlayersTurn();
+			gui.drawBoard();
+		} catch (IllegalArgumentException e) {
+			gui.invalidMove(e.getMessage());
+			gui.drawBoard();
+		}
 
 	}
 

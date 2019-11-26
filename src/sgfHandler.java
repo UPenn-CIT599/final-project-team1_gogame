@@ -47,7 +47,6 @@ public class sgfHandler {
 			e.printStackTrace();
 		}
 
-		file.getPath();
 	}
 
 	/**

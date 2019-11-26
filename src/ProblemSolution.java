@@ -104,28 +104,6 @@ public class ProblemSolution {
 	}
 
 	/**
-	 * Parses an individual move from the solution text of a sgf file.
-	 * 
-	 * @param moveString
-	 * @return
-	 */
-//	public static Move parseMove(String moveString) {
-//		Matcher moveMatch = Pattern.compile("(B|W)\\[(\\w\\w)\\]").matcher(moveString);
-//		if (moveMatch.find()) {
-//			Color color = (moveMatch.group(1).equals("B")) ? Color.BLACK : Color.WHITE;
-//			int x = moveMatch.group(2).charAt(0) - 'a';
-//			int y = moveMatch.group(2).charAt(1) - 'a';
-//			Move move = new Move(color, x, y);
-//			Matcher moveAnnotation = Pattern.compile("C\\[(.+)\\]").matcher(moveString);
-//			if (moveAnnotation.find()) {
-//				move.setAnnotation(moveAnnotation.group(1));
-//			}			
-//			return move;
-//		}
-//		return null;
-//	}
-
-	/**
 	 * Helper method which gets the number of chars in a given string. Used to determine when a move is the end of a nested variation
 	 * @param s
 	 * @param c

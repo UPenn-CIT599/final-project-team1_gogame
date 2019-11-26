@@ -47,6 +47,14 @@ public abstract class AbstractGame {
     public Board getBoard() {
 	return board;
     }
+    
+    /**
+     * 
+     * @return
+     */
+    public int getSize() {
+    	return board.getSize();
+    }
 
     /**
      * @return blackToMove

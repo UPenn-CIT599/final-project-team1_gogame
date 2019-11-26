@@ -16,7 +16,7 @@ public class DeadStoneSelector {
      * 
      * @param board The board whose dead stones will be selected
      */
-    public DeadStoneSelector(Game game) {
+    public DeadStoneSelector(AbstractGame game) {
 	board = game.getBoard();
 	size = board.getSize();
 	deadStoneLocations = new boolean[size][size];

@@ -281,8 +281,8 @@ public class UserInterface extends JPanel implements MouseListener {
 	
 	// draw the pieces, dead stones (if applicable), and buttons
 	drawPieces(g);
-	if (!replayMode && !practiceProblem) {
-	    if (((Game) game).getSelector() != null) {
+	if (!practiceProblem) {
+	    if (game.getSelector() != null) {
 		drawDeadStones(g);
 	    }
 	}
@@ -420,7 +420,7 @@ public class UserInterface extends JPanel implements MouseListener {
 	g.setColor(deadStoneColor);
 	for (int i = 0; i < numRows; i++) {
 	    for (int j = 0; j < numRows; j++) {
-		if (((Game) game).getSelector().isDeadStone(i, j)) {
+		if ((game).getSelector().isDeadStone(i, j)) {
 		    g.fillOval(borderSize + i * lineSpacing + pieceRadius / 2,
 			    borderSize + j * lineSpacing + pieceRadius / 2,
 			    pieceRadius, pieceRadius);
