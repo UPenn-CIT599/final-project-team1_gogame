@@ -103,7 +103,8 @@ public class Player {
 		    if (game.wasLastMovePass()) {
 			// check what the final score would be if the current
 			// position were the final position
-			Score scorekeeper = new Score(game.getBoard());
+			Score scorekeeper = new Score(game.getBoard(),
+				game.getKomi());
 			scorekeeper.categorizePoints();
 			if (scorekeeper.checkIfStonesArePlaced()) {
 			    scorekeeper.checkAreaOwnership();
@@ -112,8 +113,7 @@ public class Player {
 				    .scoring(colorString, sekiCount);
 			    double blackScore = score.get("blackScore");
 			    double whiteScore = score.get("whiteScore");
-			    boolean blackWins = (blackScore > (whiteScore +
-				    game.getKomi()));
+			    boolean blackWins = (blackScore > whiteScore);
 			    
 			    // pass if doing so would win the game
 			    if (blackWins == isBlack) {

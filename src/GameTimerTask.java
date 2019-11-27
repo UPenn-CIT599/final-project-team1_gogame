@@ -34,7 +34,15 @@ public class GameTimerTask extends TimerTask {
 	    // refresh the board 10 times per second
 	    if (count >= (100 / GameTimer.TIMER_REFRESH_RATE)) {
 		count = 0;
-		timer.getGame().getGui().drawBoard();
+		try {
+		    timer.getGame().getGui().drawBoard();
+		} catch (NullPointerException e) {
+		    // NullPointerException may occur if the game takes too long
+		    // to load. When a NullPointerException is caught, the timer
+		    // does nothing until the next tick - gameplay should not be
+		    // significantly affected unless the computer is extremely
+		    // slow, in which case timed games are not recommended.
+		}
 	    }
 	}
     }
