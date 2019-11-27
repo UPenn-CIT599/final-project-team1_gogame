@@ -182,6 +182,8 @@ public class UserInterface extends JPanel implements MouseListener {
 	replayMode = mainMenu.isReplayMode();
 	practiceProblem = mainMenu.isPracticeProblem();
 	numRows = mainMenu.getNumRows();
+	messageLine1 = "";
+    messageLine2 = "";
 	if (replayMode) {
 		game = new ReplayMode(this, mainMenu);
 		numRows = game.getBoard().getSize();

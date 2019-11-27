@@ -28,13 +28,20 @@ public class ReplayMode extends AbstractGame {
 			//ArrayList<Move> moves = (ArrayList<Move>) replayGame.getMoves().subList(0, moveNumber);
 			Board board = new Board(replayGame.getBoardSize());
 			Move nextMove = new Move();
-			for (int i = 0; i < moveNumber; i++) {
-				nextMove = replayGame.getMove(i);
-				board.placeStone(nextMove);
+			try {
+				for (int i = 0; i < moveNumber; i++) {
+					nextMove = replayGame.getMove(i);
+					board.placeStone(nextMove);
+				}
+				blackToMove = (nextMove.getColor().equals(Color.BLACK)) ? false : true;
+				this.board = board;
+				gui.drawBoard();
+
+			} catch (IllegalArgumentException e) {
+				gui.invalidMove("Invalid SGF file: " + e.getMessage());
+				gameOver = true;
+				gui.drawBoard();
 			}
-			blackToMove = (nextMove.getColor().equals(Color.BLACK)) ? false : true;
-			this.board = board;
-			gui.drawBoard();
 		}
 		else if (!gameOver) {
 			Move move = replayGame.getMove(moveNumber);
@@ -53,7 +60,8 @@ public class ReplayMode extends AbstractGame {
 				nextPlayersTurn();
 				gui.drawBoard();
 			} catch (IllegalArgumentException e) {
-				gui.invalidMove(e.getMessage());
+				gui.invalidMove("Invalid SGF file: " + e.getMessage());
+				gameOver = true;
 				gui.drawBoard();
 			}
 		}

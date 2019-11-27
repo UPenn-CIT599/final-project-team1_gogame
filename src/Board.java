@@ -87,6 +87,11 @@ public class Board {
 	 */
 	public void placeStone(Color color, int x, int y) throws IllegalArgumentException {
 
+		// Check whether intersection exists
+		if (x >= size || y >= size) {
+			throw new IllegalArgumentException("Invalid intersection specified");
+		}
+		
 		// Check whether the intersection is already occupied
 		if (intersections[x][y].getStone() != null) {
 			throw new IllegalArgumentException("A stone is already on that intersection");
