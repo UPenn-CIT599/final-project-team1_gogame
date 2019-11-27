@@ -30,6 +30,8 @@ public class EndGameMenu implements ActionListener {
     private static final String SAVE_REPLAY = "Save Replay";
     private static final String PLAY_AGAIN = "Play Again";
     private static final String MAIN_MENU = "Main Menu";
+    private static final String CONTINUE = "Continue Play";
+    private static final String EXIT = "Exit";
 
     /**
      * This is used to display scores.
@@ -89,15 +91,16 @@ public class EndGameMenu implements ActionListener {
 	JTextPane scoreDisplay = new JTextPane();
 	HashMap<String, Double> scores = gui.getGame().getFinalScore();
 	if (scores == null) {
-	    scoreDisplay.setText("Game over.");
+	    if (gui.isPracticeProblem()) {
+		scoreDisplay.setText("You have reached the end of the solution\n" + 
+			"path. You may continue play if you wish.");
+	    } else {
+		scoreDisplay.setText("Game over.");
+	    }
 	} else {
 	    blackScore = scores.get("blackScore");
-	    whiteScore = scores.get("whiteScore") + gui.getGame().getKomi();
+	    whiteScore = scores.get("whiteScore");
 	    scoreDifferential = Math.abs(blackScore - whiteScore);
-//	    scoreDisplay.setText("Game over.\n\nFinal Score:\n" +
-//		    blackPlayerName + ": " + SCORE_FORMAT.format(blackScore) +
-//		    "\n" + whitePlayerName + ": " +
-//		    SCORE_FORMAT.format(whiteScore) + "\n\n" + winner());
 	    scoreDisplay.setText("Game over.\n\n" + winner());
 	}
 	scoreDisplay.setEditable(false);
@@ -113,16 +116,21 @@ public class EndGameMenu implements ActionListener {
 	buttonPanel.setLayout(new GridLayout(2, 2, 20, 10));
 	buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
 	pane.add(buttonPanel);
-	JButton viewReplayButton = addAButton(VIEW_REPLAY);
-	JButton saveButton = addAButton(SAVE_REPLAY);
+	if (gui.isPracticeProblem()) {
+	    JButton continueButton = addAButton(CONTINUE);
+	    JButton exitButton = addAButton(EXIT);
+	} else {
+	    JButton viewReplayButton = addAButton(VIEW_REPLAY);
+	    JButton saveButton = addAButton(SAVE_REPLAY);
+
+	    // replay games cannot be saved
+	    if (gui.isReplayMode()) {
+		viewReplayButton.setEnabled(false);
+		saveButton.setEnabled(false);
+	    }
+	}
 	JButton playAgainButton = addAButton(PLAY_AGAIN);
 	JButton mainMenuButton = addAButton(MAIN_MENU);
-	
-	// replay and practice problem games cannot be saved
-	if (gui.isReplayMode() || gui.isPracticeProblem()) {
-	    viewReplayButton.setEnabled(false);
-	    saveButton.setEnabled(false);
-	}
 	
 	frame.pack();
 	frame.setVisible(true);
@@ -260,6 +268,10 @@ public class EndGameMenu implements ActionListener {
 	} else if (command.equals(MAIN_MENU)) {
 	    frame.dispose();
 	    gui.run();
+	} else if (command.equals(CONTINUE)) {
+	    frame.dispose();
+	} else if (command.equals(EXIT)) {
+	    System.exit(0);
 	}
     }
 }

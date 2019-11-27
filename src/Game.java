@@ -52,7 +52,7 @@ public class Game extends AbstractGame {
      * This method ends the game.
      */
     public void gameOver() {
-	scorekeeper = new Score(board);
+	scorekeeper = new Score(board, komi);
 	scorekeeper.categorizePoints();
 	if (!scorekeeper.checkIfStonesArePlaced() && (resignedPlayer == null) &&
 		(timedOutPlayer == null)) {
