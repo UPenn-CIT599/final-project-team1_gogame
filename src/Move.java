@@ -59,7 +59,10 @@ public class Move {
 			Matcher moveAnnotation = Pattern.compile("C\\[(.+)\\]").matcher(moveString);
 			if (moveAnnotation.find()) {
 				this.annotation = moveAnnotation.group(1);
-			}			
+			} else if (isPass) {
+				String colorString = (color.equals(Color.BLACK)) ? "Black" : "White";
+				this.annotation = colorString + " passes";
+			}
 		}
 	}
 

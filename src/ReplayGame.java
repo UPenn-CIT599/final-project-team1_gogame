@@ -75,6 +75,9 @@ public class ReplayGame {
 			String winningResult = resultTag.group(3).charAt(0) == 'R' ? "resignation" : resultTag.group(3) + " points";
 			result = winningPlayer + " wins by " + winningResult;
 			lastMove.setAnnotation(result);
+		} else {
+			result = "End of file. No result";
+			lastMove.setAnnotation(result);
 		}
 	}
 

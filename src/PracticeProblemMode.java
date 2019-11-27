@@ -154,7 +154,7 @@ public class PracticeProblemMode extends AbstractGame {
 			nextPlayersTurn();
 			gui.drawBoard();
 		} catch (IllegalArgumentException e) {
-			gui.invalidMove(e.getMessage());
+			gui.invalidMove("Invalid SGF file: " + e.getMessage());
 			gui.drawBoard();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
