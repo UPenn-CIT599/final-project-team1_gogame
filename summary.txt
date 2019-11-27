@@ -1,0 +1,28 @@
+Our project, entitled "Go", is a game of Go, the two-player strategy game 
+invented in China over 2500 years ago; details on rules and gameplay may be 
+found at https://en.wikipedia.org/wiki/Go_(game). Players are given the option 
+to play either against another human player or against a beginner-level computer 
+opponent, and they may customize their game in several ways, such as selecting 
+the board size, the handicap, and the komi, as well as choosing whether to play 
+a timed game. Our program also allows replays of games to be saved as Strategic 
+Game Format (sgf) files. Additionally, our program allows the user to view sgf 
+replay games (either those created by our program or those created elsewhere), 
+as well as to attempt practice problems. All of the above takes place within a 
+graphical user interface.
+
+Our GitHub repository can be found at: 
+https://github.com/UPenn-CIT599/final-project-team1_gogame/
+
+Our work breakdown is as follows:
+
+Chris: user interface and player interaction, including the following classes:
+AbstractGame, DeadStoneSelector, DeadStoneSelectorTest, EndGameMenu, Game, 
+GameTest, GameTimer, GameTimerTask, GoRunner, MainMenu, Player, PlayerTest, 
+PlayerTimer, ReplayFileFilter, UserInterface
+
+Christian: gameplay and sgf file reading, including the following classes:
+Board, BoardTest, Group, Intersection, Move, PracticeProblemMode, Problem, 
+ProblemSolution, ProblemSolutionTest, ReplayGame, ReplayMode, sgfHandler, Stone
+
+Chuan: scoring, including the following classes:
+Area, DeadStone, Helper, Point, Score, ScoreHelper
