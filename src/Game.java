@@ -73,7 +73,44 @@ public class Game extends AbstractGame {
 		        "agree on which stones are dead, press the Calculate\n" + 
 	                "Score button. If no agreement can be reached, you may\n" + 
 		        "Continue Play to resolve the dispute.");
-	    } else {
+	    } 
+	    //incorporate the code from the DeadStoneIdentifier class
+	    else if (onePlayerGame && (resignedPlayer == null) &&
+		    (timedOutPlayer == null)) {
+		DeadStoneIdentifier dsi = new DeadStoneIdentifier(scorekeeper);
+	    	dsi.groupStonesToChains();
+	    	dsi.groupChainsByLogicalConnections();
+	    	dsi.searchEyes();
+	    	dsi.computeTerritoryUnderInfluence();
+	    	dsi.identifyDeadStones();
+	    	ArrayList<HashSet<DeadStone>> deadStones = new ArrayList<>();
+	    	HashSet<DeadStone> deadBlackStones = new HashSet<>();
+    		HashSet<DeadStone> deadWhiteStones = new HashSet<>();
+    		deadStones = dsi.getDeadStones();
+	    	if (dsi.getDeadStones().size() == 2) {
+	    	    deadBlackStones = deadStones.get(0);
+	    	    deadWhiteStones = deadStones.get(1);
+	    	}
+	    	selector = new DeadStoneSelector(this);
+	    	if (deadBlackStones.size() > 0) {
+	    	    for (DeadStone ds : deadBlackStones) {
+	    		selector.selectStone(ds.getxPosition(), ds.getyPosition());
+	    	    }
+	    	}
+	    	if (deadWhiteStones.size() > 0) {
+	    	    for (DeadStone ds : deadWhiteStones) {
+	    		selector.selectStone(ds.getxPosition(), ds.getyPosition());
+	    	    }
+	    	}
+	    	//dsi.testPrint();
+	    	gui.drawBoard();
+	    	JOptionPane.showMessageDialog(gui.getFrame(), 
+		    "Please check the dead stones (labelled by red dots) selected by\n"
+		    + "the computer. If you agree with the selections or if no dead stones\n"
+		    + "are selected, press the Calculate Score button. If you don't agree with\n"
+		    + "the selections, you may Continue Play to resolve the dispute.");    
+	    }
+	    else {
 	        finalizeScore();
 	    }
 	}
