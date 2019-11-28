@@ -7,7 +7,10 @@ public class Point {
 	private int yPosition;
 	private String status;
 	private Area area;
-	
+	private int chainGroup;
+	private String logicalChainGroup;
+	private int value; 
+
 	/**
 	 * Point is essentially intersection on the board.
 	 * @param s - status of a point, which is one of the three options: black, white, empty
@@ -50,6 +53,36 @@ public class Point {
 
 	public void setArea(Area a) {
 		this.area = a;
+	}
+	
+	public int getChainGroup() {
+		return chainGroup;
+	}
+	
+	public void setChainGroup(int chainNo) {
+		this.chainGroup = chainNo;
+	}
+	
+	public String getLogicalChainGroup() {
+		return logicalChainGroup;
+	}
+	
+	public void setLogicalChainGroup(String logicalChainId) {
+		this.logicalChainGroup = logicalChainId;
+	}
+	
+	/**
+	 * @return the value
+	 */
+	public int getValue() {
+		return value;
+	}
+
+	/**
+	 * @param value the value to set
+	 */
+	public void setValue(int value) {
+		this.value = value;
 	}
 
 }
