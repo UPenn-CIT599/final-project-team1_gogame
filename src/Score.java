@@ -41,6 +41,20 @@ public class Score {
 	finalBoardPositions = boardPositions.get(boardPositions.size() - 1);
 	finalPositions = new Point[size][size];
     }
+	
+    /**
+     * @return the size
+     */
+    public int getSize() {
+	return size;
+    }
+
+    /**
+     * @return the finalPositions
+     */
+    public Point[][] getFinalPositions() {
+	return finalPositions;
+    }
 
     /**
      * According to the final board positions, 
