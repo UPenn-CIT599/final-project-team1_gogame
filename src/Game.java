@@ -30,6 +30,13 @@ public class Game extends AbstractGame {
     }
 
     /**
+     * @return onePlayerGame
+     */
+    public boolean isOnePlayerGame() {
+	return onePlayerGame;
+    }
+
+    /**
      * @return isPLayer1Black
      */
     public boolean isPlayer1Black() {
@@ -77,6 +84,7 @@ public class Game extends AbstractGame {
 	    //incorporate the code from the DeadStoneIdentifier class
 	    else if (onePlayerGame && (resignedPlayer == null) &&
 		    (timedOutPlayer == null)) {
+		selectingDeadStones = true;
 		DeadStoneIdentifier dsi = new DeadStoneIdentifier(scorekeeper);
 	    	dsi.groupStonesToChains();
 	    	dsi.groupChainsByLogicalConnections();
@@ -107,8 +115,8 @@ public class Game extends AbstractGame {
 	    	JOptionPane.showMessageDialog(gui.getFrame(), 
 		    "Please check the dead stones (labelled by red dots) selected by\n"
 		    + "the computer. If you agree with the selections or if no dead stones\n"
-		    + "are selected, press the Calculate Score button. If you don't agree with\n"
-		    + "the selections, you may Continue Play to resolve the dispute.");    
+		    + "are selected, press the Calculate Score button. If you don't agree\n"
+		    + "with the selections, you may Continue Play to resolve the dispute.");    
 	    }
 	    else {
 	        finalizeScore();

@@ -75,107 +75,112 @@ public class Player {
 	// other's actions
 	Thread computerThread = new Thread() {
 	    public void run() {
-		while (!game.isGameOver()) {
-		    while (isBlack != game.blackToMove()) {
-			synchronized (notifier) {
-			    try {
-				// wait until it's this player's turn
-				notifier.wait();
-			    } catch (InterruptedException e) {
-				e.printStackTrace();
+		// nested "while (true)" loops are used so the program can break
+		// out of the inner loop without ending the thread
+		while (true) {
+		    while (true) {
+			while (isBlack != game.blackToMove() ||
+				game.isGameOver()) {
+			    synchronized (notifier) {
+				try {
+				    // wait until it's this player's turn
+				    notifier.wait();
+				} catch (InterruptedException e) {
+				    e.printStackTrace();
+				}
 			    }
 			}
-		    }
 
-		    // check whether the game is over
-		    if (game.isGameOver()) {
-			return;
-		    }
-		    try {
-			// wait a set amount of time before moving
-			Thread.sleep(computerMoveDelay);
-		    } catch (InterruptedException e) {
-			e.printStackTrace();
-		    }		    
-		    
-		    // if the last move was pass, computer could end the game by
-		    // passing
-		    if (game.wasLastMovePass()) {
-			// check what the final score would be if the current
-			// position were the final position
-			Score scorekeeper = new Score(game.getBoard(),
-				game.getKomi());
-			scorekeeper.categorizePoints();
-			if (scorekeeper.checkIfStonesArePlaced()) {
-			    scorekeeper.checkAreaOwnership();
-			    int sekiCount = scorekeeper.checkSeki();
-			    HashMap<String, Double> score = scorekeeper
-				    .scoring(colorString, sekiCount);
-			    double blackScore = score.get("blackScore");
-			    double whiteScore = score.get("whiteScore");
-			    boolean blackWins = (blackScore > whiteScore);
-			    
-			    // pass if doing so would win the game
-			    if (blackWins == isBlack) {
-				pass();
-				game.nextPlayersTurn();
+			// check whether the game is over
+			if (game.isGameOver()) {
+			    break;
+			}
+//		    if (!game.isGameOver()) {
+			try {
+			    // wait a set amount of time before moving
+			    Thread.sleep(computerMoveDelay);
+			} catch (InterruptedException e) {
+			    e.printStackTrace();
+			}
+
+			// if the last move was pass, computer could end the
+			// game by passing
+			if (game.wasLastMovePass()) {
+			    // check what the final score would be if the
+			    // current position were the final position
+			    Score scorekeeper = new Score(game.getBoard(),
+				    game.getKomi());
+			    scorekeeper.categorizePoints();
+			    if (scorekeeper.checkIfStonesArePlaced()) {
+				scorekeeper.checkAreaOwnership();
+				int sekiCount = scorekeeper.checkSeki();
+				HashMap<String, Double> score = scorekeeper
+					.scoring(colorString, sekiCount);
+				double blackScore = score.get("blackScore");
+				double whiteScore = score.get("whiteScore");
+				boolean blackWins = (blackScore > whiteScore);
+
+				// pass if doing so would win the game
+				if (blackWins == isBlack) {
+				    pass();
+				    game.nextPlayersTurn();
+				    if (game.getTimer() != null) {
+					game.getTimer().resetByoYomi();
+				    }
+				    break;
+				}
+			    }
+			}
+			boolean movedYet = false;
+			int count = 0;
+			// try to place a stone up to the maximum number of
+			// times
+			while (!movedYet && (count < maxAttempts)) {
+			    // attempt to place a stone in a random location
+			    try {
+				int x = (int) (Math.random() *
+					game.getNumRows());
+				int y = (int) (Math.random() *
+					game.getNumRows());
+				game.getBoard().placeStone(color, x, y);
+				game.updateStringBuilder(
+					colorString.toUpperCase().charAt(0), x,
+					y);
+				if (game.getHandicapCounter() <= 0) {
+				    game.getGui().setMessage(name, false);
+				    game.nextPlayersTurn();
+				} else if (game.getHandicapCounter() == 1) {
+				    game.decrementHandicapCounter();
+				    game.getGui().setMessage(name, false);
+				    game.nextPlayersTurn();
+				} else {
+				    game.decrementHandicapCounter();
+				    game.getGui().handicapMessage();
+				}
+				game.setLastMoveWasPass(false);
+				movedYet = true;
 				if (game.getTimer() != null) {
 				    game.getTimer().resetByoYomi();
 				}
-				return;
-			    }
-			}			
-		    } 
-		    boolean movedYet = false;
-		    int count = 0;
-		    // try to place a stone up to the maximum number of
-		    // times
-		    while (!movedYet && (count < maxAttempts)) {
-			// attempt to place a stone in a random location
-			try {
-			    int x = (int) (Math.random() *
-				    game.getNumRows());
-			    int y = (int) (Math.random() *
-				    game.getNumRows());
-			    game.getBoard().placeStone(color, x, y);
-			    game.updateStringBuilder(
-				    colorString.toUpperCase().charAt(0), x, y);
-			    if (game.getHandicapCounter() <= 0) {
-				game.getGui().setMessage(name, false);
-				game.nextPlayersTurn();
-			    } else if (game.getHandicapCounter() == 1) {
-				game.decrementHandicapCounter();
-				game.getGui().setMessage(name, false);
-				game.nextPlayersTurn();
-			    }
-			    else {
-				game.decrementHandicapCounter();
-				game.getGui().handicapMessage();
-			    }
-			    game.setLastMoveWasPass(false);
-			    movedYet = true;
-			    if (game.getTimer() != null) {
-				game.getTimer().resetByoYomi();
+			    } catch (IllegalArgumentException e) {
+				// if handicap stones haven't all been placed,
+				// don't increase the counter in order to
+				// prevent passing
+				if (game.getHandicapCounter() <= 0) {
+				    count++;
+				}
 			    }
 			}
-			catch (IllegalArgumentException e) {
-			    // if handicap stones haven't all been placed,
-			    // don't increase the counter in order to
-			    // prevent passing
-			    if (game.getHandicapCounter() <= 0) {
-				count++;
-			    }
+			// pass if the maximum number of attempts was reached
+			// and all attempts were unsuccessful
+			if (count == maxAttempts) {
+			    pass();
+			    game.nextPlayersTurn();
+			    game.getTimer().resetByoYomi();
 			}
-		    }
-		    // pass if the maximum number of attempts was reached
-		    // and all attempts were unsuccessful
-		    if (count == maxAttempts) {
-			pass();
-			game.nextPlayersTurn();
-			game.getTimer().resetByoYomi();
-		    }
 
-		    game.getGui().drawBoard();
+			game.getGui().drawBoard();
+		    }
 		}
 	    }
 	};
@@ -264,8 +269,12 @@ public class Player {
 	// if it is dead stone selection phase, inform the deadStoneSelector
 	// which space was clicked
 	else if (game.isSelectingDeadStones()) {
-	    game.getSelector().selectStone(x, y);
-	    return true;
+	    if (game.isOnePlayerGame()) {
+		return false;
+	    } else {
+		game.getSelector().selectStone(x, y);
+		return true;
+	    }
 	}
 	// if an intersection is clicked during gameplay, attempt to place a
 	// stone on that intersection

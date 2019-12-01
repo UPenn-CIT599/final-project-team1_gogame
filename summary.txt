@@ -25,4 +25,4 @@ Board, BoardTest, Group, Intersection, Move, PracticeProblemMode, Problem,
 ProblemSolution, ProblemSolutionTest, ReplayGame, ReplayMode, sgfHandler, Stone
 
 Chuan: scoring, including the following classes:
-Area, DeadStone, Helper, Point, Score, ScoreHelper
+Area, DeadStone, DeadStoneIdentifier, Helper, Point, Score, ScoreHelper
