@@ -28,12 +28,16 @@ public class ReplayGame {
 		// Parse out the individual moves of a game
 		Pattern singleMove = Pattern.compile("([B|W]\\[(\\w\\w)?\\].*?(?=(;B|;W|$)))");
 		Matcher singleMoveMatcher = singleMove.matcher(sgfText);
+		// For each tag that is found by the matcher, a new move is created
 		while (singleMoveMatcher.find()) {
 			Move move = new Move(singleMoveMatcher.group(1));
+			// Set the move number based on the number of moves already made
 			move.setMoveNumber(moves.size());
+			// Include the move number in the annotation
 			move.setAnnotation("Move: " + (move.getMoveNumber()+1) + ". " + move.getAnnotation());
 			moves.add(move);
 		}
+		// Determine who moves first based on the color of the first move
 		firstMoveBlack = moves.get(0).getColor().equals(Color.BLACK) ? true : false;
 		Move lastMove = moves.get(moves.size() - 1);
 		lastMove.setIsLastMove(true);
@@ -63,19 +67,31 @@ public class ReplayGame {
 			e.printStackTrace();
 		}
 
+		// Get the size of the board based on the SZ tag. If none is specified, this defaults to 19
 		Matcher boardSizeTag = Pattern.compile("SZ\\[(\\d+)\\]").matcher(sgfText);
 		if (boardSizeTag.find()) {
 			boardSize = Integer.parseInt(boardSizeTag.group(1));
 		}
 		board = new Board(boardSize);
 
-		Matcher resultTag = Pattern.compile("RE\\[(0|B|W)(\\+)?(R|([0-9]*\\.?[0-9]*))\\]").matcher(sgfText);
+		// Get the result of the game based on the RE tag
+		Matcher resultTag = Pattern.compile("RE\\[(0|B|W)(\\+)?(R|T|([0-9]*\\.?[0-9]*))\\]").matcher(sgfText);
 		if (resultTag.find()) {
+			// Determine whether the winning player is black or white
 			String winningPlayer = resultTag.group(1).equals("B") ? "Black" : "White";
-			String winningResult = resultTag.group(3).charAt(0) == 'R' ? "resignation" : resultTag.group(3) + " points";
+			String winningResult = "";
+			// If 'R', the game was won by resignation, if 'T', by timeout. If a numeric value is specified, this is the number of points the winner won by
+			if (resultTag.group(3).charAt(0) == 'R') {
+				winningResult = "resignation";
+			} else if (resultTag.group(3).charAt(0) == 'T') {
+				winningResult = "timeout";
+			} else {
+				winningResult = resultTag.group(3) + " points";
+			}
 			result = winningPlayer + " wins by " + winningResult;
 			lastMove.setAnnotation(result);
 		} else {
+			// If no tag is found, display default no result message
 			result = "End of file. No result";
 			lastMove.setAnnotation(result);
 		}
@@ -137,7 +153,7 @@ public class ReplayGame {
 	public void setBoard(Board board) {
 		this.board = board;
 	}
-	
+
 	/**
 	 * 
 	 * @return
