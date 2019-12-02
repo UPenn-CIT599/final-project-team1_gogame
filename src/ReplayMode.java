@@ -2,6 +2,12 @@ import java.awt.Color;
 import java.io.File;
 import java.util.ArrayList;
 
+/**
+ * This class represents an instance of Replay Mode, in which a user may play through the moves of an sgf file representing
+ * a game of Go. It extends the AbstractGame class.
+ * @author morrowch
+ *
+ */
 public class ReplayMode extends AbstractGame {
 
 	private sgfHandler sgf = new sgfHandler();
@@ -48,10 +54,6 @@ public class ReplayMode extends AbstractGame {
 
 			if (move.getIsLastMove()) {
 				gameOver = true;
-				selector = new DeadStoneSelector(this);
-				for (Intersection deadStoneIntersection : replayGame.getDeadStoneIntersections()) {
-					selector.selectStone(deadStoneIntersection.getxPosition(), deadStoneIntersection.getyPosition());
-				}
 			} else {
 				moveNumber++;
 			}
@@ -64,19 +66,36 @@ public class ReplayMode extends AbstractGame {
 				gameOver = true;
 				gui.drawBoard();
 			}
+
+			if (gameOver) {
+				gameOver();
+			}
 		}
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public Boolean isOffPath() {
 		return offPath;
 	}
 
+	/**
+	 * Called when the game is over
+	 */
 	@Override
 	public void gameOver() {
-		// TODO Auto-generated method stub
-
+		selector = new DeadStoneSelector(this);
+		for (Intersection deadStoneIntersection : replayGame.getDeadStoneIntersections()) {
+			selector.selectStone(deadStoneIntersection.getxPosition(), deadStoneIntersection.getyPosition());
+		}
+		gui.gameOver();
 	}
 
+	/**
+	 * Called when the user selects an intersection on the board
+	 */
 	@Override
 	public void processMouseClick(int x, int y) {
 		Color color = (blackToMove) ? Color.BLACK : Color.WHITE;
