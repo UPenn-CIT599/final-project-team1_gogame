@@ -95,11 +95,11 @@ public class ReplayMode extends AbstractGame {
 		for (Intersection deadStoneIntersection : replayGame.getDeadStoneIntersections()) {
 			selector.selectStone(deadStoneIntersection.getxPosition(), deadStoneIntersection.getyPosition());
 		}
-		String winningPlayer = (replayGame.getBlackWins()) ? replayGame.getBlackPlayer() : replayGame.getWhitePlayer();
+		String losingPlayer = (replayGame.getBlackWins()) ? replayGame.getWhitePlayer() : replayGame.getBlackPlayer();
 		if (replayGame.getWinByResignation()) {
-			setResignedPlayer(winningPlayer);
+			setResignedPlayer(losingPlayer);
 		} else if (replayGame.getWinByTimeout()) {
-			setTimedOutPlayer(winningPlayer);
+			setTimedOutPlayer(losingPlayer);
 		} else {
 			char winnerColor = (replayGame.getBlackWins()) ? 'B' : 'W';
 			setFinalPointDifferential(winnerColor, replayGame.getPointDifferential());
