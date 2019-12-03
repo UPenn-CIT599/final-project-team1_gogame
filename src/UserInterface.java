@@ -108,6 +108,22 @@ public class UserInterface extends JPanel implements MouseListener {
     public EndGameMenu getEndGameMenu() {
 	return endGameMenu;
     }
+
+    /**
+     * This method sets the name of a player based on the contents of an sgf
+     * file.
+     * 
+     * @param name    The name to set
+     * @param isBlack True if it is the black player's name and false if it is
+     *                the white player's name
+     */
+    public void setName(String name, boolean isBlack) {
+	if (isBlack == isPlayer1Black) {
+	    player1Name = name;
+	} else {
+	    player2Name = name;
+	}
+    }
     
     /**
      * This method returns the name of the Player who is playing black.
@@ -183,10 +199,13 @@ public class UserInterface extends JPanel implements MouseListener {
 	practiceProblem = mainMenu.isPracticeProblem();
 	numRows = mainMenu.getNumRows();
 	messageLine1 = "";
-    messageLine2 = "";
+	messageLine2 = "";
 	if (replayMode) {
-		game = new ReplayMode(this, mainMenu);
-		numRows = game.getBoard().getSize();
+	    game = new ReplayMode(this, mainMenu);
+	    numRows = game.getBoard().getSize();
+	    isPlayer1Black = true;
+	    player1Name = "Black";
+	    player2Name = "White";
 	} else if (practiceProblem) {
 	    game = new PracticeProblemMode(this, mainMenu);
 	    numRows = game.getBoard().getSize();
@@ -547,15 +566,19 @@ public class UserInterface extends JPanel implements MouseListener {
 	int mouseX = e.getX();
 	int mouseY = e.getY();
 	if (replayMode) {
-	    if (buttonClicked(restartReplayButton, mouseX, mouseY)) {
-		confirmChoice(false, false);
-	    } else if (buttonClicked(nextTurnButton, mouseX, mouseY)) {
-		((ReplayMode) game).NextMove();
-	    } else if (buttonClicked(replayMainMenuButton, mouseX, mouseY)) {
-		confirmChoice(false, true);
-	    } else {
-		processMouseClick(mouseX, mouseY);;
-	    }
+//	    if (!game.isGameOver()) {
+		if (buttonClicked(restartReplayButton, mouseX, mouseY)) {
+		    confirmChoice(false, false);
+		} else if (buttonClicked(nextTurnButton, mouseX, mouseY)) {
+		    ((ReplayMode) game).NextMove();
+		} else if (buttonClicked(replayMainMenuButton, mouseX,
+			mouseY)) {
+		    confirmChoice(false, true);
+		} else {
+		    processMouseClick(mouseX, mouseY);
+		    ;
+		}
+//	    }
 	} else if (practiceProblem) {
 	    if (buttonClicked(restartPracticeButton, mouseX, mouseY)) {
 		confirmChoice(true, false);
