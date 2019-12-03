@@ -566,7 +566,7 @@ public class UserInterface extends JPanel implements MouseListener {
 	int mouseX = e.getX();
 	int mouseY = e.getY();
 	if (replayMode) {
-//	    if (!game.isGameOver()) {
+	    if (!game.isGameOver()) {
 		if (buttonClicked(restartReplayButton, mouseX, mouseY)) {
 		    confirmChoice(false, false);
 		} else if (buttonClicked(nextTurnButton, mouseX, mouseY)) {
@@ -578,7 +578,7 @@ public class UserInterface extends JPanel implements MouseListener {
 		    processMouseClick(mouseX, mouseY);
 		    ;
 		}
-//	    }
+	    }
 	} else if (practiceProblem) {
 	    if (buttonClicked(restartPracticeButton, mouseX, mouseY)) {
 		confirmChoice(true, false);
