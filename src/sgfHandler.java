@@ -121,6 +121,7 @@ public class sgfHandler {
 	 */
 	public String getCaption() {
 		String caption = "Problem";
+		// Caption tags are specified by 'GN'
 		Matcher problemCaptionTag = Pattern.compile("GN\\[(\\.+)\\]").matcher(sgfText);
 		if (problemCaptionTag.find()) {
 			caption = problemCaptionTag.group(1);

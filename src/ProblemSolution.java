@@ -32,7 +32,6 @@ public class ProblemSolution {
 	public ProblemSolution(String sgfText) {
 		Pattern movesPattern = Pattern.compile(";(B|W)\\[\\w\\w\\].*$");
 		Matcher movesMatcher = movesPattern.matcher(sgfText);
-
 		if (movesMatcher.find()) {
 			solutionText = movesMatcher.group();
 		} else {
@@ -45,19 +44,20 @@ public class ProblemSolution {
 	 */
 	public void ParseSolution() {
 		moveStrings = new ArrayList<String>();  
-		
 		Pattern singleMove = Pattern.compile("([B|W]\\[\\w\\w\\].*?(?=(;B|;W|$)))");
 		Matcher singleMoveMatcher = singleMove.matcher(solutionText);
 		while (singleMoveMatcher.find()) {
 			moveStrings.add(singleMoveMatcher.group(1));
 		}
-
+		// A dummy "parentMove" is created to represent the parent of all valid first moves
 		Move parentMove = new Move();
 		parentMove.setMoveNumber(0);
 		variations.add(parentMove);
 
+		// Begin by adding first moves as child moves to this parent move
 		AddChildProblem(parentMove, moveStrings.get(i));
 
+		// The responses represent the valid responses at any given time. In this case, it is set to the valid first moves of the problem
 		responses = parentMove.getResponses();
 	}
 
@@ -70,12 +70,15 @@ public class ProblemSolution {
 	public void AddChildProblem(Move parent, String childString) {
 		//Move child = parseMove(childString);
 		Move child = new Move(childString);
+		// If the move is the first of the solution tree, set the color of the player to move first
 		if (i == 0) {
 			solverColor = child.getColor();
 		}
+		// Add the move to the parent move
 		parent.addResponse(child);
 		child.setMoveNumber(parent.getMoveNumber() + 1);
 
+		// For now, set the new parent move as the current child move
 		parent = child;
 
 		// Checks if the move is the end of a variation

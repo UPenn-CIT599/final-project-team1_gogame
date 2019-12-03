@@ -32,40 +32,45 @@ public class PracticeProblemMode extends AbstractGame {
 	@Override
 	public void processMouseClick(int x, int y) {
 		Color color = (blackToMove) ? Color.BLACK : Color.WHITE;
+		// Construct the move based on where the player clicked
 		lastMove = new Move(color, x, y);
+		// Default the move to being off path until at least one response is found
 		onPath = false;
-		Boolean moveIsOnPath = false;
 		if (!gameOver) {
 			for (Move move : onPathMoves) {
 				if (move.equals(lastMove)) {
+					// If at least one response was found, then the move is on path
 					onPath = true;
-					moveIsOnPath = true;
 					lastMove = move;
 					caption = move.getAnnotation();
 
+					// Check if the move is the last in the solution branch
 					if (move.getIsLastMove() || move.getResponses().size() == 0) {
-						onPath = false;
 						gameOver = true;
 						board.setAnnotation(caption);
 					}
 				}
 			}
 
-			if (!moveIsOnPath) {
+			// If no response is found for the move, gameOver is set to true
+			if (!onPath) {
 				caption = "Wrong. Off path.";
 				gameOver = true;
-				onPath = false;
 			}
 		}
 
+		// Make the move the player selected
 		try {
 			board.placeStone(lastMove);
 			nextPlayersTurn();
 			board.setAnnotation(caption);
+			if (gameOver && onPath) {
+				gameOver();
+			}
 			gui.drawBoard();
 
 			// Check if the move is one the path
-			if (hasSolution && onPath) {
+			if (hasSolution && onPath && !gameOver) {
 				synchronized (notifier) {
 					notifier.notify();
 				}
@@ -96,12 +101,12 @@ public class PracticeProblemMode extends AbstractGame {
 			onPathMoves = solution.getResponses();
 		}
 
+		// Set which player moves first
 		solverIsBlack = (problem.getSolverColor().equals(Color.BLACK)) ? true : false;
 		blackToMove = (solverIsBlack) ? true : false;
 		problemTitle = problem.getCaption();
 		board = problem.getBoard();
 		gameOver = false;
-
 		InitializeResponder();
 
 	}
@@ -109,9 +114,10 @@ public class PracticeProblemMode extends AbstractGame {
 	private void InitializeResponder() {
 
 		notifier = new Object();
-
+		// Start a new thread for the computer to make its responses
 		Thread responderThread = new Thread() {
 			public void run() {
+				// While the player is on the solution tree of the problem
 				while (onPath) {
 					while (blackToMove == solverIsBlack) {
 						synchronized (notifier) {
@@ -137,17 +143,20 @@ public class PracticeProblemMode extends AbstractGame {
 	public void Respond() {
 		try {
 			Thread.sleep(RESPONSE_DELAY);
+			// Get the first of the possible responses (there will generally be just one)
 			Move computerMove = lastMove.getResponses().get(0);
-
 			if (computerMove.getAnnotation().length() > 1)
 			{
 				caption = computerMove.getAnnotation();
 				board.setAnnotation(caption);
 			}
+			// Make the computer move
 			board.placeStone(computerMove);
+			// Check for valid responses by the player
 			if (computerMove.getResponses().size() > 0) {
 				onPathMoves = computerMove.getResponses();
 			} else {
+				// If there are no valid responses, then the problem is over
 				onPath = false;
 				gameOver = true;
 			}
@@ -162,20 +171,28 @@ public class PracticeProblemMode extends AbstractGame {
 
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public String getProblemTitle() {
 		return problemTitle;
 	}
 
+	/**
+	 * Overrides the gameOver AbstractGame method. This simply calls the gameOver method in the gui class
+	 */
 	@Override
 	public void gameOver() {
-		// TODO Auto-generated method stub
-		
+		gui.gameOver();
 	}
 
+	/**
+	 * 
+	 */
 	@Override
 	public void processMouseClick(int buttonID) {
-		// TODO Auto-generated method stub
-		
+		// Not used in PracticeProblemMode
 	}
 
 }

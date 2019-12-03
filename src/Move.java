@@ -47,15 +47,18 @@ public class Move {
 	 * @return
 	 */
 	public Move(String moveString) {
+		// Check that the move matches the expected form from the sgf file
 		Matcher moveMatch = Pattern.compile("(B|W)\\[(\\w\\w)?\\]").matcher(moveString);
 		if (moveMatch.find()) {
 			this.color = (moveMatch.group(1).equals("B")) ? Color.BLACK : Color.WHITE;
+			// If the characters within the brackets are null or 'tt', the move is a pass
 			if (moveMatch.group(2) == null || moveMatch.group(2).equals("tt")) {
 				isPass = true;
 			} else {
 				this.x = moveMatch.group(2).charAt(0) - 'a';
 				this.y = moveMatch.group(2).charAt(1) - 'a';
 			}
+			// Check if the move has an associated comment
 			Matcher moveAnnotation = Pattern.compile("C\\[(.+)\\]").matcher(moveString);
 			if (moveAnnotation.find()) {
 				this.annotation = moveAnnotation.group(1);

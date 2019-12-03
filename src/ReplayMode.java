@@ -29,12 +29,14 @@ public class ReplayMode extends AbstractGame {
 	}
 
 	public void NextMove() {
+		// If offPath, the board needs to be set back to how it was when the player branched off
 		if (offPath) {
 			offPath = false;
-			//ArrayList<Move> moves = (ArrayList<Move>) replayGame.getMoves().subList(0, moveNumber);
+			// Create a new board
 			Board board = new Board(replayGame.getBoardSize());
 			Move nextMove = new Move();
 			try {
+				// Re-make all moves made up to the branching point
 				for (int i = 0; i < moveNumber; i++) {
 					nextMove = replayGame.getMove(i);
 					board.placeStone(nextMove);
@@ -50,14 +52,15 @@ public class ReplayMode extends AbstractGame {
 			}
 		}
 		else if (!gameOver) {
+			// If the game isn't over and still on the main line, get the next move
 			Move move = replayGame.getMove(moveNumber);
-
 			if (move.getIsLastMove()) {
 				gameOver = true;
 			} else {
 				moveNumber++;
 			}
 			try {
+				// Make the move
 				board.placeStone(move);
 				nextPlayersTurn();
 				gui.drawBoard();
@@ -86,6 +89,7 @@ public class ReplayMode extends AbstractGame {
 	 */
 	@Override
 	public void gameOver() {
+		// Color any selected dead stones based on the 'DS' tag (these are determined in the ReplayGame class)
 		selector = new DeadStoneSelector(this);
 		for (Intersection deadStoneIntersection : replayGame.getDeadStoneIntersections()) {
 			selector.selectStone(deadStoneIntersection.getxPosition(), deadStoneIntersection.getyPosition());
@@ -98,6 +102,7 @@ public class ReplayMode extends AbstractGame {
 	 */
 	@Override
 	public void processMouseClick(int x, int y) {
+		// If the player clicks on an intersection, then make that move, and set offPath to true
 		Color color = (blackToMove) ? Color.BLACK : Color.WHITE;
 		Move move = new Move(color, x, y);
 		try {
@@ -115,7 +120,7 @@ public class ReplayMode extends AbstractGame {
 
 	@Override
 	public void processMouseClick(int buttonID) {
-		// TODO Auto-generated method stub
+		// Not used in this class
 
 	}
 
