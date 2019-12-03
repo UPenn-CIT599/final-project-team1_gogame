@@ -95,7 +95,7 @@ public class EndGameMenu implements ActionListener {
 		scoreDisplay.setText("You have reached the end of the solution\n" + 
 			"path. You may continue play if you wish.");
 	    } else {
-		scoreDisplay.setText("Game over.");
+		scoreDisplay.setText("Game over.\n\n" + winner());
 	    }
 	} else {
 	    blackScore = scores.get("blackScore");

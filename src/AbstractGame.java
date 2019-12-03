@@ -248,6 +248,7 @@ public abstract class AbstractGame {
      */
     public void setFinalPointDifferential(char winnerColor,
 	    double pointDifferential) {
+    	finalScore = new HashMap<String, Double>();
 	if (winnerColor == 'B') {
 	    finalScore.put("blackScore", pointDifferential);
 	    finalScore.put("whiteScore", 0.0);

@@ -16,7 +16,13 @@ public class ReplayGame {
 	private String result = "";
 	private Boolean firstMoveBlack;
 	private int boardSize = 19;
-	private ArrayList<Intersection> deadStoneIntersections; 
+	private ArrayList<Intersection> deadStoneIntersections;
+	private Boolean winByResignation = false;
+	private Boolean winByTimeout = false;
+	private String blackPlayer = "Black";
+	private String whitePlayer = "White";
+	private double pointDifferential = 0;
+	private Boolean blackWins;
 
 	public ReplayGame(String sgfText) {
 		this.sgfText = sgfText;
@@ -74,18 +80,34 @@ public class ReplayGame {
 		}
 		board = new Board(boardSize);
 
+		// Get the name of the black player
+		Matcher blackPlayerMatcher = Pattern.compile("PB\\[(\\.+)\\]").matcher(sgfText);
+		if (blackPlayerMatcher.find()) {
+			blackPlayer = blackPlayerMatcher.group(1);
+		}
+
+		// Get the name of the white player
+		Matcher whitePlayerMatcher = Pattern.compile("PW\\[(\\.+)\\]").matcher(sgfText);
+		if (whitePlayerMatcher.find()) {
+			whitePlayer = whitePlayerMatcher.group(1);
+		}
+
 		// Get the result of the game based on the RE tag
 		Matcher resultTag = Pattern.compile("RE\\[(0|B|W)(\\+)?(R|T|([0-9]*\\.?[0-9]*))\\]").matcher(sgfText);
 		if (resultTag.find()) {
 			// Determine whether the winning player is black or white
-			String winningPlayer = resultTag.group(1).equals("B") ? "Black" : "White";
-			String winningResult = "";
+			blackWins = resultTag.group(1).equals("B") ? true : false;
+			String winningPlayer = blackWins ? "Black" : "White";
 			// If 'R', the game was won by resignation, if 'T', by timeout. If a numeric value is specified, this is the number of points the winner won by
+			String winningResult = "";
 			if (resultTag.group(3).charAt(0) == 'R') {
+				winByResignation = true;
 				winningResult = "resignation";
 			} else if (resultTag.group(3).charAt(0) == 'T') {
+				winByTimeout = true;
 				winningResult = "timeout";
 			} else {
+				pointDifferential = Double.parseDouble(resultTag.group(3));
 				winningResult = resultTag.group(3) + " points";
 			}
 			result = winningPlayer + " wins by " + winningResult;
@@ -160,6 +182,54 @@ public class ReplayGame {
 	 */
 	public ArrayList<Intersection> getDeadStoneIntersections() {
 		return deadStoneIntersections;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public Boolean getWinByResignation() {
+		return winByResignation;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public Boolean getWinByTimeout() {
+		return winByTimeout;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public String getBlackPlayer() {
+		return blackPlayer;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public String getWhitePlayer() {
+		return whitePlayer;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public Boolean getBlackWins() {
+		return blackWins;
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public double getPointDifferential() {
+		return pointDifferential;
 	}
 
 }
