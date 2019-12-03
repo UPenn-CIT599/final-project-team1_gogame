@@ -15,6 +15,7 @@ public class ReplayMode extends AbstractGame {
 	private ReplayGame replayGame;
 	private int moveNumber = 0;
 	private Boolean offPath = false;
+	private Boolean isValid = true;
 
 	public ReplayMode(UserInterface gui, MainMenu mainMenu) {
 		this.gui = gui;
@@ -65,11 +66,12 @@ public class ReplayMode extends AbstractGame {
 				gui.drawBoard();
 			} catch (IllegalArgumentException e) {
 				gui.invalidMove("Invalid SGF file: " + e.getMessage());
+				gui.drawBoard();
 				gameOver = true;
-				gui.gameOver();
+				isValid = false;
 			}
 
-			if (gameOver) {
+			if (gameOver && isValid) {
 				gameOver();
 			}
 		}
@@ -88,6 +90,7 @@ public class ReplayMode extends AbstractGame {
 	 */
 	@Override
 	public void gameOver() {
+
 		selector = new DeadStoneSelector(this);
 		for (Intersection deadStoneIntersection : replayGame.getDeadStoneIntersections()) {
 			selector.selectStone(deadStoneIntersection.getxPosition(), deadStoneIntersection.getyPosition());
@@ -101,6 +104,7 @@ public class ReplayMode extends AbstractGame {
 			char winnerColor = (replayGame.getBlackWins()) ? 'B' : 'W';
 			setFinalPointDifferential(winnerColor, replayGame.getPointDifferential());
 		}
+
 		gui.gameOver();
 	}
 
