@@ -71,7 +71,7 @@ public class ReplayMode extends AbstractGame {
 				isValid = false;
 			}
 
-			if (gameOver && isValid) {
+			if (gameOver) {
 				gameOver();
 			}
 		}
@@ -91,18 +91,24 @@ public class ReplayMode extends AbstractGame {
 	@Override
 	public void gameOver() {
 
-		selector = new DeadStoneSelector(this);
-		for (Intersection deadStoneIntersection : replayGame.getDeadStoneIntersections()) {
-			selector.selectStone(deadStoneIntersection.getxPosition(), deadStoneIntersection.getyPosition());
-		}
-		String losingPlayer = (replayGame.getBlackWins()) ? replayGame.getWhitePlayer() : replayGame.getBlackPlayer();
-		if (replayGame.getWinByResignation()) {
-			setResignedPlayer(losingPlayer);
-		} else if (replayGame.getWinByTimeout()) {
-			setTimedOutPlayer(losingPlayer);
+		if (isValid) {
+			selector = new DeadStoneSelector(this);
+			for (Intersection deadStoneIntersection : replayGame.getDeadStoneIntersections()) {
+				selector.selectStone(deadStoneIntersection.getxPosition(), deadStoneIntersection.getyPosition());
+			}
+			String losingPlayer = (replayGame.getBlackWins()) ? replayGame.getWhitePlayer() : replayGame.getBlackPlayer();
+			if (replayGame.getWinByResignation()) {
+				setResignedPlayer(losingPlayer);
+			} else if (replayGame.getWinByTimeout()) {
+				setTimedOutPlayer(losingPlayer);
+			} else {
+				char winnerColor = (replayGame.getBlackWins()) ? 'B' : 'W';
+				setFinalPointDifferential(winnerColor, replayGame.getPointDifferential());
+			}
 		} else {
-			char winnerColor = (replayGame.getBlackWins()) ? 'B' : 'W';
-			setFinalPointDifferential(winnerColor, replayGame.getPointDifferential());
+			finalScore = null;
+			setResignedPlayer(null);
+			setTimedOutPlayer(null);
 		}
 
 		gui.gameOver();
