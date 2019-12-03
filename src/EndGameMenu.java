@@ -204,6 +204,12 @@ public class EndGameMenu implements ActionListener {
 	String resignText = " resigned. ";
 	String timedOutText = " timed out. ";
 	String alternateWinText = " wins!";
+	
+	if (gui.isReplayMode()) {
+		if (((ReplayMode)gui.getGame()).getIsValid() == false) {
+			return "Invalid sgf file";
+		}
+	}
 	if (gui.getGame().getResignedPlayer() != null) {
 	    String resignedPlayer = gui.getGame().getResignedPlayer();
 	    String winningPlayer = "";

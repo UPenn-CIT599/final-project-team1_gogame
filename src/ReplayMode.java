@@ -137,7 +137,14 @@ public class ReplayMode extends AbstractGame {
 	@Override
 	public void processMouseClick(int buttonID) {
 		// TODO Auto-generated method stub
-
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public Boolean getIsValid() {
+		return isValid;
 	}
 
 }
