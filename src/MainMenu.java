@@ -820,11 +820,35 @@ public class MainMenu implements ActionListener, ItemListener, ChangeListener {
 	} 
 	// start the game if start game button is pressed
 	else if (command.equals(START_GAME)) {
-	    replayMode = false;
-	    practiceProblem = false;
-	    readyToPlay = true;
-	    frame.dispose();
-	    gui.initializeGame();
+	    // verify that player 1 and player 2 have distinct names
+	    boolean duplicateNames = false;
+	    if (onePlayerGame) {
+		if (player1Name.equals("Computer")) {
+		    duplicateNames = true;
+		}
+	    } else if (player1Name.equals("")) {
+		if (player2Name.equals("Player 1")) {
+		    duplicateNames = true;
+		}
+	    } else if (player2Name.equals("")) {
+		if (player1Name.equals("Player 2")) {
+		    duplicateNames = true;
+		}
+	    } else if (player1Name.equals(player2Name)) {
+		duplicateNames = true;
+	    }
+	    
+	    // start the game if the names are distinct
+	    if (duplicateNames) {
+		JOptionPane.showMessageDialog(frame,
+			"Players must have distinct names.");
+	    } else {
+		replayMode = false;
+		practiceProblem = false;
+		readyToPlay = true;
+		frame.dispose();
+		gui.initializeGame();
+	    }
 	}
     }
 
