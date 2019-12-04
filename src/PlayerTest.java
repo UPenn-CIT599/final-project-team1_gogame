@@ -16,6 +16,12 @@ import org.junit.jupiter.api.Test;
  */
 class PlayerTest {
 
+    /**
+     * This method counts the number of stones on the board in the given Game.
+     * 
+     * @param game The Game being checked
+     * @return The number of stones on the board in the given Game
+     */
     static int countStonesOnBoard(Game game) {
 	int count = 0;
 	for (int i = 0; i < 19; i++) {

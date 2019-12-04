@@ -49,11 +49,17 @@ public abstract class AbstractGame {
     }
     
     /**
-     * 
-     * @return
+     * @return the size of the board
      */
     public int getSize() {
     	return board.getSize();
+    }
+    
+    /**
+     * @return the board's annotation
+     */
+    public String getAnnotation() {
+    	return board.getAnnotation();
     }
 
     /**
@@ -195,7 +201,8 @@ public abstract class AbstractGame {
     public abstract void gameOver();
 
     /**
-     * This method finalizes the score and triggers the GUI's gameOver method.
+     * This method finalizes the score and triggers the UserInterface's gameOver
+     * method.
      */
     public void finalizeScore() {
 	if (selectingDeadStones) {
@@ -377,12 +384,4 @@ public abstract class AbstractGame {
      * @param buttonID An integer identifying which button was clicked
      */
     public abstract void processMouseClick(int buttonID);
-    
-    /**
-     * 
-     * @return
-     */
-    public String getAnnotation() {
-    	return board.getAnnotation();
-    }
 }

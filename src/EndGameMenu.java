@@ -206,9 +206,9 @@ public class EndGameMenu implements ActionListener {
 	String alternateWinText = " wins!";
 	
 	if (gui.isReplayMode()) {
-		if (((ReplayMode)gui.getGame()).getIsValid() == false) {
-			return "Invalid sgf file";
-		}
+	    if (((ReplayMode)gui.getGame()).getIsValid() == false) {
+		return "Invalid sgf file";
+	    }
 	}
 	if (gui.getGame().getResignedPlayer() != null) {
 	    String resignedPlayer = gui.getGame().getResignedPlayer();
@@ -246,6 +246,9 @@ public class EndGameMenu implements ActionListener {
 	}
     }
 
+    /**
+     * This method determines what happens when a button is pressed.
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
 	String command = e.getActionCommand();
@@ -253,7 +256,7 @@ public class EndGameMenu implements ActionListener {
 	    if (replayFile == null) {
 		int confirm = JOptionPane.showOptionDialog(frame,
 			"You must save your replay before viewing it.\n" +
-				"Press OK to choose where to save it.",
+			"Press OK to choose where to save it.",
 			"Save Replay", JOptionPane.OK_CANCEL_OPTION,
 			JOptionPane.INFORMATION_MESSAGE, null, null, null);
 		if (confirm == 0) {

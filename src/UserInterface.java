@@ -280,7 +280,8 @@ public class UserInterface extends JPanel implements MouseListener {
     }
 
     /**
-     * This method draws the board, including the pieces, buttons, and messages.
+     * This method draws the board, including the pieces, buttons, and messages,
+     * as well as the dead stones and timer if applicable.
      */
     public void drawBoard() {
 	Graphics g = image.getGraphics();
@@ -416,7 +417,6 @@ public class UserInterface extends JPanel implements MouseListener {
 	    } else {
 	    	drawButton(g, nextTurnButton, "Next Turn", 24);
 	    }
-	    //drawButton(g, nextTurnButton, "Next Turn", 24);
 	    drawButton(g, replayMainMenuButton, "Main Menu", 20);
 	} else if (practiceProblem) {
 	    drawButton(g, restartPracticeButton, "Restart", 34);
@@ -424,8 +424,7 @@ public class UserInterface extends JPanel implements MouseListener {
 	} else if (((Game) game).isSelectingDeadStones()) {
 	    drawButton(g, calculateScoreButton, "Calculate Score", 41);
 	    drawButton(g, continuePlayButton, "Continue Play", 47);
-	}
-	else {
+	} else {
 	    drawButton(g, passButton, "Pass", 43);
 	    drawButton(g, resignButton, "Resign", 35);
 	    drawButton(g, gameMainMenuButton, "Main Menu", 20);
@@ -602,13 +601,6 @@ public class UserInterface extends JPanel implements MouseListener {
 		game.processMouseClick(Player.RESIGN);
 	    } else if (buttonClicked(gameMainMenuButton, mouseX, mouseY)) {
 		if (!game.isGameOver()) {
-//		    int confirm = JOptionPane.showOptionDialog(frame,
-//			    CONFIRM_MAIN_MENU + "\n" + LOST_PROGRESS_WARNING,
-//			    "Main Menu Confirmation", JOptionPane.YES_NO_OPTION,
-//			    JOptionPane.WARNING_MESSAGE, null, null, null);
-//		    if (confirm == 0) {
-//			run();
-//		    }
 		    confirmChoice(true, true);
 		}
 	    } else {

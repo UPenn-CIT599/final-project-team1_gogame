@@ -76,7 +76,7 @@ public class Player {
 	Thread computerThread = new Thread() {
 	    public void run() {
 		// nested "while (true)" loops are used so the program can break
-		// out of the inner loop without ending the thread
+		// out of the inner loop without ending the Thread
 		while (true) {
 		    while (true) {
 			while (isBlack != game.blackToMove() ||
@@ -95,7 +95,6 @@ public class Player {
 			if (game.isGameOver()) {
 			    break;
 			}
-//		    if (!game.isGameOver()) {
 			try {
 			    // wait a set amount of time before moving
 			    Thread.sleep(computerMoveDelay);
@@ -232,7 +231,7 @@ public class Player {
      * 
      * @param x The column which was clicked
      * @param y The row which was clicked
-     * @return True if the mouse click results in the Player either playing a
+     * @return True if the mouse click results in the Player either placing a
      *         stone or passing, and false if the Player does nothing
      */
     public boolean processMouseClick(int x, int y)

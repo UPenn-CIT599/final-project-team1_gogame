@@ -154,6 +154,9 @@ public class MainMenu implements ActionListener, ItemListener, ChangeListener {
 	return readyToPlay;
     }
     
+    /**
+     * @return the replayFile
+     */
     public File getReplayFile() {
     	return replayFile;
     }
@@ -300,7 +303,7 @@ public class MainMenu implements ActionListener, ItemListener, ChangeListener {
     }
     
     /**
-     * This method is used by the createNamePanel method to set a Player's name.
+     * This method sets a Player's name.
      * 
      * @param playerNumber The number of the Player
      * @param name         The name of the Player

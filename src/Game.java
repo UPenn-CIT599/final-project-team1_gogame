@@ -45,7 +45,7 @@ public class Game extends AbstractGame {
 
     /**
      * This method returns to game play if players pass consecutively to end the
-     * game but can't agree on which stones are dead
+     * game but can't agree on which stones are dead.
      */
     public void continuePlay() {
 	gameOver = false;
@@ -110,13 +110,12 @@ public class Game extends AbstractGame {
 	    		selector.selectStone(ds.getxPosition(), ds.getyPosition());
 	    	    }
 	    	}
-	    	//dsi.testPrint();
 	    	gui.drawBoard();
-	    	JOptionPane.showMessageDialog(gui.getFrame(), 
-		    "Please check the dead stones (labelled by red dots) selected by\n"
-		    + "the computer. If you agree with the selections or if no dead stones\n"
-		    + "are selected, press the Calculate Score button. If you don't agree\n"
-		    + "with the selections, you may Continue Play to resolve the dispute.");    
+		JOptionPane.showMessageDialog(gui.getFrame(),
+			"Please check the dead stones (labelled by red dots) selected by\n" +
+			"the computer. If you agree with the selections or if no dead stones\n" +
+			"are selected, press the Calculate Score button. If you don't agree\n" +
+			"with the selections, you may Continue Play to resolve the dispute.");
 	    }
 	    else {
 	        finalizeScore();
@@ -143,7 +142,7 @@ public class Game extends AbstractGame {
 	}
 	sgfStringBuilder.append("KM[" + komi + "]");
 	
-	// add area for the result, to be updated later
+	// add tag for the result, to be updated later
 	sgfStringBuilder.append("RE[%]");
 
 	// add player names
