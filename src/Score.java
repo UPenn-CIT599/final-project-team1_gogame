@@ -55,6 +55,48 @@ public class Score {
     public Point[][] getFinalPositions() {
 	return finalPositions;
     }
+    
+    /**
+     * @return the finalBoardPositions
+     */
+    public String getFinalBoardPositions() {
+	return finalBoardPositions;
+    }
+
+    /**
+     * @return the emptyLocations
+     */
+    public ArrayList<Point> getEmptyLocations() {
+	return emptyLocations;
+    }
+
+    /**
+     * @return the blackStones
+     */
+    public ArrayList<Point> getBlackStones() {
+	return blackStones;
+    }
+
+    /**
+     * @return the whiteStones
+     */
+    public ArrayList<Point> getWhiteStones() {
+	return whiteStones;
+    }
+
+    /**
+     * @return the areas
+     */
+    public ArrayList<Area> getAreas() {
+	return areas;
+    }
+
+    /**
+     * @return the neutralPositions
+     */
+    public ArrayList<Point> getNeutralPositions() {
+	return neutralPositions;
+    }
 
     /**
      * According to the final board positions, 
