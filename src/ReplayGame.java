@@ -81,13 +81,13 @@ public class ReplayGame {
 		board = new Board(boardSize);
 
 		// Get the name of the black player
-		Matcher blackPlayerMatcher = Pattern.compile("PB\\[(\\.+)\\]").matcher(sgfText);
+		Matcher blackPlayerMatcher = Pattern.compile("PB\\[(.+?)\\]").matcher(sgfText);
 		if (blackPlayerMatcher.find()) {
 			blackPlayer = blackPlayerMatcher.group(1);
 		}
 
 		// Get the name of the white player
-		Matcher whitePlayerMatcher = Pattern.compile("PW\\[(\\.+)\\]").matcher(sgfText);
+		Matcher whitePlayerMatcher = Pattern.compile("PW\\[(.+?)\\]").matcher(sgfText);
 		if (whitePlayerMatcher.find()) {
 			whitePlayer = whitePlayerMatcher.group(1);
 		}
