@@ -13,8 +13,9 @@ import org.junit.jupiter.api.*;
 public class ReplayGameTest {
 	
 	@Test
-    void ReplayGameTest() {
-		String replayGameString = "(;FF[4]GM[1]SZ[19]KM[6.5]RE[W+R]PB[Player 1]PW[Computer]RU[Chinese]DT[2019-11-25]"
+    void ReplayGameTest1() {
+		String replayGameString = "(;FF[4]GM[1]SZ[19]KM[6.5]RE[W+R]"
+				+ "PB[Player 1]PW[Computer]RU[Chinese]DT[2019-11-25]"
 				+ ";B[ji];W[cb];B[nj];W[ks];B[hm];W[gd])";
 		
 		ReplayGame rg = new ReplayGame(replayGameString);
@@ -23,6 +24,10 @@ public class ReplayGameTest {
 		assertEquals(rg.getMoves().size(), 6);
 		assertEquals(rg.getBlackPlayer(), "Player 1");
 		assertEquals(rg.getWhitePlayer(), "Computer");
+		assertEquals(rg.getBlackWins(), false);
+		assertEquals(rg.getWinByResignation(), true);
+		assertEquals(rg.getWinByTimeout(), false);
+		assertEquals(rg.getPointDifferential(), 0);
 		
 		assertEquals(rg.getMoves().get(0).getMoveNumber(), 0);
 		assertEquals(rg.getMoves().get(0).getX(), 9);
@@ -53,6 +58,32 @@ public class ReplayGameTest {
 		assertEquals(rg.getMoves().get(5).getX(), 6);
 		assertEquals(rg.getMoves().get(5).getY(), 3);
 		assertEquals(rg.getMoves().get(5).getColor(), Color.WHITE);
+	}
+	
+	@Test
+    void ReplayGameTest2() {
+		String replayGameString = "(;FF[4]GM[1]SZ[19]KM[6.5]RE[W+367.5]"
+				+ "PB[Test Player Black]PW[Test Player White]RU[Chinese]DT[2019-11-24]"
+				+ ";B[sa];W[as];B[ra];W[dq];B[tt];W[tt]DS[dq][sa][ra])";
+
+		ReplayGame rg = new ReplayGame(replayGameString);
+		rg.ParseMoves();
+		assertEquals(rg.getBoard().getSize(), 19);
+		assertEquals(rg.getMoves().size(), 6);
+		assertEquals(rg.getBlackPlayer(), "Test Player Black");
+		assertEquals(rg.getWhitePlayer(), "Test Player White");
+		assertEquals(rg.getBlackWins(), false);
+		assertEquals(rg.getWinByResignation(), false);
+		assertEquals(rg.getWinByTimeout(), false);
+		assertEquals(rg.getPointDifferential(), 367.5);
+		
+		assertEquals(rg.getDeadStoneIntersections().size(), 3);
+		assertEquals(rg.getDeadStoneIntersections().get(0).getxPosition(), 3);
+		assertEquals(rg.getDeadStoneIntersections().get(0).getyPosition(), 16);
+		assertEquals(rg.getDeadStoneIntersections().get(1).getxPosition(), 18);
+		assertEquals(rg.getDeadStoneIntersections().get(1).getyPosition(), 0);
+		assertEquals(rg.getDeadStoneIntersections().get(2).getxPosition(), 17);
+		assertEquals(rg.getDeadStoneIntersections().get(2).getyPosition(), 0);
 	}
 
 }
