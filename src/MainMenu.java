@@ -916,6 +916,8 @@ public class MainMenu implements ActionListener, ItemListener, ChangeListener {
 		if (handicap == 0) {
 		    setEnabledAllComponents(komiPanel, true);
 		} else {
+		    JSlider komiSlider = (JSlider) komiPanel.getComponent(1);
+		    komiSlider.setValue(0);
 		    setEnabledAllComponents(komiPanel, false);
 		}
 	    } 
