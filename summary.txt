@@ -22,7 +22,9 @@ PlayerTimer, ReplayFileFilter, UserInterface
 
 Christian: gameplay and sgf file reading, including the following classes:
 Board, BoardTest, Group, Intersection, Move, PracticeProblemMode, Problem, 
-ProblemSolution, ProblemSolutionTest, ReplayGame, ReplayMode, sgfHandler, Stone
+ProblemSolution, ProblemSolutionTest, ReplayGame, ReplayGameTest, ReplayMode, 
+sgfHandler, Stone
 
 Chuan: scoring, including the following classes:
-Area, DeadStone, DeadStoneIdentifier, Helper, Point, Score, ScoreHelper
+Area, DeadStone, DeadStoneIdentifier, Helper, Point, Score, ScoreHelper, 
+ScoreTest
