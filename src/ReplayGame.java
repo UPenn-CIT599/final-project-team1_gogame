@@ -23,16 +23,17 @@ public class ReplayGame {
 	private String whitePlayer = "White";
 	private double pointDifferential = 0;
 	private Boolean blackWins;
+	private Pattern stonePositionIntersectionPattern = Pattern.compile("\\[(\\w\\w)\\]");
 
 	public ReplayGame(String sgfText) {
 		this.sgfText = sgfText;
 	}
 
-	public void ParseMoves() {
+	public void ParseMoves() throws IllegalArgumentException {
 		moves = new ArrayList<Move>();  
 
 		// Parse out the individual moves of a game
-		Pattern singleMove = Pattern.compile("([B|W]\\[(\\w\\w)?\\].*?(?=(;B|;W|$)))");
+		Pattern singleMove = Pattern.compile("(;[B|W]\\[(\\w\\w)?\\].*?(?=(;B|;W|$)))");
 		Matcher singleMoveMatcher = singleMove.matcher(sgfText);
 		// For each tag that is found by the matcher, a new move is created
 		while (singleMoveMatcher.find()) {
@@ -50,7 +51,7 @@ public class ReplayGame {
 
 		// Find dead stones indicated by the DS tag, defined for the purposes of this app
 		Pattern deadStones = Pattern.compile("((DS)(\\[\\w\\w\\])*)");
-		Pattern deadStoneIntersection = Pattern.compile("\\[(\\w\\w)\\]");
+		Pattern deadStoneIntersection = stonePositionIntersectionPattern;
 		Matcher deadStonesMatcher = deadStones.matcher(sgfText);
 		deadStoneIntersections = new ArrayList<Intersection>();
 		try {
@@ -79,6 +80,32 @@ public class ReplayGame {
 			boardSize = Integer.parseInt(boardSizeTag.group(1));
 		}
 		board = new Board(boardSize);
+
+		Matcher handicapStoneMatcher = Pattern.compile("(A(B|W)(\\[\\w\\w\\])+)").matcher(sgfText);
+		ArrayList<Move> handicapMoves = new ArrayList<Move>();
+		while (handicapStoneMatcher.find()) {
+			String stonePositionsLine = handicapStoneMatcher.group();
+			Color color = (stonePositionsLine.charAt(1) == 'B') ? Color.BLACK : Color.WHITE;
+			Matcher intersections = stonePositionIntersectionPattern.matcher(stonePositionsLine);
+			while (intersections.find()) {
+				String intersection = intersections.group(1);
+				// Get the numeric representation of the intersections (subtracting 'a' to index at 0)
+				int x = intersection.charAt(0) - 'a';
+				int y = intersection.charAt(1) - 'a';
+				// Place the stone on the board
+				Move move = new Move(color, x, y);
+				handicapMoves.add(move);
+			}
+		}
+
+		for (Move move : handicapMoves) {
+			try {
+				board.placeStone(move);
+			}
+			catch (IllegalArgumentException e) {
+				throw e;
+			}
+		}
 
 		// Get the name of the black player
 		Matcher blackPlayerMatcher = Pattern.compile("PB\\[(.+?)\\]").matcher(sgfText);
@@ -223,7 +250,7 @@ public class ReplayGame {
 	public Boolean getBlackWins() {
 		return blackWins;
 	}
-	
+
 	/**
 	 * 
 	 * @return

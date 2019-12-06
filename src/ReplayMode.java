@@ -19,10 +19,18 @@ public class ReplayMode extends AbstractGame {
 
 	public ReplayMode(UserInterface gui, MainMenu mainMenu) {
 		this.gui = gui;
-		File sgfFile = mainMenu.getReplayFile();
-		sgf.readSgfFile(sgfFile);
-		sgf.constructReplayGame();
-		replayGame = sgf.getReplayGame();
+		try {
+			File sgfFile = mainMenu.getReplayFile();
+			sgf.readSgfFile(sgfFile);
+			sgf.constructReplayGame();
+			replayGame = sgf.getReplayGame();
+		} catch (IllegalArgumentException e) {
+			gui.invalidMove("Invalid SGF file: " + e.getMessage());
+			board = new Board(19);
+			gui.drawBoard();
+			gameOver = true;
+			isValid = false;
+		}
 		gui.setName(replayGame.getBlackPlayer(), true);
 		gui.setName(replayGame.getWhitePlayer(), false);
 		blackToMove = replayGame.getFirstMoveBlack();
@@ -138,7 +146,7 @@ public class ReplayMode extends AbstractGame {
 	public void processMouseClick(int buttonID) {
 		// TODO Auto-generated method stub
 	}
-	
+
 	/**
 	 * 
 	 * @return

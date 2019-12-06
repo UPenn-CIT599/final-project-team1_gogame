@@ -93,13 +93,17 @@ public class sgfHandler {
 		Board board = new Board(getBoardSize(), moves);
 		problem = new Problem(board, caption, solution);
 	}
-	
+
 	/**
 	 * Called when the sgf file loaded in is a game to replay
 	 */
-	public void constructReplayGame() {
+	public void constructReplayGame() throws IllegalArgumentException {
 		replayGame = new ReplayGame(sgfText);
-		replayGame.ParseMoves();
+		try {
+			replayGame.ParseMoves();
+		} catch (IllegalArgumentException e) {
+			throw e;
+		}
 	}
 
 	/**
@@ -128,7 +132,7 @@ public class sgfHandler {
 		} 
 		return caption;
 	}
-	
+
 	public ReplayGame getReplayGame() {
 		return replayGame;
 	}
