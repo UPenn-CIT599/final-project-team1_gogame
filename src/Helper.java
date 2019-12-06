@@ -7,8 +7,9 @@ import java.util.HashSet;
 public class Helper {
 	
 	/**
-	 * This method returns the adjacent points of a given point,
-	 * which is quite similar to Christian's getAdjacentIntersections method under the Stone class.
+	 * This is a helper method for the getChainAndFindReach method in the ScoreHelper class
+	 * and the getInfluence method in the DeadStoneIdentifier class.
+	 * This method returns the adjacent points of a given point. 
 	 * @param p - the given point
 	 * @param boardSize
 	 * @param boardPosition
@@ -32,22 +33,6 @@ public class Helper {
 	}
 	
 	/**
-	 * This method checks if an empty location has already been included in the ArrayList. 
-	 * @param emptyLocation
-	 * @param areas
-	 * @return boolean
-	 */
-	public static boolean checkContainEmptyLocation(Point emptyLocation, ArrayList<Area> areas) {
-		boolean containEmptyLocation = false;
-		for (Area a : areas) {
-			if (a.getEmptyLocations().contains(emptyLocation)) {
-				containEmptyLocation = true;
-			}
-		}
-		return containEmptyLocation;
-	}
-	
-	/**
 	 * This is a helper method for the influenceOfLogicalChain method in the DeadStoneIdentifier class.
 	 * This method checks if a position is on the board.
 	 * Value 12345 is used to indicate positions that are not on the board.
@@ -65,9 +50,9 @@ public class Helper {
 	/**
 	 * This is a helper method for the influenceOfLogicalChain method in the DeadStoneIdentifier class.
 	 * This method sets the point values on the board.
-	 * @param pv
-	 * @param size
-	 * @return pointValue
+	 * @param pv - point values to be set
+	 * @param size - board size
+	 * @return pointValue - point values that have been set
 	 */
 	public static int[][] setPointValue(int[][] pv, int size){
 		int [][] pointValue = new int[size][size];
@@ -80,6 +65,7 @@ public class Helper {
 	}
 	
 	/**
+	 * This is a helper method for the identifyDeadStones method in the DeadStoneIdentifier class.
 	 * This method returns the positions of the stones in a given dead logical chain.
 	 * @param deadLogicalChains
 	 * @return deadStonePositions
@@ -99,8 +85,8 @@ public class Helper {
 	 * This is a helper method for the groupChainsByLogicalConnections method in the DeadStoneIdentifier class.
 	 * This method combines the preliminary logical chain groups into final logical chain groups by putting 
 	 * chain groups with common components together.
-	 * @param chainGroupRecord 
-	 * @return chainGroupRecordFinal
+	 * @param chainGroupRecord - preliminary logical chain groups
+	 * @return chainGroupRecordFinal - final logical chain groups
 	 */
 	public static ArrayList<HashSet<Integer>> findCommonElement(ArrayList<HashSet<Integer>> chainGroupRecord){
 		ArrayList<HashSet<Integer>> chainGroupRecordFinal = new ArrayList<>(); // what I need

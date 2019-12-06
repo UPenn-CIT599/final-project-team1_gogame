@@ -23,52 +23,67 @@ public class Point {
 		yPosition = y;
 	}
 
+	/**
+	 * @return the xPosition
+	 */
 	public int getxPosition() {
 		return xPosition;
 	}
 
-	public void setxPosition(int xPosition) {
-		this.xPosition = xPosition;
-	}
-
+	/**
+	 * @return the yPosition
+	 */
 	public int getyPosition() {
 		return yPosition;
 	}
 
-	public void setyPosition(int yPosition) {
-		this.yPosition = yPosition;
-	}
-	
+	/**
+	 * @return the status
+	 */
 	public String getStatus() {
 		return status;
 	}
 	
-	public void setStatus(String s) {
-		this.status = s;
-	}
-	
+	/**
+	 * @return the area
+	 */
 	public Area getArea() {
 		return area;
 	}
 
-	public void setArea(Area a) {
-		this.area = a;
+	/**
+	 * @param area the area to set
+	 */
+	public void setArea(Area area) {
+		this.area = area;
 	}
 	
+	/**
+	 * @return the chainGroup
+	 */
 	public int getChainGroup() {
 		return chainGroup;
 	}
 	
-	public void setChainGroup(int chainNo) {
-		this.chainGroup = chainNo;
+	/**
+	 * @param chainGroup the chainGroup to set
+	 */
+	public void setChainGroup(int chainGroup) {
+		this.chainGroup = chainGroup;
 	}
 	
+	/**
+	 * @return the logicalChainGroup
+	 */
 	public String getLogicalChainGroup() {
 		return logicalChainGroup;
 	}
 	
-	public void setLogicalChainGroup(String logicalChainId) {
-		this.logicalChainGroup = logicalChainId;
+	/**
+	 * @param logicalChainGroup the logicalChainGroup to set
+	 */
+	public void setLogicalChainGroup(String logicalChainGroup) {
+		this.logicalChainGroup = logicalChainGroup;
 	}
 	
 	/**
