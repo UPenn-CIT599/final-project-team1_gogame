@@ -11,15 +11,16 @@ public class DeadStoneIdentifier {
 	/**
 	 * The dead stones will be identified, with modifications, according to an algorithm found online:
 	 * https://www.uni-trier.de/fileadmin/fb4/prof/BWL/FIN/Veranstaltungen/A_static_method_for_computing_the_score_of_a_Go_game__Carta_.pdf
+	 * The algorithm consists of the following steps:
 	 * 1. Group tangibly connected stones into chains
 	 * 2. Group chains into logically connected chain groups
 	 * 3. Calculate logical chain properties:
-	 * eyes
-	 * territory
+	 * eyes of a logical chain
+	 * territory under the influence of a logical chain
 	 * 4. Identify dead logical chains based on their properties:
 	 * If a logical chain has two eyes, it is alive;
 	 * If a logical chain does not have two eyes but possess a large territory
-	 * (defined as 6 points), it is also alive;
+	 * (defined as more than 6 points), it is also alive;
 	 * All other logical chains are identified as dead.
 	 */
 	
@@ -40,8 +41,7 @@ public class DeadStoneIdentifier {
 	}
 	
 	/**
-	 * This method groups tangibly connected stones into chains and 
-	 * assigns a chain ID to each group. 
+	 * This method groups tangibly connected stones into chains and assigns a chain ID to each group. 
 	 */ 
 	public void groupStonesToChains() {
 		int chainNo = 0;
@@ -114,8 +114,7 @@ public class DeadStoneIdentifier {
 	}
 	
 	/**
-	 * This method groups chains into logically connected chain groups and
-	 * assigns logical chain IDs.
+	 * This method groups chains into logically connected chain groups and assigns logical chain IDs.
 	 */
 	public void groupChainsByLogicalConnections() {
 		HashMap<Integer, HashSet<Point>> reachGroups = new HashMap<>();
@@ -177,18 +176,13 @@ public class DeadStoneIdentifier {
 			}
 			finalLogicalChainGroups.put(logicalChainId, logicalChain);
 		}
-		//set logical chain ID
+		
 		for (String s : finalLogicalChainGroups.keySet()) {
 			for (Point p : finalLogicalChainGroups.get(s)) {
-				p.setLogicalChainGroup(s);
+				p.setLogicalChainGroup(s); //set logical chain ID
 			}
 		}		
-		for (int y = 0; y < size; y++) {
-			System.out.println("");
-			for (int x = 0; x < size; x++) {
-				System.out.print(boardPoint[x][y].getLogicalChainGroup() + "\t");
-			}
-		}
+
 	}
 	
 	/**
@@ -259,13 +253,13 @@ public class DeadStoneIdentifier {
 			}
 			eyesOfLogicalChains.put(s, eyes);
 		}
-		
 	}
 	
 	/**
 	 * This method calculates the influence of every logical chain on the board
 	 * according to the Bouzy algorithm.
-	 * @param dilations, erosions - parameters of the Bouzy algorithm
+	 * @param dilations - parameter of the Bouzy algorithm
+	 * @param erosions - parameter of the Bouzy algorithm
 	 * @return pointValue - positive (negative) value indicates white (black) territory 
 	 * or white (black) stone
 	 */
@@ -379,15 +373,6 @@ public class DeadStoneIdentifier {
 			pointValue = Helper.setPointValue(pointValueWorking, size+2);
 		}
 		
-		/*
-		for (int y = 0; y < size+2; y++) {
-			System.out.println("");
-			for (int x = 0; x < size+2; x++) {
-				System.out.print(pointValue[x][y] + "\t");
-			}
-		}
-		*/
-		
 		return pointValue;
 	}
 	
@@ -439,7 +424,7 @@ public class DeadStoneIdentifier {
 	
 	
 	/**
-	 * This method identifies dead logical chains based on their properties.
+	 * This method identifies dead logical chains based on their properties as described above.
 	 * All the stones of a dead logical chain are considered dead.
 	 */ 
 	public void identifyDeadStones(){
@@ -458,17 +443,15 @@ public class DeadStoneIdentifier {
 			if (statusOfLogicalChains.get(s).equals("dead")) {
 				if (finalLogicalChainGroups.get(s).iterator().next().getStatus().contains("b")) {
 					deadBlackStonePositions.addAll(Helper.getDeadStonePositions(finalLogicalChainGroups.get(s)));
-					
 				} else if (finalLogicalChainGroups.get(s).iterator().next().getStatus().contains("w")) {
 					deadWhiteStonePositions.addAll(Helper.getDeadStonePositions(finalLogicalChainGroups.get(s)));
 				}
-				
 			}
 		}
 	}
 	
 	/**
-	 * This method groups all the dead black stones and dead white stones.
+	 * This method returns an ArrayList that contains all the dead black stones and dead white stones.
 	 * @return deadStones
 	 */
 	public ArrayList<HashSet<DeadStone>> getDeadStones(){
@@ -488,30 +471,4 @@ public class DeadStoneIdentifier {
 		return deadStones;
 	}
 	
-	//This method is for debugging.
-	public void testPrint() {
-		System.out.println("chain group No: " + chainGroups.keySet());
-		System.out.println("");
-		System.out.println("logical group ID: " + finalLogicalChainGroups.keySet());
-		System.out.println("");
-		System.out.println("eyes: ");
-		for (String s : eyesOfLogicalChains.keySet()) {
-			System.out.println(s + ": " + eyesOfLogicalChains.get(s).size());
-		}
-		System.out.println("");
-		System.out.println("territory: ");
-		for (String s : territoryOfLogicalChains.keySet()) {
-			System.out.println(s + ": " + territoryOfLogicalChains.get(s).size());
-		}
-		System.out.println("");
-		System.out.println("live dead status: ");
-		for (String s : statusOfLogicalChains.keySet()) {
-			System.out.println(s + ": " + statusOfLogicalChains.get(s));
-		}
-		System.out.println("");
-		System.out.println("dead black: " + deadBlackStonePositions);
-		System.out.println("");
-		System.out.println("dead white: " + deadWhiteStonePositions);
-	}
-
 }
