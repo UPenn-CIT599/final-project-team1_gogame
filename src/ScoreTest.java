@@ -7,7 +7,15 @@ import java.util.HashSet;
 import org.junit.jupiter.api.Test;
 
 class ScoreTest {
-
+	
+	/**
+	 * This test checks if the categorizePoints method in the Score class properly
+	 * takes in the final positions from the Board class and categorizes the points 
+	 * into the 3 groups: black, white, and empty.
+	 * 
+	 * The test begins with placing a few stones on the board and then verifies the 
+	 * color, and the x and y positions of the placed stones.
+	 */
 	@Test
 	void categorizePointsTest() {
 		double komi = 7.5;
@@ -44,6 +52,21 @@ class ScoreTest {
 		assertEquals(score.getEmptyLocations().get(0).getyPosition(), 0);
 	}
 	
+	/**
+	 * This test checks if the dead stones are correctly removed, the ownership of
+	 * each area is correctly determined, and the final scores are correctly calculated.
+	 * 
+	 * The game used for testing has one dead white stone at the x=4, y=2 position. There 
+	 * are 3 areas in total: one belongs to white and two belong to black. Each area has
+	 * 5, 4 and 2 empty points, respectively.
+	 * 
+	 * Before removing the dead white stone, there are 8 black stones, 7 white stones, and 
+	 * 10 empty points on the board. After removing the dead white stone, there should be 8 
+	 * black stones, 6 white stones, and 11 empty points.
+	 * 
+	 * The black score = 8 stones + 6 empty points enclosed = 14
+	 * The white score = 6 stones + 5 empty points enclosed + 7.5 seki = 18.5
+	 */
 	@Test
 	void deadStonesAndAreaOwnershipAndScoringTests() {
 		double komi = 7.5;
@@ -102,6 +125,21 @@ class ScoreTest {
 		assertEquals(finalScores.get("whiteScore"), 18.5);
 	}
 	
+	/**
+	 * This test checks if seki can be identified, the number of neutral points that
+	 * constitute seki is correctly computed, and the final scores are correctly calculated.
+	 * 
+	 * The game used for testing has one seki neutral point at the x=5, y=5 position. There 
+	 * is one normal neutral point (also called dame) at the the x=3, y=0 position.
+	 * 
+	 * There is no dead stone in this game. There are 16 black stones and 17 white stones.
+	 * There are 9 points that belong to black and 5 points that belong to white. The last
+	 * move is made by white, meaning the one dame will be assigned to black. The seki neutral
+	 * point will be divided evenly between black and white, meaning each gets 0.5 point.
+	 * 
+	 * The black score = 16 stones + 9 empty points enclosed + 1 dame + 0.5 seki = 26.5
+	 * The white score = 17 stones + 5 empty points enclosed + 0.5 seki + 7.5 seki = 30
+	 */
 	@Test
 	void sekiAndScoringTests() {
 		double komi = 7.5;
@@ -156,7 +194,6 @@ class ScoreTest {
 		
 		assertEquals(finalScores.get("blackScore"), 26.5);
 		assertEquals(finalScores.get("whiteScore"), 30);
-		
 	}
 
 }
