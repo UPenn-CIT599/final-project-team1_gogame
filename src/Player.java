@@ -175,7 +175,9 @@ public class Player {
 			if (count == maxAttempts) {
 			    pass();
 			    game.nextPlayersTurn();
-			    game.getTimer().resetByoYomi();
+			    if (game.getTimer() != null) {
+				game.getTimer().resetByoYomi();
+			    }
 			}
 
 			game.getGui().drawBoard();
