@@ -7,6 +7,18 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 public class Score {
+	
+	/**
+	 * After the game ends, the score for each player will be calculated in the following steps:
+	 * 1. Categorize each point on the board into one of the three groups: 
+	 * black, white, and empty
+	 * 2. Remove dead stones from the board by replacing them with empty points
+	 * 3. Determine the ownership of each area on the board
+	 * 4. Check if seki (see the definition below) is present on the board and determine the number
+	 * of neutral points that constitute the seki
+	 * 5. Calculate the scores for both black and white by adding the number of stones and empty points
+	 * in the areas that belong to each and dividing the neutral points between them
+	 */
 
     /**
      * Definition of seki (a Go term):
@@ -22,16 +34,12 @@ public class Score {
 
     private int size;
     private double blackScore, whiteScore, komi;
-
     private String finalBoardPositions;
     private Point[][] finalPositions;
-
     private ArrayList<Area> areas = new ArrayList<>();
-
     private ArrayList<Point> emptyLocations = new ArrayList<>();
     private ArrayList<Point> blackStones = new ArrayList<>();
     private ArrayList<Point> whiteStones = new ArrayList<>();
-
     private ArrayList<Point> neutralPositions = new ArrayList<>();
 
     public Score(Board b, double komi) {
@@ -128,7 +136,8 @@ public class Score {
     }
 
     /**
-     * This method checks if any stone is placed on the board.
+     * This method checks if any stone is placed on the board before the game ends. 
+     * If no stone is placed, the GUI will prompt the user to place a stone before calculating the scores.
      * @return stonePlaced
      */
     public boolean checkIfStonesArePlaced() {
@@ -139,9 +148,8 @@ public class Score {
 	return stonePlaced;
     }
 
-
     /**
-     * Given the positions of the dead stones selected by the players,
+     * Given the positions of the dead stones selected by the players or identified by the computer,
      * this method returns a HashSet that stores all the DeadStone objects.
      * @param deadStonePositions
      * @return deadStones
@@ -187,6 +195,8 @@ public class Score {
     /**
      * This method determines the ownership of all the areas on the board.
      * An area belongs to either black or white, or does not belong to any side (neutral). 
+     * This method uses some code found online at:
+     * https://www.moderndescartes.com/essays/implementing_go/
      */
     public void checkAreaOwnership() {
 	for (Point empty : emptyLocations) {
@@ -232,7 +242,7 @@ public class Score {
 
     /**
      * This method checks whether a rare case called seki is present on the board
-     * and returns the number of neutral positions that occur because of seki.
+     * and returns the number of neutral positions that constitute seki.
      * @return sekiCount
      */
     public int checkSeki() {

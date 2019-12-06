@@ -4,41 +4,22 @@ import java.util.HashSet;
 public class ScoreHelper {
 	
 	/**
+	 * This class contains helper methods for the Score class.
+	 */
+	
+	/**
 	 * Definitions:
 	 * Chain is a group of adjacent points.
 	 * Reach is all the adjacent points surrounding a chain.
 	 */
 	
 	/**
-	 * Given a point, the board size, and the board position,
-	 * this method returns the adjacent points on the board.
-	 * @param p
-	 * @param boardSize
-	 * @param boardPosition
-	 * @return adjacentPoints
-	 */
-	public static ArrayList<Point> getAdjacentPoints(Point p, int boardSize, Point[][] boardPosition) {
-		ArrayList<Point> adjacentPoints = new ArrayList<>();
-		if (p.getxPosition() > 0) {
-			adjacentPoints.add(boardPosition[p.getxPosition() - 1][p.getyPosition()]);
-		}
-		if (p.getxPosition() < boardSize - 1) {
-			adjacentPoints.add(boardPosition[p.getxPosition() + 1][p.getyPosition()]);
-		}
-		if (p.getyPosition() > 0) {
-			adjacentPoints.add(boardPosition[p.getxPosition()][p.getyPosition() - 1]);
-		}
-		if (p.getyPosition() < boardSize - 1) {
-			adjacentPoints.add(boardPosition[p.getxPosition()][p.getyPosition() + 1]);
-		}
-		return adjacentPoints;
-	}
-	
-	/**
 	 * Given a point, the board size, and the board position, 
 	 * this method returns the chain that this point is in and 
 	 * the reach of this chain.
-	 * @param p
+	 * This method uses some code found online at:
+     * https://www.moderndescartes.com/essays/implementing_go/
+	 * @param p - the given point
 	 * @param size
 	 * @param finalPositions
 	 * @return chainAndReach
