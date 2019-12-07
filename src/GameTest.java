@@ -15,7 +15,7 @@ class GameTest {
     @Test
     void testGetGui() {
 	// testing getGui getter
-	UserInterface gui = new UserInterface();
+	TestUserInterface gui = new TestUserInterface();
 	Game game = new Game(gui, new MainMenu(null));
 	assertEquals(game.getGui(), gui);
     }
@@ -83,7 +83,7 @@ class GameTest {
     @Test
     void testWasLastMovePass() {
 	// testing lastMoveWasPass getter and setter
-	UserInterface gui = new UserInterface();
+	TestUserInterface gui = new TestUserInterface();
 	Game game = new Game(gui, new MainMenu(null));
 
 	// initial value should be false
@@ -123,7 +123,7 @@ class GameTest {
     @Test
     void testIsSelectingDeadStones() {
 	// testing isSelectingDeadStones getter
-	Game game = new Game(new UserInterface(), new MainMenu(null));
+	Game game = new Game(new TestUserInterface(), new MainMenu(null));
 
 	// initial value should be false
 	assertFalse(game.isSelectingDeadStones());
@@ -163,7 +163,7 @@ class GameTest {
     @Test
     void testGetSgfStringBuilder() {
 	// testing sgf StringBuilder methods
-	Game game = new Game(new UserInterface(), new MainMenu(null));
+	Game game = new Game(new TestUserInterface(), new MainMenu(null));
 
 	// StringBuilder is initialized in constructor
 
@@ -214,181 +214,154 @@ class GameTest {
 
     @Test
     void testGameOverByPassingWithEmptyBoard() {
-	// testing the gameOver function up to the drawBoard command
-	Game game = new Game(new UserInterface(), new MainMenu(null));
+	// testing gameOver
+	Game game = new Game(new TestUserInterface(), new MainMenu(null));
 
-	try {
-	    // two consecutive passes should result in gameOver method call,
-	    // gameOver should result in a NullPointerException when drawBoard
-	    // is called
-	    game.getPlayer1().pass();
-	    game.getPlayer2().pass();
-	} catch (NullPointerException e) {
-	    // since board is empty, game should not end and lastMoveWasPass
-	    // should be false
-	    assertFalse(game.isGameOver());
-	    assertFalse(game.wasLastMovePass());
+	// two consecutive passes should result in gameOver method call
+	game.getPlayer1().pass();
+	game.getPlayer2().pass();
 
-	    // passes should have been removed from sgfStringBuilder
-	    assertFalse(game.getSgfStringBuilder().toString().contains("[tt]"));
-	}
+	// since board is empty, game should not end and lastMoveWasPass
+	// should be false
+	assertFalse(game.isGameOver());
+	assertFalse(game.wasLastMovePass());
+
+	// passes should have been removed from sgfStringBuilder
+	assertFalse(game.getSgfStringBuilder().toString().contains("[tt]"));
     }
 
     @Test
     void testGameOverByResignWithEmptyBoard() {
-	// testing the gameOver function up to the drawBoard command
-	Game game = new Game(new UserInterface(), new MainMenu(null));
+	// testing gameOver
+	Game game = new Game(new TestUserInterface(), new MainMenu(null));
 
-	try {
-	    // resign should result in gameOver method call,
-	    // gameOver should result in a NullPointerException when drawBoard
-	    // is called
-	    game.getPlayer1().pass();
-	    game.getPlayer2().resign();
-	} catch (NullPointerException e) {
-	    // resign should end the game even with an empty board
-	    assertTrue(game.isGameOver());
+	// resign should result in gameOver method call
+	game.getPlayer1().pass();
+	game.getPlayer2().resign();
 
-	    // the last move was a pass
-	    assertTrue(game.wasLastMovePass());
+	// resign should end the game even with an empty board
+	assertTrue(game.isGameOver());
 
-	    // pass should not have been removed from sgfStringBuilder
-	    assertTrue(game.getSgfStringBuilder().toString().contains("[tt]"));
+	// the last move was a pass
+	assertTrue(game.wasLastMovePass());
 
-	    // should not be dead stone selection phase
-	    assertFalse(game.isSelectingDeadStones());
-	    assertNull(game.getSelector());
+	// pass should not have been removed from sgfStringBuilder
+	assertTrue(game.getSgfStringBuilder().toString().contains("[tt]"));
 
-	    // final score should be added
-	    assertNotNull(game.getFinalScore());
+	// should not be dead stone selection phase
+	assertFalse(game.isSelectingDeadStones());
+	assertNull(game.getSelector());
 
-	    // final move color should be white
-	    assertEquals(game.getFinalMoveColor(), "white");
+	// final score should be added
+	assertNotNull(game.getFinalScore());
 
-	    // parentheses in sgfStringBuilder should be closed
-	    assertTrue(game.getSgfStringBuilder().toString().endsWith(")"));
-	}
+	// final move color should be white
+	assertEquals(game.getFinalMoveColor(), "white");
+
+	// parentheses in sgfStringBuilder should be closed
+	assertTrue(game.getSgfStringBuilder().toString().endsWith(")"));
     }
 
     @Test
     void testGameOverByPassingWithNonEmptyBoard() {
-	// testing the gameOver function up to the drawBoard command
-	Game game = new Game(new UserInterface(), new MainMenu(null));
+	// testing gameOver
+	Game game = new Game(new TestUserInterface(), new MainMenu(null));
 
-	try {
-	    // two consecutive passes should result in gameOver method call,
-	    // gameOver should result in a NullPointerException when drawBoard
-	    // is called
-	    game.getPlayer1().processMouseClick(0, 1);
-	    game.getPlayer2().processMouseClick(2, 3);
-	    game.getPlayer1().pass();
-	    game.getPlayer2().pass();
-	} catch (NullPointerException e) {
-	    // game should be over
-	    assertTrue(game.isGameOver());
-	    assertTrue(game.wasLastMovePass());
+	// two consecutive passes should result in gameOver method call
+	game.getPlayer1().processMouseClick(0, 1);
+	game.getPlayer2().processMouseClick(2, 3);
+	game.getPlayer1().pass();
+	game.getPlayer2().pass();
 
-	    // sgfStringBuilder should contain record of passes
-	    assertTrue(game.getSgfStringBuilder().toString()
-		    .contains(";B[tt];W[tt]"));
+	// game should be over
+	assertTrue(game.isGameOver());
+	assertTrue(game.wasLastMovePass());
 
-	    // should be dead stone selection phase
-	    assertTrue(game.isSelectingDeadStones());
-	    assertNotNull(game.getSelector());
+	// sgfStringBuilder should contain record of passes
+	assertTrue(
+		game.getSgfStringBuilder().toString().contains(";B[tt];W[tt]"));
 
-	    // test continuePlay method - should call drawBoard and get a
-	    // NullPointerException
-	    try {
-		game.continuePlay();
-	    } catch (NullPointerException n) {
-		// game should no longer be over
-		assertFalse(game.isGameOver());
+	// should be dead stone selection phase
+	assertTrue(game.isSelectingDeadStones());
+	assertNotNull(game.getSelector());
 
-		// passes should no longer be counted
-		assertFalse(game.wasLastMovePass());
-		assertFalse(
-			game.getSgfStringBuilder().toString().contains("[tt]"));
+	// test continuePlay method
+	game.continuePlay();
+	// game should no longer be over
+	assertFalse(game.isGameOver());
 
-		// should no longer be dead stone selection phase
-		assertFalse(game.isSelectingDeadStones());
-		assertNull(game.getSelector());
-	    }
-	}
+	// passes should no longer be counted
+	assertFalse(game.wasLastMovePass());
+	assertFalse(game.getSgfStringBuilder().toString().contains("[tt]"));
+
+	// should no longer be dead stone selection phase
+	assertFalse(game.isSelectingDeadStones());
+	assertNull(game.getSelector());
     }
 
     @Test
     void testGameOverByResignWithNonEmptyBoard() {
-	// testing the gameOver function up to the drawBoard command
-	Game game = new Game(new UserInterface(), new MainMenu(null));
+	// testing gameOver
+	Game game = new Game(new TestUserInterface(), new MainMenu(null));
 
-	try {
-	    // resign should result in gameOver method call,
-	    // gameOver should result in a NullPointerException when drawBoard
-	    // is called
-	    game.getPlayer1().processMouseClick(0, 1);
-	    game.getPlayer2().processMouseClick(2, 3);
-	    game.getPlayer1().resign();
-	} catch (NullPointerException e) {
-	    // resign should end the game
-	    assertTrue(game.isGameOver());
+	// resign should result in gameOver method call
+	game.getPlayer1().processMouseClick(0, 1);
+	game.getPlayer2().processMouseClick(2, 3);
+	game.getPlayer1().resign();
 
-	    // the last move was not a pass
-	    assertFalse(game.wasLastMovePass());
+	// resign should end the game
+	assertTrue(game.isGameOver());
 
-	    // should not be dead stone selection phase
-	    assertFalse(game.isSelectingDeadStones());
-	    assertNull(game.getSelector());
+	// the last move was not a pass
+	assertFalse(game.wasLastMovePass());
 
-	    // final score should be added
-	    assertNotNull(game.getFinalScore());
+	// should not be dead stone selection phase
+	assertFalse(game.isSelectingDeadStones());
+	assertNull(game.getSelector());
 
-	    // final move color should be white
-	    assertEquals(game.getFinalMoveColor(), "white");
+	// final score should be added
+	assertNotNull(game.getFinalScore());
 
-	    // parentheses in sgfStringBuilder should be closed
-	    assertTrue(game.getSgfStringBuilder().toString().endsWith(")"));
-	}
+	// final move color should be white
+	assertEquals(game.getFinalMoveColor(), "white");
+
+	// parentheses in sgfStringBuilder should be closed
+	assertTrue(game.getSgfStringBuilder().toString().endsWith(")"));
     }
 
     @Test
     void testProcessMouseClickOnBoard() {
-	// testing a click on a space on the board, up to drawBoard method call
-	Game game = new Game(new UserInterface(), new MainMenu(null));
+	// testing a click on a space on the board
+	Game game = new Game(new TestUserInterface(), new MainMenu(null));
 
 	// black moves first
 	assertTrue(game.blackToMove());
 
-	try {
-	    game.processMouseClick(0, 1);
-	} catch (NullPointerException e) {
-	    // should be white's turn
-	    assertFalse(game.blackToMove());
+	game.processMouseClick(0, 1);
 
-	    // sgfStringBuilder should be updated
-	    assertTrue(
-		    game.getSgfStringBuilder().toString().contains(";B[ab]"));
-	}
+	// should be white's turn
+	assertFalse(game.blackToMove());
+
+	// sgfStringBuilder should be updated
+	assertTrue(game.getSgfStringBuilder().toString().contains(";B[ab]"));
     }
 
     @Test
     void testProcessMouseClickOnPassButton() {
-	// testing a click on a space on the board, up to drawBoard method call
-	Game game = new Game(new UserInterface(), new MainMenu(null));
+	// testing a click on a space on the board
+	Game game = new Game(new TestUserInterface(), new MainMenu(null));
 
 	// black moves first
 	assertTrue(game.blackToMove());
 
-	try {
-	    game.processMouseClick(Player.PASS);
-	} catch (NullPointerException e) {
-	    // should be white's turn
-	    assertFalse(game.blackToMove());
-	    assertTrue(game.wasLastMovePass());
+	game.processMouseClick(Player.PASS);
 
-	    // sgfStringBuilder should be updated
-	    assertTrue(
-		    game.getSgfStringBuilder().toString().contains(";B[tt]"));
-	}
+	// should be white's turn
+	assertFalse(game.blackToMove());
+	assertTrue(game.wasLastMovePass());
+
+	// sgfStringBuilder should be updated
+	assertTrue(game.getSgfStringBuilder().toString().contains(";B[tt]"));
     }
 
 }

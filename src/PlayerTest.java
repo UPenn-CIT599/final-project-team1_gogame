@@ -6,10 +6,7 @@ import org.junit.jupiter.api.Test;
 
 /**
  * The PlayerTest class tests methods dealing with computer players; methods
- * relating to human players have already been tested in GameTest. Note that
- * creating a computer player also creates a new thread. A NullPointerException
- * will be thrown whenever the new thread calls the drawBoard method, but that
- * exception cannot be caught here since it is not in the main thread.
+ * relating to human players have already been tested in GameTest.
  * 
  * @author Chris Hartung
  *
@@ -36,7 +33,7 @@ class PlayerTest {
 
     @Test
     void testWhiteComputerPlayer() {
-	Game game = new Game(new UserInterface(), new MainMenu(null));
+	Game game = new Game(new TestUserInterface(), new MainMenu(null));
 	Player computer = new Player(game, "Computer", false, true);
 
 	// since the computer is white, it should get stuck at the wait command
@@ -60,7 +57,7 @@ class PlayerTest {
 
     @Test
     void testBlackComputerPlayer() {
-	Game game = new Game(new UserInterface(), new MainMenu(null));
+	Game game = new Game(new TestUserInterface(), new MainMenu(null));
 	new Player(game, "Computer", true, true);
 
 	// since it is the computer's turn, it should wait one second and then
@@ -78,7 +75,7 @@ class PlayerTest {
 
     @Test
     void testComputerPlayerAfterPassWithEmptyBoard() {
-	Game game = new Game(new UserInterface(), new MainMenu(null));
+	Game game = new Game(new TestUserInterface(), new MainMenu(null));
 	Player computer = new Player(game, "Computer", false, true);
 
 	// since the computer is white, it should get stuck at the wait command
@@ -104,7 +101,7 @@ class PlayerTest {
 
     @Test
     void testComputerPlayerAfterPassWhenPassWins() {
-	Game game = new Game(new UserInterface(), new MainMenu(null));
+	Game game = new Game(new TestUserInterface(), new MainMenu(null));
 	Player computer = new Player(game, "Computer", false, true);
 
 	// since the computer is white, it should get stuck at the wait command
@@ -132,7 +129,7 @@ class PlayerTest {
 
     @Test
     void testComputerPlayerAfterPassWhenPassLoses() {
-	Game game = new Game(new UserInterface(), new MainMenu(null));
+	Game game = new Game(new TestUserInterface(), new MainMenu(null));
 	Player computer = new Player(game, "Computer", false, true);
 
 	// since the computer is white, it should get stuck at the wait command
@@ -169,7 +166,7 @@ class PlayerTest {
 
     @Test
     void testComputerPlayerWhenGameEndsWhileWaiting() {
-	Game game = new Game(new UserInterface(), new MainMenu(null));
+	Game game = new Game(new TestUserInterface(), new MainMenu(null));
 	Player computer = new Player(game, "Computer", false, true);
 
 	// since the computer is white, it should get stuck at the wait command
@@ -180,35 +177,29 @@ class PlayerTest {
 	game.nextPlayersTurn();
 
 	// once there is a stone on the board, two passes should end the game
-
-	// the passes will result in a NullPointerException in the main thread
-	// when drawBoard is called
 	game.getBoard().placeStone(Color.WHITE, 0, 0);
 	game.getPlayer1().pass();
+	game.getPlayer2().pass();
+	assertTrue(game.isGameOver());
+
+	// once notified, the computer should wake up, recognize that the
+	// game is over, and do nothing
+	computer.notifyComputer();
 	try {
-	    game.getPlayer2().pass();
-	} catch (NullPointerException n) {
-	    assertTrue(game.isGameOver());
-
-	    // once notified, the computer should wake up, recognize that the
-	    // game is over, and do nothing
-	    computer.notifyComputer();
-	    try {
-		Thread.sleep(1500);
-	    } catch (InterruptedException e) {
-		e.printStackTrace();
-	    }
-
-	    // computer should not have placed a stone since the game was
-	    // already over
-	    assertEquals(countStonesOnBoard(game), 1);
-	    assertTrue(game.isGameOver());
+	    Thread.sleep(1500);
+	} catch (InterruptedException e) {
+	    e.printStackTrace();
 	}
+
+	// computer should not have placed a stone since the game was
+	// already over
+	assertEquals(countStonesOnBoard(game), 1);
+	assertTrue(game.isGameOver());
     }
 
     @Test
     void testComputerPlayerWithNoLegalMoves() {
-	Game game = new Game(new UserInterface(), new MainMenu(null));
+	Game game = new Game(new TestUserInterface(), new MainMenu(null));
 	Player computer = new Player(game, "Computer", false, true);
 
 	// since the computer is white, it should get stuck at the wait command
