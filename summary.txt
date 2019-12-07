@@ -18,7 +18,7 @@ Our work breakdown is as follows:
 Chris: user interface and player interaction, including the following classes:
 AbstractGame, DeadStoneSelector, DeadStoneSelectorTest, EndGameMenu, Game, 
 GameTest, GameTimer, GameTimerTask, GoRunner, MainMenu, Player, PlayerTest, 
-PlayerTimer, ReplayFileFilter, UserInterface
+PlayerTimer, ReplayFileFilter, TestUserInterface, UserInterface
 
 Christian: gameplay and sgf file reading, including the following classes:
 Board, BoardTest, Group, Intersection, Move, PracticeProblemMode, Problem, 
